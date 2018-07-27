@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    okhttpVersion = '3.11.0'
+
+    junitVersion = '5.2.0'
+    mockitoVersion = '2.19.0'
+}
+
+dependencies {
+    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
