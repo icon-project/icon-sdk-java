@@ -6,8 +6,14 @@ package foundation.icon.icx;
 public interface Callback<T> {
 
     /**
-     * Invoked when the execution is completed
-     * @param response a result of the execution
+     * Invoked when the execution is successful
+     * @param result a result of the execution
      */
-    void onResponse(Response<T> response);
+    void onSuccess(T result);
+
+    /**
+     * Invoked when the execution is completed with an exception
+     * @param exception an exception thrown during the execution
+     */
+    void onFailure(Exception exception);
 }

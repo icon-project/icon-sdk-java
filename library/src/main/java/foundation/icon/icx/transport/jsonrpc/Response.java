@@ -18,7 +18,7 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 /**
- * A response of the request
+ * A jsonrpc response of the request
  */
 public class Response<T> {
     private String jsonrpc = "2.0";

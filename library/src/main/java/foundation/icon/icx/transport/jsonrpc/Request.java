@@ -18,7 +18,7 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 /**
- * A request to be execute
+ * A jsonrpc request to be execute
  */
 public class Request<T> {
 

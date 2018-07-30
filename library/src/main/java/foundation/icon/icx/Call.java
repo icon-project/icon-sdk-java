@@ -12,7 +12,7 @@ public interface Call<T> {
      * @return Response
      * @throws IOException an exception if there exist errors
      */
-    Response<T> execute() throws IOException;
+    T execute() throws IOException;
 
     /**
      * Executes asynchronously
