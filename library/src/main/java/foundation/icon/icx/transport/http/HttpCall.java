@@ -80,13 +80,7 @@ public class HttpCall<T> implements Call<T> {
         ResponseBody body = httpResponse.body();
         if (body != null) {
             ObjectMapper mapper = new ObjectMapper();
-            SimpleModule module = new SimpleModule();
-            module.addDeserializer(RpcField.class, new RpcFieldDeserializer());
-            module.addDeserializer(BigInteger.class, new BigIntegerDeserializer());
-            module.addDeserializer(boolean.class, new BooleanDeserializer());
-            module.addDeserializer(Boolean.class, new BooleanDeserializer());
-            module.addDeserializer(byte[].class, new BytesDeserializer());
-            mapper.registerModule(module);
+            mapper.registerModule(createDeserializerModule());
             TypeReference<Response<T>> type = new TypeReference<Response<T>>() {
             };
             Response<T> response = mapper.readValue(body.byteStream(), type);
@@ -99,5 +93,15 @@ public class HttpCall<T> implements Call<T> {
         } else {
             throw new RpcError(httpResponse.code(), httpResponse.message());
         }
+    }
+
+    private SimpleModule createDeserializerModule() {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(RpcField.class, new RpcFieldDeserializer());
+        module.addDeserializer(BigInteger.class, new BigIntegerDeserializer());
+        module.addDeserializer(boolean.class, new BooleanDeserializer());
+        module.addDeserializer(Boolean.class, new BooleanDeserializer());
+        module.addDeserializer(byte[].class, new BytesDeserializer());
+        return module;
     }
 }

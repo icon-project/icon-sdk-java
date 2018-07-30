@@ -15,39 +15,47 @@
  *
  */
 
-package foundation.icon.icx.transport.jsonrpc;
+package foundation.icon.icx.data;
 
 /**
- * A jsonrpc request to be execute
+ * CallData contains data parameters of ICX jsonrpc spec
  */
-public class Request<T> {
-
-    private String jsonrpc = "2.0";
-
+public class CallData<T> {
     private String method;
-
-    private long id;
-
     private T params;
 
-    public Request(String method, T params) {
+    private CallData(String method, T params) {
         this.method = method;
         this.params = params;
-    }
-
-    public String getJsonrpc() {
-        return jsonrpc;
     }
 
     public String getMethod() {
         return method;
     }
 
-    public long getId() {
-        return id;
-    }
-
     public T getParams() {
         return params;
+    }
+
+    /**
+     * Builder for Calldata
+     */
+    public static class Builder<T> {
+        private String method;
+        private T params;
+
+        public Builder<T> method(String method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder<T> params(T params) {
+            this.params = params;
+            return this;
+        }
+
+        public CallData<T> build() {
+            return new CallData<>(method, params);
+        }
     }
 }
