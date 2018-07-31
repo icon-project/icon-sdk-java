@@ -18,23 +18,24 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.CallData;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
 
 /**
  * IcxCall contains parameters for querying request.
- * @param <T> input type of the parameter
+ *
+ * @param <I> Input parameter type
+ * @param <O> Response type
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class IcxCall<T> {
+public class IcxCall<I, O> {
 
     private String from;
     private String to;
     private String dataType = "call";
-    private CallData<T> data;
-    private Class<?> responseType;
+    private CallData<I> data;
+    private Class<O> responseType;
 
     private IcxCall(
-            String from, String to, CallData<T> data, Class<?> responseType) {
+            String from, String to, CallData<I> data, Class<O> responseType) {
         this.from = from;
         this.to = to;
         this.data = data;
@@ -53,52 +54,58 @@ public class IcxCall<T> {
         return dataType;
     }
 
-    public CallData<T> getData() {
+    public CallData<I> getData() {
         return data;
     }
 
-    public Class<?> responseType() {
+    public Class<O> responseType() {
         return responseType;
     }
 
     /**
      * Builder for creating immutable object of  IcxCall
-     * @param <T> input type of the parameter
+     *
+     * @param <I> Input parameter type
+     * @param <O> Response type
      */
-    public static class Builder<T> {
+    public static class Builder<I, O> {
         private String from;
         private String to;
         private String method;
-        private T params;
-        private Class<?> responseType = RpcField.class;
+        private I params;
+        private Class<O> responseType;
 
-        public Builder<T> from(String from) {
+        /**
+         * Create builder with the response type
+         *
+         * @param responseType response type of icx call
+         */
+        public Builder(Class<O> responseType) {
+            this.responseType = responseType;
+        }
+
+        public Builder<I, O> from(String from) {
             this.from = from;
             return this;
         }
 
-        public Builder<T> to(String to) {
+        public Builder<I, O> to(String to) {
             this.to = to;
             return this;
         }
 
-        public Builder<T> method(String method) {
+        public Builder<I, O> method(String method) {
             this.method = method;
             return this;
         }
 
-        public Builder<T> params(T params) {
+        public Builder<I, O> params(I params) {
             this.params = params;
             return this;
         }
 
-        public Builder<T> responseType(Class<?> responseType) {
-            this.responseType = responseType;
-            return this;
-        }
-
-        public IcxCall<T> build() {
-            CallData<T> callData = new CallData.Builder<T>()
+        public IcxCall<I, O> build() {
+            CallData<I> callData = new CallData.Builder<I>()
                     .method(method)
                     .params(params)
                     .build();

@@ -1,8 +1,5 @@
 package foundation.icon.icx;
 
-import java.math.BigInteger;
-import java.util.List;
-
 import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.data.ScoreApi;
@@ -10,6 +7,9 @@ import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
+
+import java.math.BigInteger;
+import java.util.List;
 
 /**
  * IconService which provides APIs of ICON network
@@ -89,7 +89,7 @@ public class IconService {
     /**
      * Get information about api function in score
      *
-     * @param scoreAddress
+     * @param scoreAddress The address to get APIs
      * @return The ScoreApi object
      */
     public Call<List<ScoreApi>> getScoreApi(String scoreAddress) {
@@ -136,8 +136,8 @@ public class IconService {
      * @param <I>     input type of the parameter
      * @return the Call object can execute a request
      */
-    public <I> Call<?> query(IcxCall<I> icxCall) {
-        Request<IcxCall<I>> request = new Request<>("icx_call", icxCall);
+    public <I, O> Call<O> query(IcxCall<I, O> icxCall) {
+        Request<IcxCall<I, O>> request = new Request<>("icx_call", icxCall);
         return provider.request(request, icxCall.responseType());
     }
 

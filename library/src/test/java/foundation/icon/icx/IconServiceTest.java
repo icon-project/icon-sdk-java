@@ -33,6 +33,7 @@ class IconServiceTest {
         assertNotNull(iconService);
     }
 
+    @SuppressWarnings("unused")
     @Test
     void testQuery() {
         Provider provider = mock(Provider.class);
@@ -45,15 +46,15 @@ class IconServiceTest {
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
-        IcxCall<Person> icxCall = new Builder<Person>()
-                .from("0x01")
-                .to("0x02")
-                .method("addUser")
-                .params(person)
-                .responseType(PersonResponse.class)
-                .build();
+        IcxCall<Person, PersonResponse> icxCall =
+                new Builder<Person, PersonResponse>(PersonResponse.class)
+                        .from("0x01")
+                        .to("0x02")
+                        .method("addUser")
+                        .params(person)
+                        .build();
 
-        iconService.query(icxCall);
+        Call<PersonResponse> query = iconService.query(icxCall);
 
         verify(provider).request(
                 argThat(argument -> argument.getParams().equals(icxCall)),
@@ -69,7 +70,7 @@ class IconServiceTest {
         iconService.getTotalSupply();
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getTotalSupply", null)),
+                argThat(request -> isRequestMatches(request, "icx_getTotalSupply", null)),
                 argThat(responseType -> responseType.equals(BigInteger.class)));
     }
 
@@ -82,11 +83,11 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getBalance(address);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("address", new RpcValue(address));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getBalance", params)),
+                argThat(request -> isRequestMatches(request, "icx_getBalance", params)),
                 argThat(responseType -> responseType.equals(BigInteger.class)));
     }
 
@@ -97,11 +98,11 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getBlock(BigInteger.ONE);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(BigInteger.ONE));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getBlockByHeight", params)),
+                argThat(request -> isRequestMatches(request, "icx_getBlockByHeight", params)),
                 argThat(responseType -> responseType.equals(Block.class)));
     }
 
@@ -114,11 +115,11 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getBlock(hash);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("hash", new RpcValue(hash));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getBlockByHash", params)),
+                argThat(request -> isRequestMatches(request, "icx_getBlockByHash", params)),
                 argThat(responseType -> responseType.equals(Block.class)));
     }
 
@@ -130,10 +131,11 @@ class IconServiceTest {
         iconService.getBlock("latest");
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getLastBlock", null)),
+                argThat(request -> isRequestMatches(request, "icx_getLastBlock", null)),
                 argThat(responseType -> responseType.equals(Block.class)));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void testGetScoreApi() {
         Provider provider = mock(Provider.class);
@@ -143,12 +145,13 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getScoreApi(address);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("address", new RpcValue(address));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getScoreApi", params)),
-                argThat(responseType -> responseType.equals((Class<List<ScoreApi>>) ((Class) List.class))));
+                argThat(request -> isRequestMatches(request, "icx_getScoreApi", params)),
+                argThat(responseType ->
+                        responseType.equals((Class<List<ScoreApi>>) ((Class) List.class))));
     }
 
     @Test
@@ -160,11 +163,11 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getTransaction(hash);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getTransactionByHash", params)),
+                argThat(request -> isRequestMatches(request, "icx_getTransactionByHash", params)),
                 argThat(responseType -> responseType.equals(ConfirmedTransaction.class)));
     }
 
@@ -177,14 +180,15 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         iconService.getTransactionResult(hash);
 
-        HashMap<String, RpcValue> params = new HashMap();
+        HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
 
         verify(provider).request(
-                argThat( request -> isRequestMatches(request, "icx_getTransactionResult", params)),
+                argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
                 argThat(responseType -> responseType.equals(TransactionResult.class)));
     }
 
+    @SuppressWarnings("unchecked")
     private boolean isRequestMatches(Request req, String method, Map<String, RpcValue> params) {
         Request<RpcObject> request = (Request<RpcObject>) req;
 
@@ -193,8 +197,8 @@ class IconServiceTest {
         boolean isParamMatches = (request.getParams() == null && params == null);
         if (!isParamMatches && params.size() > 0) {
             Set<String> keys = params.keySet();
-            for(String key : keys) {
-                RpcValue value = ((RpcValue)(request.getParams()).getValue(key));
+            for (String key : keys) {
+                RpcValue value = ((RpcValue) (request.getParams()).getValue(key));
                 isParamMatches = value.asString().equals(params.get(key).asString());
                 if (!isParamMatches) break;
             }
@@ -210,7 +214,7 @@ class IconServiceTest {
     }
 
     @SuppressWarnings("unused")
-    class PersonResponse{
+    class PersonResponse {
         public boolean isOk;
         public String message;
     }
