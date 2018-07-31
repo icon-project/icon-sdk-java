@@ -43,7 +43,7 @@ public class IconService {
     /**
      * Get a block matching the block number.
      * @param height The block number
-     * @return The block object
+     * @return The Block object
      */
     public Call<RpcField> getBlock(BigInteger height) {
         RpcObject params = new RpcObject.Builder()
@@ -56,7 +56,7 @@ public class IconService {
     /**
      * Get a block matching the block hash.
      * @param hash The block hash (without hex prefix) or the string 'latest'
-     * @return The block object
+     * @return The Block object
      */
     public Call<RpcField> getBlock(String hash) {
         if (hash.equals("latest")) return getLastBlock();
@@ -70,7 +70,7 @@ public class IconService {
 
     /**
      * Get the latest block.
-     * @return The block object
+     * @return The Block object
      */
     public Call<RpcField> getLastBlock() {
         Request<RpcObject> request = new Request<>("icx_getLastBlock", null);
@@ -94,13 +94,26 @@ public class IconService {
     /**
      * Get a transaction matching the given transaction hash.
      * @param hash The transaction hash
-     * @return The transaction object
+     * @return The Transaction object
      */
     public Call<RpcField> getTransaction(String hash) {
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getTransactionByHash", params);
+        return provider.request(request, RpcField.class);
+    }
+
+    /**
+     * Get the result of a transaction by transaction hash.
+     * @param hash The transaction hash
+     * @return The TransactionResult object
+     */
+    public Call<RpcField> getTransactionResult(String hash) {
+        RpcObject params = new RpcObject.Builder()
+                .put("txHash", new RpcValue(hash))
+                .build();
+        Request<RpcObject> request = new Request<>("icx_getTransactionResult", params);
         return provider.request(request, RpcField.class);
     }
 
