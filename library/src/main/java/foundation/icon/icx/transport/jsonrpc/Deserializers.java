@@ -37,7 +37,18 @@ public class Deserializers {
         public BigInteger deserialize(
                 JsonParser parser, DeserializationContext context)
                 throws IOException {
-            RpcValue rpcValue = new RpcValue(parser.getText());
+            return deserialize(parser.readValueAsTree());
+        }
+
+        private BigInteger deserialize(JsonNode node) {
+            RpcValue rpcValue;
+            if (node.isLong()) {
+                rpcValue = new RpcValue(node.asLong());
+            } else if (node.isInt()) {
+                rpcValue = new RpcValue(node.asInt());
+            } else {
+                rpcValue = new RpcValue(node.asText());
+            }
             return rpcValue.asInteger();
         }
     }
