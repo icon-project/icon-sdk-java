@@ -18,6 +18,15 @@ public class IconService {
     }
 
     /**
+     * Get the total number of issued coins.
+     * @return A BigNumber instance of the total number of coins.
+     */
+    public Call<BigInteger> getTotalSupply() {
+        Request<RpcObject> request = new Request<>("icx_getTotalSupply", null);
+        return provider.request(request, BigInteger.class);
+    }
+
+    /**
      * Get the balance of an address.
      * @param address The address to get the balance of.
      * @return A BigNumber instance of the current balance for the given address in loop.
