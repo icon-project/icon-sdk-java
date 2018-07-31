@@ -18,15 +18,16 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * A read-only data class of RpcObject
  */
 public class RpcObject implements RpcField {
-    private final HashMap<String, RpcField> fields;
+    private final Map<String, RpcField> fields;
 
-    private RpcObject(HashMap<String, RpcField> fields) {
+    private RpcObject(Map<String, RpcField> fields) {
         this.fields = fields;
     }
 
@@ -46,14 +47,30 @@ public class RpcObject implements RpcField {
     }
 
     /**
+     * Returns new builder for using current RpcObject
+     * @return new builder
+     */
+    public Builder newBuilder() {
+        Builder builder = new Builder();
+        for (String key : keySet()) {
+            builder.put(key, getValue(key));
+        }
+        return builder;
+    }
+
+    /**
      * Builder for RpcObject
      */
     public static class Builder {
 
-        private final HashMap<String, RpcField> fields;
+        private final Map<String, RpcField> fields;
 
         public Builder() {
             fields = new HashMap<>();
+        }
+
+        public Builder(Map<String, RpcField> initialMap) {
+            fields = initialMap;
         }
 
         public Builder put(String key, RpcField value) {
