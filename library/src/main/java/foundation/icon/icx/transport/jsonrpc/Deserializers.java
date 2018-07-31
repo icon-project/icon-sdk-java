@@ -107,6 +107,8 @@ public class Deserializers {
                     return new RpcValue(n.asLong());
                 } else if (n.isInt()) {
                     return new RpcValue(n.asInt());
+                } else if (n.isBoolean()) {
+                    return new RpcValue(n.asBoolean());
                 }
                 return new RpcValue(n.asText());
             }
