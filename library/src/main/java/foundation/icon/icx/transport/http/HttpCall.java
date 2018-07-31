@@ -17,6 +17,7 @@
 
 package foundation.icon.icx.transport.http;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -81,6 +82,7 @@ public class HttpCall<T> implements Call<T> {
         ResponseBody body = httpResponse.body();
         if (body != null) {
             ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.registerModule(createDeserializerModule());
             JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, responseType);
             Response<T> response = mapper.readValue(body.byteStream(), type);
