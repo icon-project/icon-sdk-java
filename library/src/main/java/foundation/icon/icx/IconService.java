@@ -1,5 +1,6 @@
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -96,12 +97,12 @@ public class IconService {
      * @param hash The transaction hash
      * @return The Transaction object
      */
-    public Call<RpcField> getTransaction(String hash) {
+    public Call<ConfirmedTransaction> getTransaction(String hash) {
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getTransactionByHash", params);
-        return provider.request(request, RpcField.class);
+        return provider.request(request, ConfirmedTransaction.class);
     }
 
     /**
