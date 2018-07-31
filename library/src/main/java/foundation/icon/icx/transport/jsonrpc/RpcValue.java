@@ -50,6 +50,14 @@ public class RpcValue implements RpcField {
         this.value = sb.toString();
     }
 
+    public RpcValue(long value) {
+        this(new BigInteger(String.valueOf(value)));
+    }
+
+    public RpcValue(int value) {
+        this(new BigInteger(String.valueOf(value)));
+    }
+
     public RpcValue(BigInteger value) {
         this.value = "0x" + value.toString(16);
     }

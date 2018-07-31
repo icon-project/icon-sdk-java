@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -91,7 +91,13 @@ public class Deserializers {
                 }
                 return builder.build();
             } else {
-                return new RpcValue(((TextNode) node).textValue());
+                JsonNode n = ((JsonNode) node);
+                if (n.isLong()) {
+                    return new RpcValue(n.asLong());
+                } else if (n.isInt()) {
+                    return new RpcValue(n.asInt());
+                }
+                return new RpcValue(n.asText());
             }
         }
 
