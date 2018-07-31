@@ -33,6 +33,7 @@ import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcFieldDeserializer;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DeserializerTest {
     private ObjectMapper mapper;
@@ -88,6 +89,15 @@ class DeserializerTest {
         assertEquals("string", rpcValue.asString());
         rpcValue = (RpcValue) root.getValue("bytesValue");
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
+    }
+
+    @Test
+    void testRpcValue() throws IOException {
+        String json = "\"0x1234\"";
+        RpcField rpcField = mapper.readValue(json, RpcField.class);
+
+        assertTrue(rpcField instanceof RpcValue);
+        assertEquals("0x1234", ((RpcValue) rpcField).asString());
     }
 
     @Test
