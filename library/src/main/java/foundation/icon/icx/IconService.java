@@ -80,13 +80,27 @@ public class IconService {
     /**
      * Get information about api function in score
      * @param scoreAddress
-     * @return
+     * @return The ScoreApi object
      */
     public Call<RpcField> getScoreApi(String scoreAddress) {
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getScoreApi", params);
+        return provider.request(request, RpcField.class);
+    }
+
+
+    /**
+     * Get a transaction matching the given transaction hash.
+     * @param hash The transaction hash
+     * @return The transaction object
+     */
+    public Call<RpcField> getTransaction(String hash) {
+        RpcObject params = new RpcObject.Builder()
+                .put("txHash", new RpcValue(hash))
+                .build();
+        Request<RpcObject> request = new Request<>("icx_getTransactionByHash", params);
         return provider.request(request, RpcField.class);
     }
 
