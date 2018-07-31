@@ -16,8 +16,6 @@
 
 package foundation.icon.icx.data;
 
-import foundation.icon.icx.transport.jsonrpc.RpcField;
-
 import java.math.BigInteger;
 import java.util.List;
 
@@ -34,7 +32,7 @@ public class TransactionResult {
     private BigInteger stepPrice;
     private String scoreAddress;
     private String logsBloom;
-    private List<RpcField> eventLogs;
+    private List<EventLog> eventLogs;
 
     public String getStatus() {
         return status;
@@ -76,7 +74,7 @@ public class TransactionResult {
         return logsBloom;
     }
 
-    public List<RpcField> getEventLogs() {
+    public List<EventLog> getEventLogs() {
         return eventLogs;
     }
 
