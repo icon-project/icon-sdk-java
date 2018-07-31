@@ -1,5 +1,6 @@
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
@@ -46,12 +47,12 @@ public class IconService {
      * @param height The block number
      * @return The Block object
      */
-    public Call<RpcField> getBlock(BigInteger height) {
+    public Call<Block> getBlock(BigInteger height) {
         RpcObject params = new RpcObject.Builder()
                 .put("height", new RpcValue(height))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getBlockByHeight", params);
-        return provider.request(request, RpcField.class);
+        return provider.request(request, Block.class);
     }
 
     /**
@@ -59,23 +60,23 @@ public class IconService {
      * @param hash The block hash (without hex prefix) or the string 'latest'
      * @return The Block object
      */
-    public Call<RpcField> getBlock(String hash) {
+    public Call<Block> getBlock(String hash) {
         if (hash.equals("latest")) return getLastBlock();
 
         RpcObject params = new RpcObject.Builder()
                 .put("hash", new RpcValue(hash))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getBlockByHash", params);
-        return provider.request(request, RpcField.class);
+        return provider.request(request, Block.class);
     }
 
     /**
      * Get the latest block.
      * @return The Block object
      */
-    public Call<RpcField> getLastBlock() {
+    public Call<Block> getLastBlock() {
         Request<RpcObject> request = new Request<>("icx_getLastBlock", null);
-        return provider.request(request, RpcField.class);
+        return provider.request(request, Block.class);
     }
 
     /**
