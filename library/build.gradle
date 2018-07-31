@@ -9,19 +9,20 @@ repositories {
 }
 
 ext {
-    okhttpVersion = '3.11.0'
+    bouncycastleVersion = '1.54'
     jacksonVersion = '2.9.6'
+    okhttpVersion = '3.11.0'
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
 }
 
 dependencies {
-    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
 
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
