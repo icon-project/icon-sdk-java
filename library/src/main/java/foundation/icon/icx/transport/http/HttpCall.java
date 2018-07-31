@@ -44,7 +44,6 @@ public class HttpCall<T> implements Call<T> {
     private final okhttp3.Call httpCall;
     private final Class<T> responseType;
 
-    @SuppressWarnings("unused")
     HttpCall(okhttp3.Call httpCall, Class<T> responseType) {
         this.httpCall = httpCall;
         this.responseType = responseType;
