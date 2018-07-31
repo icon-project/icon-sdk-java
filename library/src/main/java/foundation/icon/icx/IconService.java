@@ -2,13 +2,14 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.ConfirmedTransaction;
+import foundation.icon.icx.data.ScoreApi;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.Request;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * IconService which provides APIs of ICON network
@@ -85,12 +86,12 @@ public class IconService {
      * @param scoreAddress
      * @return The ScoreApi object
      */
-    public Call<RpcField> getScoreApi(String scoreAddress) {
+    public Call<List<ScoreApi>> getScoreApi(String scoreAddress) {
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))
                 .build();
         Request<RpcObject> request = new Request<>("icx_getScoreApi", params);
-        return provider.request(request, RpcField.class);
+        return provider.request(request, (Class<List<ScoreApi>>) ((Class)List.class));
     }
 
 
