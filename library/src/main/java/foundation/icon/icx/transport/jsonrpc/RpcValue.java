@@ -135,6 +135,13 @@ public class RpcValue implements RpcField {
         }
     }
 
+    @Override
+    public String toString() {
+        return "RpcValue(" +
+                "value=" + value +
+                ')';
+    }
+
     public static class RpcValueException extends IllegalArgumentException {
         RpcValueException(String message) {
             super(message);

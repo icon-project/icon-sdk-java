@@ -39,6 +39,13 @@ public class RpcArray implements RpcField {
         return fields.get(index);
     }
 
+    @Override
+    public String toString() {
+        return "RpcArray(" +
+                "fields=" + fields +
+                ')';
+    }
+
     /**
      * Builder for RpcArray
      */
