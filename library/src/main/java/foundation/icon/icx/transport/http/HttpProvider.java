@@ -17,6 +17,7 @@
 
 package foundation.icon.icx.transport.http;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -67,6 +68,7 @@ public class HttpProvider implements Provider {
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
                 ObjectMapper mapper = new ObjectMapper();
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 SimpleModule module = new SimpleModule();
                 module.addSerializer(RpcField.class, new RpcFieldSerializer());
                 module.addSerializer(BigInteger.class, new BigIntegerSerializer());

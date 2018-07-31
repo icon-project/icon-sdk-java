@@ -38,6 +38,13 @@ public class RpcObject implements RpcField {
         return fields.get(key);
     }
 
+    @Override
+    public String toString() {
+        return "RpcObject(" +
+                "fields=" + fields +
+                ')';
+    }
+
     /**
      * Builder for RpcObject
      */

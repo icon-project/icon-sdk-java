@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -37,7 +37,18 @@ public class Deserializers {
         public BigInteger deserialize(
                 JsonParser parser, DeserializationContext context)
                 throws IOException {
-            RpcValue rpcValue = new RpcValue(parser.getText());
+            return deserialize(parser.readValueAsTree());
+        }
+
+        private BigInteger deserialize(JsonNode node) {
+            RpcValue rpcValue;
+            if (node.isLong()) {
+                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asLong())));
+            } else if (node.isInt()) {
+                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asInt())));
+            } else {
+                rpcValue = new RpcValue(node.asText());
+            }
             return rpcValue.asInteger();
         }
     }
@@ -91,7 +102,15 @@ public class Deserializers {
                 }
                 return builder.build();
             } else {
-                return new RpcValue(((TextNode) node).textValue());
+                JsonNode n = ((JsonNode) node);
+                if (n.isLong()) {
+                    return new RpcValue(new BigInteger(String.valueOf(n.asLong())));
+                } else if (n.isInt()) {
+                    return new RpcValue(new BigInteger(String.valueOf(n.asInt())));
+                } else if (n.isBoolean()) {
+                    return new RpcValue(n.asBoolean());
+                }
+                return new RpcValue(n.asText());
             }
         }
 

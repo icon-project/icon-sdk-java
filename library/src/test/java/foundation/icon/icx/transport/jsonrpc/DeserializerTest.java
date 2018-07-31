@@ -52,7 +52,7 @@ class DeserializerTest {
     @Test
     void testRpcDeserializer() throws IOException {
 
-        String json = "{\"stringValue\":\"string\",\"array\":[{\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"},\"0x4d2\",\"0x0\",\"string\",\"0x010203\"],\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\",\"object\":{\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"}}";
+        String json = "{\"stringValue\":\"string\",\"array\":[{\"longValue\":1533018344753765,\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"},\"0x4d2\",\"0x0\",\"string\",\"0x010203\"],\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\",\"object\":{\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"}}";
         RpcObject root = (RpcObject) mapper.readValue(json, RpcField.class);
 
         RpcValue rpcValue;
@@ -68,6 +68,8 @@ class DeserializerTest {
         assertEquals("string", rpcValue.asString());
         rpcValue = (RpcValue) obj.getValue("bytesValue");
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
+        rpcValue = (RpcValue) obj.getValue("longValue");
+        assertEquals(new BigInteger(String.valueOf(1533018344753765L)), rpcValue.asInteger());
 
         rpcValue = (RpcValue) array.get(1);
         assertEquals(new BigInteger("4d2", 16), rpcValue.asInteger());
@@ -90,7 +92,7 @@ class DeserializerTest {
 
     @Test
     void testObject() throws IOException {
-        String json = "{\"stringValue\":\"stringValue\",\"intValue\":\"0x1234\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x01020304\",\"intArrayValue\":[\"0x1234\",\"0x1234\"]}";
+        String json = "{\"longValue\":1533018344753765,\"stringValue\":\"stringValue\",\"intValue\":\"0x1234\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x01020304\",\"intArrayValue\":[\"0x1234\",\"0x1234\"]}";
         Custom custom = mapper.readValue(json, Custom.class);
 
         assertEquals("stringValue", custom.stringValue);
@@ -99,6 +101,7 @@ class DeserializerTest {
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3, 0x4}, custom.bytesValue);
         assertEquals(new BigInteger("1234", 16), custom.intArrayValue[0]);
         assertEquals(new BigInteger("1234", 16), custom.intArrayValue[1]);
+        assertEquals(new BigInteger(String.valueOf(1533018344753765L)), custom.longValue);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
@@ -108,5 +111,6 @@ class DeserializerTest {
         public boolean booleanValue;
         public byte[] bytesValue;
         public BigInteger[] intArrayValue;
+        public BigInteger longValue;
     }
 }
