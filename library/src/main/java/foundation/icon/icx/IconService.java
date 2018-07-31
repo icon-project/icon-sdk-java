@@ -1,6 +1,10 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.transport.jsonrpc.Request;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+
+import java.math.BigInteger;
 
 /**
  * IconService which provides APIs of ICON network
@@ -11,6 +15,19 @@ public class IconService {
 
     public IconService(Provider provider) {
         this.provider = provider;
+    }
+
+    /**
+     * Get the balance of an address.
+     * @param address The address to get the balance of.
+     * @return A BigNumber instance of the current balance for the given address in loop.
+     */
+    public Call<BigInteger> getBalance(String address) {
+        RpcObject params = new RpcObject.Builder()
+                .put("address", new RpcValue(address))
+                .build();
+        Request<RpcObject> request = new Request<>("icx_getBalance", params);
+        return provider.request(request, BigInteger.class);
     }
 
     /**
