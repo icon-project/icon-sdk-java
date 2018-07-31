@@ -17,13 +17,9 @@
 
 package foundation.icon.icx.transport.http;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
-import java.io.IOException;
-import java.math.BigInteger;
-
 import foundation.icon.icx.Call;
 import foundation.icon.icx.Callback;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BigIntegerDeserializer;
@@ -35,6 +31,9 @@ import foundation.icon.icx.transport.jsonrpc.RpcError;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import okhttp3.ResponseBody;
 
+import java.io.IOException;
+import java.math.BigInteger;
+
 /**
  * Http call can be executed by this class
  * @param <T> the data type of the response
@@ -42,10 +41,12 @@ import okhttp3.ResponseBody;
 public class HttpCall<T> implements Call<T> {
 
     private final okhttp3.Call httpCall;
+    private final Class<T> responseType;
 
     @SuppressWarnings("unused")
     HttpCall(okhttp3.Call httpCall, Class<T> responseType) {
         this.httpCall = httpCall;
+        this.responseType = responseType;
     }
 
     @Override
@@ -81,8 +82,7 @@ public class HttpCall<T> implements Call<T> {
         if (body != null) {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(createDeserializerModule());
-            TypeReference<Response<T>> type = new TypeReference<Response<T>>() {
-            };
+            JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, responseType);
             Response<T> response = mapper.readValue(body.byteStream(), type);
             T params = response.getResult();
             if(params != null) {
