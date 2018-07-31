@@ -27,12 +27,24 @@ public class Response<T> {
 
     private long id;
 
-    private T params;
+    private T result;
 
     private RpcError error;
 
-    public T getParams() {
-        return params;
+    public String getJsonrpc() {
+        return jsonrpc;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public T getResult() {
+        return result;
     }
 
     public RpcError getError() {

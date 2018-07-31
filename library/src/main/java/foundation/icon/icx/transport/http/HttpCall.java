@@ -84,7 +84,7 @@ public class HttpCall<T> implements Call<T> {
             TypeReference<Response<T>> type = new TypeReference<Response<T>>() {
             };
             Response<T> response = mapper.readValue(body.byteStream(), type);
-            T params = response.getParams();
+            T params = response.getResult();
             if(params != null) {
                 return params;
             } else {
