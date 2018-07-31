@@ -43,9 +43,9 @@ public class Deserializers {
         private BigInteger deserialize(JsonNode node) {
             RpcValue rpcValue;
             if (node.isLong()) {
-                rpcValue = new RpcValue(node.asLong());
+                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asLong())));
             } else if (node.isInt()) {
-                rpcValue = new RpcValue(node.asInt());
+                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asInt())));
             } else {
                 rpcValue = new RpcValue(node.asText());
             }
@@ -104,9 +104,9 @@ public class Deserializers {
             } else {
                 JsonNode n = ((JsonNode) node);
                 if (n.isLong()) {
-                    return new RpcValue(n.asLong());
+                    return new RpcValue(new BigInteger(String.valueOf(n.asLong())));
                 } else if (n.isInt()) {
-                    return new RpcValue(n.asInt());
+                    return new RpcValue(new BigInteger(String.valueOf(n.asInt())));
                 } else if (n.isBoolean()) {
                     return new RpcValue(n.asBoolean());
                 }
