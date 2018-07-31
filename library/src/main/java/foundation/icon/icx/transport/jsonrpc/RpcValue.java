@@ -41,25 +41,20 @@ public class RpcValue implements RpcField {
     }
 
     public RpcValue(byte[] value) {
-        StringBuilder sb = new StringBuilder(value.length * 2);
-        sb.append("0x");
-        for (byte aByte : value) {
-            sb.append(HEX_DIGITS[aByte >> 4 & 0x0f]);
-            sb.append(HEX_DIGITS[aByte & 0x0f]);
-        }
-        this.value = sb.toString();
+        this.value = toHexString(value, true);
     }
 
     public RpcValue(BigInteger value) {
-        this.value = "0x" + value.toString(16);
+        this.value = toHexString(value, true);
     }
 
     public RpcValue(Boolean value) {
-        this.value = value ? "0x1" : "0x0";
+        this.value = toHexString(value, true);
     }
 
     /**
      * Returns the value as string
+     *
      * @return the value as string
      */
     public String asString() {
@@ -68,6 +63,7 @@ public class RpcValue implements RpcField {
 
     /**
      * Returns the value as bytes
+     *
      * @return the value as bytes
      */
     public byte[] asBytes() {
@@ -93,6 +89,7 @@ public class RpcValue implements RpcField {
 
     /**
      * Returns the value as integer
+     *
      * @return the value as integer
      */
     public BigInteger asInteger() {
@@ -114,6 +111,7 @@ public class RpcValue implements RpcField {
 
     /**
      * Returns the value as boolean
+     *
      * @return the value as boolean
      */
     public boolean asBoolean() {
@@ -132,6 +130,47 @@ public class RpcValue implements RpcField {
         return "RpcValue(" +
                 "value=" + value +
                 ')';
+    }
+
+    /**
+     * Convert byte array to hex string
+     *
+     * @param value      a byte array to convert
+     * @param withPrefix whether '0x' prefix is included to the output
+     * @return hex string
+     */
+    public static String toHexString(byte[] value, boolean withPrefix) {
+        StringBuilder sb = new StringBuilder(value.length * 2);
+        if (withPrefix) sb.append("0x");
+        for (byte aByte : value) {
+            sb.append(HEX_DIGITS[aByte >> 4 & 0x0f]);
+            sb.append(HEX_DIGITS[aByte & 0x0f]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Convert byte array to hex string
+     *
+     * @param value      a BigInteger value to convert
+     * @param withPrefix whether '0x' prefix is included to the output
+     * @return hex string
+     */
+    public static String toHexString(BigInteger value, boolean withPrefix) {
+        if (withPrefix) return "0x" + value.toString(16);
+        else return value.toString(16);
+    }
+
+    /**
+     * Convert byte array to hex string
+     *
+     * @param value      a boolean value to convert
+     * @param withPrefix whether '0x' prefix is included to the output
+     * @return hex string
+     */
+    public static String toHexString(boolean value, boolean withPrefix) {
+        if (withPrefix) return value ? "0x1" : "0x0";
+        else return value ? "1" : "0";
     }
 
     public static class RpcValueException extends IllegalArgumentException {
