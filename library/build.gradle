@@ -1,10 +1,6 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
-
-
-group 'foundation.icon'
-version '0.1.0'
 
 sourceCompatibility = 1.8
 
@@ -14,7 +10,7 @@ repositories {
 
 ext {
     okhttpVersion = '3.11.0'
-    retrofitVersion = '2.4.0'
+    jacksonVersion = '2.9.6'
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
@@ -22,17 +18,10 @@ ext {
 
 dependencies {
     compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
 
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-}
-
-
-test {
-    useJUnitPlatform()
-
 }

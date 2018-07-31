@@ -1,16 +1,10 @@
-plugins {
-    id 'java'
+allprojects {
+    group 'foundation.icon'
+    version '0.1.0'
 }
 
-group 'foundation.icon'
-version '0.1.0'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+subprojects {
+    repositories {
+        mavenCentral()
+    }
 }
