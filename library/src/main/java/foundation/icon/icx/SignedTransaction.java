@@ -33,7 +33,7 @@ import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
  * SignedTransaction serializes transaction messages and
  * makes parameters to send
  */
-public class SignedTransaction implements Transaction {
+public class SignedTransaction {
 
     private Transaction transaction;
     private Wallet wallet;

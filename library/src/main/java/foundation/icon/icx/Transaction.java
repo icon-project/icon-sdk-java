@@ -17,8 +17,27 @@
 
 package foundation.icon.icx;
 
+import java.math.BigInteger;
+
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 public interface Transaction {
+
+    BigInteger getVersion();
+
+    String getFrom();
+
+    String getTo();
+
+    BigInteger getValue();
+
+    BigInteger getStepLimit();
+
+    BigInteger getTimestamp();
+
+    BigInteger getNID();
+
+    BigInteger getNonce();
+
     RpcObject getParams();
 }

@@ -20,6 +20,7 @@ package foundation.icon.icx;
 import java.math.BigInteger;
 import java.util.TreeMap;
 
+import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
@@ -32,6 +33,62 @@ public class IcxTransaction implements Transaction {
 
     private IcxTransaction(RpcObject params) {
         this.params = params;
+    }
+
+    @Override
+    public BigInteger getVersion() {
+        RpcField rpcField = params.getValue("version");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
+    }
+
+    @Override
+    public String getFrom() {
+        RpcField rpcField = params.getValue("from");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asString();
+    }
+
+    @Override
+    public String getTo() {
+        RpcField rpcField = params.getValue("to");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asString();
+    }
+
+    @Override
+    public BigInteger getValue() {
+        RpcField rpcField = params.getValue("value");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
+    }
+
+    @Override
+    public BigInteger getStepLimit() {
+        RpcField rpcField = params.getValue("stepLimit");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
+    }
+
+    @Override
+    public BigInteger getTimestamp() {
+        RpcField rpcField = params.getValue("timestamp");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
+    }
+
+    @Override
+    public BigInteger getNID() {
+        RpcField rpcField = params.getValue("nid");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
+    }
+
+    @Override
+    public BigInteger getNonce() {
+        RpcField rpcField = params.getValue("nonce");
+        if (rpcField == null) return null;
+        return ((RpcValue) rpcField).asInteger();
     }
 
     @Override
