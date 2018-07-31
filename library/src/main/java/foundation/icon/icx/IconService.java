@@ -78,6 +78,19 @@ public class IconService {
     }
 
     /**
+     * Get information about api function in score
+     * @param scoreAddress
+     * @return
+     */
+    public Call<RpcField> getScoreApi(String scoreAddress) {
+        RpcObject params = new RpcObject.Builder()
+                .put("address", new RpcValue(scoreAddress))
+                .build();
+        Request<RpcObject> request = new Request<>("icx_getScoreApi", params);
+        return provider.request(request, RpcField.class);
+    }
+
+    /**
      * Calls a SCORE API just for reading
      * @param icxCall instance of IcxCall
      * @param <I> input type of the parameter
