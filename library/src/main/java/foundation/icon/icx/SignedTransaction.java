@@ -19,6 +19,7 @@ package foundation.icon.icx;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
@@ -91,9 +92,10 @@ public class SignedTransaction {
         RpcObject params = transaction.getParams();
         String jsonString = null;
         try {
-            jsonString = mapper.writeValueAsString(params)
-                    .replaceAll("[\"]", "")
-                    .replaceAll("[:,]", ".");
+            SerializePrinter printer = new SerializePrinter();
+            ObjectWriter writer = mapper.writer(printer);
+            jsonString = writer.writeValueAsString(params)
+                    .replaceAll("[\"]", "");
         } catch (JsonProcessingException ignored) {
         }
         if (jsonString == null || jsonString.length() < 2) return "";
