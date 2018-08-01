@@ -134,7 +134,6 @@ public class Serializers {
                 case JsonWriteContext.STATUS_EXPECT_NAME:
                     throw new JsonGenerationException("Can not write string value here");
             }
-            gen.writeRaw('"');
             for (char c : str.toCharArray()) {
                 if (escapeMap.containsKey(c)) {
                     writeShortEscape(gen, c);
@@ -142,7 +141,6 @@ public class Serializers {
                     gen.writeRaw(c);
                 }
             }
-            gen.writeRaw('"');
         }
     }
 }

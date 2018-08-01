@@ -17,6 +17,13 @@
 
 package foundation.icon.icx;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.transport.jsonrpc.Serializers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,6 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 class SignedTransactionTest {
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(RpcField.class, new Serializers.RpcFieldSerializer(true));
+        mapper.registerModule(module);
+    }
+
     @Test
     void testSerialize() throws IOException {
 
@@ -63,6 +80,14 @@ class SignedTransactionTest {
         String serialize = signedTransaction.serialize();
         assertEquals("icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3",
                 serialize);
+    }
+
+    @Test
+    void testEscapeString() throws JsonProcessingException {
+        String temp = "\\.{}[]\"\b한글";
+        RpcField escapeValue = new RpcValue(temp);
+        String json = mapper.writeValueAsString(escapeValue);
+        assertEquals("\\\\\\.\\{\\}\\[\\]\"\b한글", json);
     }
 
 

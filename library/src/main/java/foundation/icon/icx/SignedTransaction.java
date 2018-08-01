@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -86,6 +87,7 @@ public class SignedTransaction {
     public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
+        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
         module.addSerializer(RpcField.class, new RpcFieldSerializer(true));
         mapper.registerModule(module);
 
@@ -94,8 +96,7 @@ public class SignedTransaction {
         try {
             SerializePrinter printer = new SerializePrinter();
             ObjectWriter writer = mapper.writer(printer);
-            jsonString = writer.writeValueAsString(params)
-                    .replaceAll("[\"]", "");
+            jsonString = writer.writeValueAsString(params);
         } catch (JsonProcessingException ignored) {
         }
         if (jsonString == null || jsonString.length() < 2) return "";
