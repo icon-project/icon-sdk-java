@@ -123,7 +123,7 @@ public class Keystore {
             int n, int p) {
 
         KeystoreFile keystoreFile = new KeystoreFile();
-        keystoreFile.setAddress(Keys.getAddress(ecKeyPair));
+        keystoreFile.setAddress(IconKeys.getAddress(ecKeyPair));
 
         KeystoreFile.Crypto crypto = new KeystoreFile.Crypto();
         crypto.setCipher(CIPHER);
