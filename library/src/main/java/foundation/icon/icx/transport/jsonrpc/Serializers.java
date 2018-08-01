@@ -17,13 +17,17 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonWriteContext;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Serializers for jsonrpc value
@@ -61,6 +65,29 @@ public class Serializers {
 
     public static class RpcFieldSerializer extends JsonSerializer<RpcField> {
 
+        final char[] escapeChars = { '\\', '.', '{', '}', '[', ']' };
+        final Map escapeMap = new HashMap();
+        boolean useEscape = false;
+
+        public RpcFieldSerializer() {
+        }
+
+        public RpcFieldSerializer(boolean useEscape) {
+            initEscapeMap();
+            this.useEscape = useEscape;
+        }
+
+        private void initEscapeMap() {
+            for (char c : escapeChars) {
+                escapeMap.put(c, c);
+            }
+        }
+
+        private void writeShortEscape(JsonGenerator gen, char c) throws IOException {
+            gen.writeRaw('\\');
+            gen.writeRaw(c);
+        }
+
         @Override
         public void serialize(
                 RpcField field, JsonGenerator gen, SerializerProvider serializers)
@@ -88,8 +115,34 @@ public class Serializers {
                 gen.writeEndArray();
             } else {
                 RpcValue value = (RpcValue) field;
-                gen.writeString(value.asString());
+                if (useEscape)
+                    writeWithEscape(value.asString(), gen);
+                else
+                    gen.writeString(value.asString());
             }
+        }
+
+        private void writeWithEscape(String str, JsonGenerator gen)  throws IOException {
+            int status = ((JsonWriteContext) gen.getOutputContext()).writeValue();
+            switch (status) {
+                case JsonWriteContext.STATUS_OK_AFTER_COLON:
+                    gen.writeRaw('.');
+                    break;
+                case JsonWriteContext.STATUS_OK_AFTER_COMMA:
+                    gen.writeRaw('.');
+                    break;
+                case JsonWriteContext.STATUS_EXPECT_NAME:
+                    throw new JsonGenerationException("Can not write string value here");
+            }
+            gen.writeRaw('"');
+            for (char c : str.toCharArray()) {
+                if (escapeMap.containsKey(c)) {
+                    writeShortEscape(gen, c);
+                } else {
+                    gen.writeRaw(c);
+                }
+            }
+            gen.writeRaw('"');
         }
     }
 }

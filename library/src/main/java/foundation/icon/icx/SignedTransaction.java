@@ -86,7 +86,7 @@ public class SignedTransaction {
     public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addSerializer(RpcField.class, new RpcFieldSerializer());
+        module.addSerializer(RpcField.class, new RpcFieldSerializer(true));
         mapper.registerModule(module);
 
         RpcObject params = transaction.getParams();
