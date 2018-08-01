@@ -21,7 +21,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
+import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
+import foundation.icon.icx.transport.jsonrpc.Serializers.BytesSerializer;
+import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,11 +32,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
-
-import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BytesSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,12 +58,14 @@ class SerializerTest {
         RpcField booleanValue = new RpcValue(false);
         RpcField stringValue = new RpcValue("string");
         RpcField bytesValue = new RpcValue(new byte[]{0x1, 0x2, 0x3});
+        RpcField escapeValue = new RpcValue("\\.{}[]");
 
         RpcField object = new RpcObject.Builder()
                 .put("intValue", intValue)
                 .put("booleanValue", booleanValue)
                 .put("stringValue", stringValue)
                 .put("bytesValue", bytesValue)
+                .put("escapeValue", escapeValue)
                 .build();
 
         RpcField array = new RpcArray.Builder()
