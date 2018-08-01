@@ -54,7 +54,7 @@ public class KeyWallet implements Wallet {
         return signMessage(hash, ecKeyPair);
     }
 
-    private ECKeyPair getEcKeyPair() {
+    protected ECKeyPair getEcKeyPair() {
         return ecKeyPair;
     }
 
