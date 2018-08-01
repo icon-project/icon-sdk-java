@@ -68,4 +68,8 @@ public class IconKeys {
         System.arraycopy(hash, hash.length - 20, result, 0, length);
         return result;
     }
+
+    public static boolean isValidAddress(String address) {
+        return address.matches("^hx[0-9a-fA-F]{40}$");
+    }
 }
