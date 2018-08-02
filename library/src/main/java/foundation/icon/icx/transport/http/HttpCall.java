@@ -17,6 +17,7 @@
 
 package foundation.icon.icx.transport.http;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,17 +81,22 @@ public class HttpCall<T> implements Call<T> {
             throws IOException {
         ResponseBody body = httpResponse.body();
         if (body != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.registerModule(createDeserializerModule());
-            JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, responseType);
-            Response<T> response = mapper.readValue(body.byteStream(), type);
-            T params = response.getResult();
-            if(params != null) {
-                return params;
-            } else {
-                throw response.getError();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                mapper.registerModule(createDeserializerModule());
+                JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, responseType);
+                Response<T> response = mapper.readValue(body.byteStream(), type);
+                T params = response.getResult();
+                if(params != null) {
+                    return params;
+                } else {
+                    throw response.getError();
+                }
+            } catch (JsonParseException e) {
+                throw new RpcError(httpResponse.code(), httpResponse.message());
             }
+
         } else {
             throw new RpcError(httpResponse.code(), httpResponse.message());
         }
