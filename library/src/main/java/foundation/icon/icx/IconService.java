@@ -1,15 +1,17 @@
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Block;
-import foundation.icon.icx.data.ConfirmedTransaction;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.jsonrpc.Request;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IconService which provides APIs of ICON network
@@ -17,9 +19,23 @@ import java.util.List;
 public class IconService {
 
     private Provider provider;
+    private List<RpcConverter.RpcConverterFactory> converterFactories = new ArrayList<>();
+    private Map<Class, RpcConverter<?>> converterMap = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public IconService(Provider provider) {
         this.provider = provider;
+        addConverterFactory(Converters.newFactory(BigInteger.class, Converters.BIG_INTEGER));
+        addConverterFactory(Converters.newFactory(Boolean.class, Converters.BOOLEAN));
+        addConverterFactory(Converters.newFactory(String.class, Converters.STRING));
+        addConverterFactory(Converters.newFactory(byte[].class, Converters.BYTES));
+        addConverterFactory(Converters.newFactory(Block.class, Converters.BLOCK));
+        addConverterFactory(Converters.newFactory(
+                ConfirmedTransaction.class, Converters.CONFIRMED_TRANSACTION));
+        addConverterFactory(Converters.newFactory(
+                TransactionResult.class, Converters.TRANSACTION_RESULT));
+        Class<List<ScoreApi>> listClass = ((Class) List.class);
+        addConverterFactory(Converters.newFactory(listClass, Converters.SCORE_API_LIST));
     }
 
     /**
@@ -28,8 +44,9 @@ public class IconService {
      * @return A BigNumber instance of the total number of coins.
      */
     public Call<BigInteger> getTotalSupply() {
-        Request<RpcObject> request = new Request<>("icx_getTotalSupply", null);
-        return provider.request(request, BigInteger.class);
+        long requestId = System.currentTimeMillis();
+        Request request = new Request(requestId, "icx_getTotalSupply", null);
+        return provider.request(request, findConverter(BigInteger.class));
     }
 
     /**
@@ -39,11 +56,12 @@ public class IconService {
      * @return A BigNumber instance of the current balance for the given address in loop.
      */
     public Call<BigInteger> getBalance(String address) {
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(address))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getBalance", params);
-        return provider.request(request, BigInteger.class);
+        Request request = new Request(requestId, "icx_getBalance", params);
+        return provider.request(request, findConverter(BigInteger.class));
     }
 
     /**
@@ -53,11 +71,12 @@ public class IconService {
      * @return The Block object
      */
     public Call<Block> getBlock(BigInteger height) {
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("height", new RpcValue(height))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getBlockByHeight", params);
-        return provider.request(request, Block.class);
+        Request request = new Request(requestId, "icx_getBlockByHeight", params);
+        return provider.request(request, findConverter(Block.class));
     }
 
     /**
@@ -69,11 +88,12 @@ public class IconService {
     public Call<Block> getBlock(String hash) {
         if (hash.equals("latest")) return getLastBlock();
 
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("hash", new RpcValue(hash))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getBlockByHash", params);
-        return provider.request(request, Block.class);
+        Request request = new Request(requestId, "icx_getBlockByHash", params);
+        return provider.request(request, findConverter(Block.class));
     }
 
     /**
@@ -82,8 +102,9 @@ public class IconService {
      * @return The Block object
      */
     public Call<Block> getLastBlock() {
-        Request<RpcObject> request = new Request<>("icx_getLastBlock", null);
-        return provider.request(request, Block.class);
+        long requestId = System.currentTimeMillis();
+        Request request = new Request(requestId, "icx_getLastBlock", null);
+        return provider.request(request, findConverter(Block.class));
     }
 
     /**
@@ -92,12 +113,15 @@ public class IconService {
      * @param scoreAddress The address to get APIs
      * @return The ScoreApi object
      */
+    @SuppressWarnings("unchecked")
     public Call<List<ScoreApi>> getScoreApi(String scoreAddress) {
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getScoreApi", params);
-        return provider.request(request, (Class<List<ScoreApi>>) ((Class) List.class));
+        Request request = new Request(requestId, "icx_getScoreApi", params);
+        Class<List<ScoreApi>> listClass = ((Class) List.class);
+        return provider.request(request, findConverter(listClass));
     }
 
 
@@ -108,11 +132,12 @@ public class IconService {
      * @return The Transaction object
      */
     public Call<ConfirmedTransaction> getTransaction(String hash) {
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getTransactionByHash", params);
-        return provider.request(request, ConfirmedTransaction.class);
+        Request request = new Request(requestId, "icx_getTransactionByHash", params);
+        return provider.request(request, findConverter(ConfirmedTransaction.class));
     }
 
     /**
@@ -122,23 +147,24 @@ public class IconService {
      * @return The TransactionResult object
      */
     public Call<TransactionResult> getTransactionResult(String hash) {
+        long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
                 .build();
-        Request<RpcObject> request = new Request<>("icx_getTransactionResult", params);
-        return provider.request(request, TransactionResult.class);
+        Request request = new Request(requestId, "icx_getTransactionResult", params);
+        return provider.request(request, findConverter(TransactionResult.class));
     }
 
     /**
      * Calls a SCORE API just for reading
      *
      * @param icxCall instance of IcxCall
-     * @param <I>     input type of the parameter
      * @return the Call object can execute a request
      */
-    public <I, O> Call<O> query(IcxCall<I, O> icxCall) {
-        Request<IcxCall<I, O>> request = new Request<>("icx_call", icxCall);
-        return provider.request(request, icxCall.responseType());
+    public <O> Call<O> query(IcxCall<O> icxCall) {
+        long requestId = System.currentTimeMillis();
+        Request request = new Request(requestId, "icx_call", icxCall.getProperties());
+        return provider.request(request, findConverter(icxCall.responseType()));
     }
 
     /**
@@ -148,9 +174,29 @@ public class IconService {
      * @return the Call object can execute a request (result type is txHash)
      */
     public Call<String> sendTransaction(SignedTransaction signedTransaction) {
-        Request<RpcObject> request = new Request<>(
-                "icx_sendTransaction", signedTransaction.getParams());
-        return provider.request(request, String.class);
+        long requestId = System.currentTimeMillis();
+        Request request = new Request(
+                requestId, "icx_sendTransaction", signedTransaction.getParams());
+        return provider.request(request, findConverter(String.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> RpcConverter<T> findConverter(Class<T> type) {
+        RpcConverter converter = converterMap.get(type);
+        if (converter != null) return converter;
+
+        for (RpcConverterFactory factory : converterFactories) {
+            converter = factory.create(type);
+            if (converter != null) {
+                converterMap.put(type, converter);
+                return converter;
+            }
+        }
+        return null;
+    }
+
+    public void addConverterFactory(RpcConverterFactory factory) {
+        converterFactories.add(factory);
     }
 
 }

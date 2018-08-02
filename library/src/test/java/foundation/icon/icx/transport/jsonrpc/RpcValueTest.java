@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import foundation.icon.icx.transport.jsonrpc.RpcValue.RpcValueException;
+import foundation.icon.icx.transport.jsonrpc.RpcField.RpcValueException;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

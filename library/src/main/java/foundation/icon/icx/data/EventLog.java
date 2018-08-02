@@ -16,26 +16,35 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class EventLog {
-    private String scoreAddress;
-    private List<RpcField> indexed;
-    private List<RpcField> data;
+    private RpcObject properties;
+
+    EventLog(RpcObject properties) {
+        this.properties = properties;
+    }
 
     public String getScoreAddress() {
-        return scoreAddress;
+        RpcValue value = (RpcValue) properties.getValue("scoreAddress");
+        return value != null ? value.asString() : null;
     }
 
     public List<RpcField> getIndexed() {
-        return indexed;
+        RpcArray field = (RpcArray) properties.getValue("indexed");
+        return field != null ? field.asArray().asList() : null;
     }
 
     public List<RpcField> getData() {
-        return data;
+        RpcField field = properties.getValue("data");
+        return field != null ? field.asArray().asList() : null;
     }
 
 }

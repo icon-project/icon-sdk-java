@@ -57,6 +57,7 @@ public class RpcValue implements RpcField {
      *
      * @return the value as string
      */
+    @Override
     public String asString() {
         return value;
     }
@@ -66,6 +67,7 @@ public class RpcValue implements RpcField {
      *
      * @return the value as bytes
      */
+    @Override
     public byte[] asBytes() {
         if (!value.startsWith(HEX_PREFIX)) {
             throw new RpcValueException("The value is not hex string.");
@@ -92,6 +94,7 @@ public class RpcValue implements RpcField {
      *
      * @return the value as integer
      */
+    @Override
     public BigInteger asInteger() {
         String body;
         int indexOfPrefix = value.lastIndexOf(HEX_PREFIX);
@@ -114,6 +117,7 @@ public class RpcValue implements RpcField {
      *
      * @return the value as boolean
      */
+    @Override
     public boolean asBoolean() {
         switch (value) {
             case "0x0":
@@ -173,9 +177,4 @@ public class RpcValue implements RpcField {
         else return value ? "1" : "0";
     }
 
-    public static class RpcValueException extends IllegalArgumentException {
-        RpcValueException(String message) {
-            super(message);
-        }
-    }
 }

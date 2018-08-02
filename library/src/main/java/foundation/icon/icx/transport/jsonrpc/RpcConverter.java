@@ -17,37 +17,14 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
-/**
- * A jsonrpc response of the request
- */
-public class Response {
-    private String jsonrpc = "2.0";
+public interface RpcConverter<T> {
 
-    private String method;
+    T convertTo(RpcField object);
 
-    private long id;
+    RpcField convertFrom(T object);
 
-    private RpcField result;
+    interface RpcConverterFactory {
+        <T> RpcConverter<T> create(Class<T> type);
 
-    private RpcError error;
-
-    public String getJsonrpc() {
-        return jsonrpc;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public RpcField getResult() {
-        return result;
-    }
-
-    public RpcError getError() {
-        return error;
     }
 }

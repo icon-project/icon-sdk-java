@@ -16,39 +16,67 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
+import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class ScoreApi {
-    private String type;
-    private String name;
-    private List<Param> inputs;
-    private List<Param> outputs;
-    private String readonly;
+
+    private RpcObject properties;
+
+    ScoreApi(RpcObject rpcObject) {
+        this.properties = properties;
+    }
 
     public String getType() {
-        return type;
+        return getProperty("type").asString();
     }
 
     public String getName() {
-        return name;
+        return getProperty("name").asString();
     }
 
     public List<Param> getInputs() {
-        return inputs;
+        return getParams((RpcArray) properties.getValue("inputs"));
     }
 
     public List<Param> getOutputs() {
-        return outputs;
+        return getParams((RpcArray) properties.getValue("outputs"));
+    }
+
+    List<Param> getParams(RpcArray array) {
+        List<Param> params = new ArrayList<>(array.size());
+        for (RpcField rpcField : array) {
+            RpcObject object = (RpcObject) rpcField;
+
+            String name = ((RpcValue) object.getValue("type")).asString();
+            String type = ((RpcValue) object.getValue("type")).asString();
+            params.add(new Param(name, type));
+        }
+        return params;
     }
 
     public String getReadonly() {
-        return readonly;
+        return getProperty("readonly").asString();
     }
 
-    class Param {
+    RpcValue getProperty(String key) {
+        return (RpcValue) properties.getValue(key);
+    }
+
+    public class Param {
         private String type;
         private String name;
+
+        Param(String type, String name) {
+            this.type = type;
+            this.name = name;
+        }
 
         public String getType() {
             return type;
