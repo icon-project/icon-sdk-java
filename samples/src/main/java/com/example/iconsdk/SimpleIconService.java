@@ -38,10 +38,12 @@ public class SimpleIconService {
                 .addInterceptor(loggning)
                 .build();
         IconService iconService = new IconService(new HttpProvider(httpClient, URL));
-        Call<BigInteger> call = iconService.getBalance("hx0000000000000000000000000000000000000000");
 
-        BigInteger balance = call.execute();
+        BigInteger balance = iconService.getBalance("hx0000000000000000000000000000000000000000").execute();
         System.out.println("balance:"+balance);
+
+        BigInteger totalSupply = iconService.getTotalSupply().execute();
+        System.out.println("totalSupply:"+totalSupply);
 
     }
 
