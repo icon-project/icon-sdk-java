@@ -24,10 +24,16 @@ import java.io.IOException;
  */
 public class RpcError extends IOException {
     private long code;
+    private String message;
+
+    public RpcError() {
+        // jackson needs a default constructor
+    }
 
     public RpcError(long code, String message) {
         super(message);
         this.code = code;
+        this.message = message;
     }
 
     /**
@@ -36,5 +42,14 @@ public class RpcError extends IOException {
      */
     public long getCode() {
         return code;
+    }
+
+    /**
+     * Returns the message of rpc error
+     * @return error message
+     */
+    @Override
+    public String getMessage() {
+        return message;
     }
 }
