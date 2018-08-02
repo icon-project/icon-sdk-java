@@ -16,6 +16,7 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.Transaction;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -23,7 +24,7 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import java.math.BigInteger;
 
 
-public class ConfirmedTransaction {
+public class ConfirmedTransaction implements Transaction {
 
     private RpcObject properties;
 
@@ -31,32 +32,58 @@ public class ConfirmedTransaction {
         this.properties = properties;
     }
 
+    @Override
     public BigInteger getVersion() {
         return getProperty("version").asInteger();
     }
 
+    @Override
     public String getFrom() {
         return getProperty("from").asString();
     }
 
+    @Override
     public String getTo() {
         return getProperty("to").asString();
     }
 
+    @Override
     public BigInteger getValue() {
         return getProperty("value").asInteger();
     }
 
+    @Override
     public BigInteger getStepLimit() {
         return getProperty("stepLimit").asInteger();
     }
 
+    @Override
     public BigInteger getTimestamp() {
         return getProperty("timestamp").asInteger();
     }
 
+    @Override
+    public BigInteger getNid() {
+        return getProperty("nid").asInteger();
+    }
+
+    @Override
     public BigInteger getNonce() {
         return getProperty("nonce").asInteger();
+    }
+
+    @Override
+    public String getDataType() {
+        return getProperty("dataType").asString();
+    }
+
+    @Override
+    public RpcField getData() {
+        return getProperty("data");
+    }
+
+    public String getTxHash() {
+        return getProperty("txHash").asString();
     }
 
     public BigInteger getTxIndex() {
@@ -73,22 +100,6 @@ public class ConfirmedTransaction {
 
     public String getSignature() {
         return getProperty("signature").asString();
-    }
-
-    public String getDataType() {
-        return getProperty("dataType").asString();
-    }
-
-    public RpcField getData() {
-        return getProperty("data");
-    }
-
-    public String getTxHash() {
-        return getProperty("txHash").asString();
-    }
-
-    public BigInteger getNid() {
-        return getProperty("nid").asInteger();
     }
 
     RpcValue getProperty(String key) {

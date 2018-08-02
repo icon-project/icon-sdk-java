@@ -52,6 +52,10 @@ public class RpcValue implements RpcField {
         this.value = toHexString(value, true);
     }
 
+    public RpcValue(boolean value) {
+        this.value = toHexString(value, true);
+    }
+
     /**
      * Returns the value as string
      *

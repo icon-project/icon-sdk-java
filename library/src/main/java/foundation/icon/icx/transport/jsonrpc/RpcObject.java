@@ -17,9 +17,7 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A read-only data class of RpcObject
@@ -48,6 +46,7 @@ public class RpcObject implements RpcField {
 
     /**
      * Returns new builder for using current RpcObject
+     *
      * @return new builder
      */
     public Builder newBuilder() {
@@ -63,18 +62,37 @@ public class RpcObject implements RpcField {
      */
     public static class Builder {
 
+        /**
+         * Sort policy of the properties
+         */
+        public enum Sort {
+            NONE,
+            KEY,
+            INSERT
+        }
+
         private final Map<String, RpcField> fields;
 
         public Builder() {
-            fields = new HashMap<>();
+            this(Sort.NONE);
         }
 
-        public Builder(Map<String, RpcField> initialMap) {
-            fields = initialMap;
+        public Builder(Sort sort) {
+            switch (sort) {
+                case KEY:
+                    fields = new TreeMap<>();
+                    break;
+                case INSERT:
+                    fields = new LinkedHashMap<>();
+                    break;
+                default:
+                    fields = new HashMap<>();
+                    break;
+            }
         }
 
         public Builder put(String key, RpcField value) {
-            fields.put(key, value);
+            if (!fields.containsKey(key)) fields.put(key, value);
             return this;
         }
 

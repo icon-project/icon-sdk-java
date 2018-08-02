@@ -176,7 +176,7 @@ public class IconService {
     public Call<String> sendTransaction(SignedTransaction signedTransaction) {
         long requestId = System.currentTimeMillis();
         Request request = new Request(
-                requestId, "icx_sendTransaction", signedTransaction.getParams());
+                requestId, "icx_sendTransaction", signedTransaction.getProperties());
         return provider.request(request, findConverter(String.class));
     }
 

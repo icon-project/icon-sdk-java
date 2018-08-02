@@ -15,30 +15,24 @@
  *
  */
 
-package foundation.icon.icx;
-
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+package foundation.icon.icx.data;
 
 import java.math.BigInteger;
 
-public interface Transaction {
-    BigInteger getVersion();
 
-    String getFrom();
+public enum NetworkId {
 
-    String getTo();
+    MAIN(new BigInteger("1")),
+    TEST(new BigInteger("2"));
 
-    BigInteger getValue();
+    private BigInteger nid;
 
-    BigInteger getStepLimit();
+    NetworkId(BigInteger nid) {
+        this.nid = nid;
+    }
 
-    BigInteger getTimestamp();
+    public BigInteger getValue() {
+        return nid;
+    }
 
-    BigInteger getNid();
-
-    BigInteger getNonce();
-
-    String getDataType();
-
-    RpcField getData();
 }
