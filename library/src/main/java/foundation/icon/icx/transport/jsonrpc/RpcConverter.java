@@ -19,9 +19,9 @@ package foundation.icon.icx.transport.jsonrpc;
 
 public interface RpcConverter<T> {
 
-    T convertTo(RpcField object);
+    T convertTo(RpcItem object);
 
-    RpcField convertFrom(T object);
+    RpcItem convertFrom(T object);
 
     interface RpcConverterFactory {
         <T> RpcConverter<T> create(Class<T> type);

@@ -1,13 +1,9 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
-import foundation.icon.icx.data.Block;
-import foundation.icon.icx.data.ConfirmedTransaction;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import org.junit.jupiter.api.Test;
 
@@ -45,12 +41,12 @@ class IconServiceTest {
                 if(PersonResponse.class == type){
                     return new RpcConverter<T>() {
                         @Override
-                        public T convertTo(RpcField object) {
+                        public T convertTo(RpcItem object) {
                             return null;
                         }
 
                         @Override
-                        public RpcField convertFrom(T object) {
+                        public RpcItem convertFrom(T object) {
                             return null;
                         }
                     };
@@ -213,7 +209,7 @@ class IconServiceTest {
         if (!isParamMatches && params.size() > 0) {
             Set<String> keys = params.keySet();
             for (String key : keys) {
-                RpcValue value = ((RpcValue) (request.getParams()).getValue(key));
+                RpcValue value = ((RpcValue) (request.getParams()).getItem(key));
                 isParamMatches = value.asString().equals(params.get(key).asString());
                 if (!isParamMatches) break;
             }

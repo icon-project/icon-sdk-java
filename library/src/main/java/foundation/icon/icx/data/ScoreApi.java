@@ -17,7 +17,7 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
@@ -42,20 +42,20 @@ public class ScoreApi {
     }
 
     public List<Param> getInputs() {
-        return getParams((RpcArray) properties.getValue("inputs"));
+        return getParams((RpcArray) properties.getItem("inputs"));
     }
 
     public List<Param> getOutputs() {
-        return getParams((RpcArray) properties.getValue("outputs"));
+        return getParams((RpcArray) properties.getItem("outputs"));
     }
 
     List<Param> getParams(RpcArray array) {
         List<Param> params = new ArrayList<>(array.size());
-        for (RpcField rpcField : array) {
-            RpcObject object = (RpcObject) rpcField;
+        for (RpcItem rpcItem : array) {
+            RpcObject object = (RpcObject) rpcItem;
 
-            String name = ((RpcValue) object.getValue("type")).asString();
-            String type = ((RpcValue) object.getValue("type")).asString();
+            String name = ((RpcValue) object.getItem("type")).asString();
+            String type = ((RpcValue) object.getItem("type")).asString();
             params.add(new Param(name, type));
         }
         return params;
@@ -66,7 +66,7 @@ public class ScoreApi {
     }
 
     RpcValue getProperty(String key) {
-        return (RpcValue) properties.getValue(key);
+        return (RpcValue) properties.getItem(key);
     }
 
     public class Param {

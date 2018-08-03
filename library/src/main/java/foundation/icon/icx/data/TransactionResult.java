@@ -17,9 +17,8 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -75,25 +74,25 @@ public class TransactionResult {
     }
 
     public List<EventLog> getEventLogs() {
-        RpcField field = properties.getValue("eventLogs");
-        return field != null ? getArray(field.asArray()) : null;
+        RpcItem item = properties.getItem("eventLogs");
+        return item != null ? getArray(item.asArray()) : null;
     }
 
     private List<EventLog> getArray(RpcArray array) {
         List<EventLog> eventLogs = new ArrayList<>(array.size());
-        for (RpcField rpcField : array) {
-            eventLogs.add(new EventLog((RpcObject) rpcField));
+        for (RpcItem rpcItem : array) {
+            eventLogs.add(new EventLog((RpcObject) rpcItem));
         }
         return eventLogs;
     }
 
     String getPropertyAsString(String key) {
-        RpcField value = properties.getValue(key);
+        RpcItem value = properties.getItem(key);
         return value != null ? value.asString() : null;
     }
 
     BigInteger getPropertyAsInteger(String key) {
-        RpcField value = properties.getValue(key);
+        RpcItem value = properties.getItem(key);
         return value != null ? value.asInteger() : null;
     }
 

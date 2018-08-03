@@ -17,8 +17,8 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.transport.jsonrpc.RpcField;
-import foundation.icon.icx.transport.jsonrpc.RpcFieldCreator;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
@@ -27,7 +27,6 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
  *
  * @param <O> Response type
  */
-@SuppressWarnings("FieldCanBeLocal")
 public class IcxCall<O> {
 
     private RpcObject properties;
@@ -53,7 +52,7 @@ public class IcxCall<O> {
         private String from;
         private String to;
         private String method;
-        private RpcField params;
+        private RpcItem params;
 
         /**
          * Create builder with the response type
@@ -77,17 +76,17 @@ public class IcxCall<O> {
         }
 
         public <I> Builder params(I params) {
-            this.params = RpcFieldCreator.create(params);
+            this.params = RpcItemCreator.create(params);
             return this;
         }
 
-        public Builder params(RpcField params) {
+        public Builder params(RpcItem params) {
             this.params = params;
             return this;
         }
 
-        public IcxCall<RpcField> build() {
-            return buildWith(RpcField.class);
+        public IcxCall<RpcItem> build() {
+            return buildWith(RpcItem.class);
         }
 
         public <O> IcxCall<O> buildWith(Class<O> responseType) {

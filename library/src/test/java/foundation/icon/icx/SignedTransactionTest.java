@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import foundation.icon.icx.data.NetworkId;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import foundation.icon.icx.transport.jsonrpc.Serializers;
@@ -41,7 +41,7 @@ class SignedTransactionTest {
     void setUp() {
         mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addSerializer(RpcField.class, new Serializers.RpcFieldSerializer(true));
+        module.addSerializer(RpcItem.class, new Serializers.RpcItemSerializer(true));
         mapper.registerModule(module);
     }
 
@@ -88,7 +88,7 @@ class SignedTransactionTest {
     @Test
     void testEscapeString() throws JsonProcessingException {
         String temp = "\\.{}[]\"\b한글";
-        RpcField escapeValue = new RpcValue(temp);
+        RpcItem escapeValue = new RpcValue(temp);
         String json = mapper.writeValueAsString(escapeValue);
         assertEquals("\\\\\\.\\{\\}\\[\\]\"\b한글", json);
     }

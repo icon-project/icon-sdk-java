@@ -17,7 +17,7 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.Transaction;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
@@ -78,7 +78,7 @@ public class ConfirmedTransaction implements Transaction {
     }
 
     @Override
-    public RpcField getData() {
+    public RpcItem getData() {
         return getProperty("data");
     }
 
@@ -103,7 +103,7 @@ public class ConfirmedTransaction implements Transaction {
     }
 
     RpcValue getProperty(String key) {
-        return (RpcValue) properties.getValue(key);
+        return (RpcValue) properties.getItem(key);
     }
 
 }

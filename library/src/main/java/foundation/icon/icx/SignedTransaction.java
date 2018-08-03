@@ -22,11 +22,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
+import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 import java.math.BigInteger;
@@ -111,7 +111,7 @@ public class SignedTransaction {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
-        module.addSerializer(RpcField.class, new RpcFieldSerializer(true));
+        module.addSerializer(RpcItem.class, new RpcItemSerializer(true));
         mapper.registerModule(module);
 
         String jsonString = null;

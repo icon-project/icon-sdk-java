@@ -22,7 +22,7 @@ import java.math.BigInteger;
 /**
  * RpcValue contains a leaf value such as string, bytes, integer, boolean
  */
-public class RpcValue implements RpcField {
+public class RpcValue implements RpcItem {
     private static final String HEX_PREFIX = "0x";
 
     private final static char[] HEX_DIGITS = {

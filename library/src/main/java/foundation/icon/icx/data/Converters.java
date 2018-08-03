@@ -32,14 +32,13 @@ public final class Converters {
             = new RpcConverter<BigInteger>() {
 
         @Override
-        public BigInteger convertTo(RpcField object) {
-            RpcValue value = (RpcValue) object;
-            return value.asInteger();
+        public BigInteger convertTo(RpcItem object) {
+            return object.asInteger();
         }
 
         @Override
-        public RpcField convertFrom(BigInteger object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(BigInteger object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -47,14 +46,13 @@ public final class Converters {
             = new RpcConverter<Boolean>() {
 
         @Override
-        public Boolean convertTo(RpcField object) {
-            RpcValue value = (RpcValue) object;
-            return value.asBoolean();
+        public Boolean convertTo(RpcItem object) {
+            return object.asBoolean();
         }
 
         @Override
-        public RpcField convertFrom(Boolean object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(Boolean object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -62,14 +60,13 @@ public final class Converters {
             = new RpcConverter<String>() {
 
         @Override
-        public String convertTo(RpcField object) {
-            RpcValue value = (RpcValue) object;
-            return value.asString();
+        public String convertTo(RpcItem object) {
+            return object.asString();
         }
 
         @Override
-        public RpcField convertFrom(String object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(String object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -77,27 +74,26 @@ public final class Converters {
             = new RpcConverter<byte[]>() {
 
         @Override
-        public byte[] convertTo(RpcField object) {
-            RpcValue value = (RpcValue) object;
-            return value.asBytes();
+        public byte[] convertTo(RpcItem object) {
+            return object.asBytes();
         }
 
         @Override
-        public RpcField convertFrom(byte[] object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(byte[] object) {
+            return RpcItemCreator.create(object);
         }
     };
 
     public static final RpcConverter<Block> BLOCK = new RpcConverter<Block>() {
 
         @Override
-        public Block convertTo(RpcField object) {
-            return new Block((RpcObject) object);
+        public Block convertTo(RpcItem object) {
+            return new Block(object.asObject());
         }
 
         @Override
-        public RpcField convertFrom(Block object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(Block object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -105,13 +101,13 @@ public final class Converters {
             = new RpcConverter<ConfirmedTransaction>() {
 
         @Override
-        public ConfirmedTransaction convertTo(RpcField object) {
-            return new ConfirmedTransaction((RpcObject) object);
+        public ConfirmedTransaction convertTo(RpcItem object) {
+            return new ConfirmedTransaction(object.asObject());
         }
 
         @Override
-        public RpcField convertFrom(ConfirmedTransaction object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(ConfirmedTransaction object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -119,13 +115,13 @@ public final class Converters {
             = new RpcConverter<TransactionResult>() {
 
         @Override
-        public TransactionResult convertTo(RpcField object) {
-            return new TransactionResult((RpcObject) object);
+        public TransactionResult convertTo(RpcItem object) {
+            return new TransactionResult(object.asObject());
         }
 
         @Override
-        public RpcField convertFrom(TransactionResult object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(TransactionResult object) {
+            return RpcItemCreator.create(object);
         }
     };
 
@@ -133,19 +129,18 @@ public final class Converters {
             = new RpcConverter<List<ScoreApi>>() {
 
         @Override
-        public List<ScoreApi> convertTo(RpcField object) {
-            RpcArray array = (RpcArray) object;
+        public List<ScoreApi> convertTo(RpcItem rpcItem) {
+            RpcArray array = rpcItem.asArray();
             List<ScoreApi> scoreApis = new ArrayList<>(array.size());
             for (int i = 0; i < array.size(); i++) {
-                RpcObject rpcField = (RpcObject) array.get(i);
-                scoreApis.add(new ScoreApi(rpcField));
+                scoreApis.add(new ScoreApi(array.get(i).asObject()));
             }
             return scoreApis;
         }
 
         @Override
-        public RpcField convertFrom(List<ScoreApi> object) {
-            return RpcFieldCreator.create(object);
+        public RpcItem convertFrom(List<ScoreApi> object) {
+            return RpcItemCreator.create(object);
         }
     };
 

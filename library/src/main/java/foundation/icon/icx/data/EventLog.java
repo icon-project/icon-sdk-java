@@ -17,11 +17,10 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,18 +32,18 @@ public class EventLog {
     }
 
     public String getScoreAddress() {
-        RpcValue value = (RpcValue) properties.getValue("scoreAddress");
+        RpcValue value = (RpcValue) properties.getItem("scoreAddress");
         return value != null ? value.asString() : null;
     }
 
-    public List<RpcField> getIndexed() {
-        RpcArray field = (RpcArray) properties.getValue("indexed");
-        return field != null ? field.asArray().asList() : null;
+    public List<RpcItem> getIndexed() {
+        RpcArray item = (RpcArray) properties.getItem("indexed");
+        return item != null ? item.asArray().asList() : null;
     }
 
-    public List<RpcField> getData() {
-        RpcField field = properties.getValue("data");
-        return field != null ? field.asArray().asList() : null;
+    public List<RpcItem> getData() {
+        RpcItem item = properties.getItem("data");
+        return item != null ? item.asArray().asList() : null;
     }
 
 }

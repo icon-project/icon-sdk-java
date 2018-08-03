@@ -46,7 +46,7 @@ public class Block {
     }
 
     public List<ConfirmedTransaction> getTransactions() {
-        RpcArray array = (RpcArray) properties.getValue("confirmed_transaction_list");
+        RpcArray array = (RpcArray) properties.getItem("confirmed_transaction_list");
 
         List<ConfirmedTransaction> transactions = new ArrayList<>(array.size());
         for (int i = 0; i < array.size(); i++) {
@@ -77,7 +77,7 @@ public class Block {
 
 
     RpcValue getProperty(String key) {
-        return (RpcValue) properties.getValue(key);
+        return (RpcValue) properties.getItem(key);
     }
 
 }

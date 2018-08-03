@@ -27,7 +27,7 @@ public class Response {
 
     private long id;
 
-    private RpcField result;
+    private RpcItem result;
 
     private RpcError error;
 
@@ -43,7 +43,7 @@ public class Response {
         return id;
     }
 
-    public RpcField getResult() {
+    public RpcItem getResult() {
         return result;
     }
 

@@ -21,17 +21,17 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 
-public class RpcFieldCreator {
+public class RpcItemCreator {
 
-    public static <T> RpcField create(T item) {
-        return toRpcField(item);
+    public static <T> RpcItem create(T item) {
+        return toRpcItem(item);
     }
 
-    static <T> RpcField toRpcField(T item) {
-        return item != null ? toRpcField(item.getClass(), item) : null;
+    static <T> RpcItem toRpcItem(T item) {
+        return item != null ? toRpcItem(item.getClass(), item) : null;
     }
 
-    static <T> RpcField toRpcField(Class<?> type, T item) {
+    static <T> RpcItem toRpcItem(Class<?> type, T item) {
         RpcValue rpcValue = toRpcValue(item);
         if (rpcValue != null) {
             return rpcValue;
@@ -71,9 +71,9 @@ public class RpcFieldCreator {
             }
             if (fieldObject != null) {
                 field.setAccessible(true);
-                RpcField rpcField = toRpcField(type, fieldObject);
-                if (rpcField != null) {
-                    builder.put(key, rpcField);
+                RpcItem rpcItem = toRpcItem(type, fieldObject);
+                if (rpcItem != null) {
+                    builder.put(key, rpcItem);
                 }
             }
         }
@@ -87,7 +87,7 @@ public class RpcFieldCreator {
 
             int length = Array.getLength(obj);
             for (int i = 0; i < length; i++) {
-                builder.add(toRpcField(Array.get(obj, i)));
+                builder.add(toRpcItem(Array.get(obj, i)));
             }
             return builder.build();
         }

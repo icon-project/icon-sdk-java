@@ -29,7 +29,7 @@ import java.math.BigInteger;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BigIntegerDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BooleanDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BytesDeserializer;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcFieldDeserializer;
+import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +42,7 @@ class DeserializerTest {
     void initAll() {
         mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(RpcField.class, new RpcFieldDeserializer());
+        module.addDeserializer(RpcItem.class, new RpcItemDeserializer());
         module.addDeserializer(BigInteger.class, new BigIntegerDeserializer());
         module.addDeserializer(boolean.class, new BooleanDeserializer());
         module.addDeserializer(Boolean.class, new BooleanDeserializer());
@@ -54,22 +54,22 @@ class DeserializerTest {
     void testRpcDeserializer() throws IOException {
 
         String json = "{\"stringValue\":\"string\",\"array\":[{\"longValue\":1533018344753765,\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"},\"0x4d2\",\"0x0\",\"string\",\"0x010203\"],\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\",\"object\":{\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"}}";
-        RpcObject root = (RpcObject) mapper.readValue(json, RpcField.class);
+        RpcObject root = (RpcObject) mapper.readValue(json, RpcItem.class);
 
         RpcValue rpcValue;
 
-        RpcArray array = (RpcArray) root.getValue("array");
+        RpcArray array = (RpcArray) root.getItem("array");
 
         RpcObject obj = (RpcObject) array.get(0);
-        rpcValue = (RpcValue) obj.getValue("intValue");
+        rpcValue = (RpcValue) obj.getItem("intValue");
         assertEquals(new BigInteger("4d2", 16), rpcValue.asInteger());
-        rpcValue = (RpcValue) obj.getValue("booleanValue");
+        rpcValue = (RpcValue) obj.getItem("booleanValue");
         assertEquals(false, rpcValue.asBoolean());
-        rpcValue = (RpcValue) obj.getValue("stringValue");
+        rpcValue = (RpcValue) obj.getItem("stringValue");
         assertEquals("string", rpcValue.asString());
-        rpcValue = (RpcValue) obj.getValue("bytesValue");
+        rpcValue = (RpcValue) obj.getItem("bytesValue");
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
-        rpcValue = (RpcValue) obj.getValue("longValue");
+        rpcValue = (RpcValue) obj.getItem("longValue");
         assertEquals(new BigInteger(String.valueOf(1533018344753765L)), rpcValue.asInteger());
 
         rpcValue = (RpcValue) array.get(1);
@@ -81,23 +81,23 @@ class DeserializerTest {
         rpcValue = (RpcValue) array.get(4);
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
 
-        rpcValue = (RpcValue) root.getValue("intValue");
+        rpcValue = (RpcValue) root.getItem("intValue");
         assertEquals(new BigInteger("4d2", 16), rpcValue.asInteger());
-        rpcValue = (RpcValue) root.getValue("booleanValue");
+        rpcValue = (RpcValue) root.getItem("booleanValue");
         assertEquals(false, rpcValue.asBoolean());
-        rpcValue = (RpcValue) root.getValue("stringValue");
+        rpcValue = (RpcValue) root.getItem("stringValue");
         assertEquals("string", rpcValue.asString());
-        rpcValue = (RpcValue) root.getValue("bytesValue");
+        rpcValue = (RpcValue) root.getItem("bytesValue");
         assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
     }
 
     @Test
     void testRpcValue() throws IOException {
         String json = "\"0x1234\"";
-        RpcField rpcField = mapper.readValue(json, RpcField.class);
+        RpcItem rpcItem = mapper.readValue(json, RpcItem.class);
 
-        assertTrue(rpcField instanceof RpcValue);
-        assertEquals("0x1234", ((RpcValue) rpcField).asString());
+        assertTrue(rpcItem instanceof RpcValue);
+        assertEquals("0x1234", ((RpcValue) rpcItem).asString());
     }
 
     @Test

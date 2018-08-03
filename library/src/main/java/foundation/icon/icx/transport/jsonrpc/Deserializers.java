@@ -75,17 +75,17 @@ public class Deserializers {
         }
     }
 
-    public static class RpcFieldDeserializer extends JsonDeserializer<RpcField> {
+    public static class RpcItemDeserializer extends JsonDeserializer<RpcItem> {
 
         @Override
-        public RpcField deserialize(
+        public RpcItem deserialize(
                 JsonParser parser, DeserializationContext context)
                 throws IOException {
             TreeNode node = parser.readValueAsTree();
             return deserialize(node);
         }
 
-        private RpcField deserialize(TreeNode node) {
+        private RpcItem deserialize(TreeNode node) {
             if (node.isObject()) {
                 RpcObject.Builder builder = new RpcObject.Builder();
                 for (Iterator<String> it = node.fieldNames(); it.hasNext(); ) {
