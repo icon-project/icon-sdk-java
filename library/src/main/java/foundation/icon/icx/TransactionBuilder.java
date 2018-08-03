@@ -171,7 +171,7 @@ public final class TransactionBuilder {
         }
     }
 
-    private static final class MessageBuilder {
+    public static final class MessageBuilder {
         private TransactionBuilder txBuilder;
 
         private MessageBuilder(TransactionBuilder txBuilder, String message) {
