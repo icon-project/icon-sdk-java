@@ -89,9 +89,8 @@ public class HttpCall<T> implements Call<T> {
             if (converter == null) {
                 throw new IOException("Can not convert response params '" + content + "'");
             }
-            T params = converter.convertTo(response.getResult());
-            if (params != null) {
-                return params;
+            if (response.getResult() != null) {
+                return converter.convertTo(response.getResult());
             } else {
                 throw response.getError();
             }
