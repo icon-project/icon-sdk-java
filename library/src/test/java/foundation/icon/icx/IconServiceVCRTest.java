@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -84,7 +83,7 @@ public class IconServiceVCRTest {
     void testGetScoreApi() throws IOException {
         String scoreAddress = "cx1ca4697e8229e29adce3cded4412a137be6d7edb";
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
-        assertEquals("balanceOf", ((Map)apis.get(0)).get("name"));
+        assertEquals("balanceOf", apis.get(0).getName());
     }
 
     @Test
