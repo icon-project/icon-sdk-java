@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.*;
 
+import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
