@@ -16,9 +16,12 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.*;
+import foundation.icon.icx.data.Block;
+import foundation.icon.icx.data.ConfirmedTransaction;
+import foundation.icon.icx.data.ScoreApi;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
@@ -32,7 +35,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class IconServiceVCRTest {
 
@@ -128,14 +130,14 @@ public class IconServiceVCRTest {
                 .put("_owner", new RpcValue(wallet.getAddress()))
                 .build();
 
-        IcxCall<RpcField> call = new IcxCall.Builder()
+        IcxCall<RpcItem> call = new IcxCall.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
                 .build();
 
-        RpcField result = iconService.query(call).execute();
+        RpcItem result = iconService.query(call).execute();
         assertEquals(BigInteger.ZERO, result.asInteger());
     }
 
