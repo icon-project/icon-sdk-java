@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
@@ -53,32 +54,61 @@ public class SignedTransaction {
     public RpcObject getProperties() {
         RpcObject properties = getTransactionProperties();
 
-        Builder builder = properties.newBuilder();
+        RpcObject.Builder builder = new RpcObject.Builder();
+        for (String key : properties.keySet()) {
+            builder.put(key, getSortedItem(properties.getItem(key)));
+        }
+
         builder.put("signature", new RpcValue(getSignature(properties)));
         return builder.build();
     }
 
     RpcObject getTransactionProperties() {
         return new Builder(Builder.Sort.KEY)
-                .put("version", getRpcValueFromTransaction(transaction.getVersion()))
-                .put("from", getRpcValueFromTransaction(transaction.getFrom()))
-                .put("to", getRpcValueFromTransaction(transaction.getTo()))
-                .put("value", getRpcValueFromTransaction(transaction.getValue()))
-                .put("stepLimit", getRpcValueFromTransaction(transaction.getStepLimit()))
-                .put("timestamp", getRpcValueFromTransaction(transaction.getTimestamp()))
-                .put("nid", getRpcValueFromTransaction(transaction.getNid()))
-                .put("nonce", getRpcValueFromTransaction(transaction.getNonce()))
-                .put("dataType", getRpcValueFromTransaction(transaction.getDataType()))
-                .put("data", transaction.getData())
+                .put("version", getRpcItemFromTransaction(transaction.getVersion()))
+                .put("from", getRpcItemFromTransaction(transaction.getFrom()))
+                .put("to", getRpcItemFromTransaction(transaction.getTo()))
+                .put("value", getRpcItemFromTransaction(transaction.getValue()))
+                .put("stepLimit", getRpcItemFromTransaction(transaction.getStepLimit()))
+                .put("timestamp", getRpcItemFromTransaction(transaction.getTimestamp()))
+                .put("nid", getRpcItemFromTransaction(transaction.getNid()))
+                .put("nonce", getRpcItemFromTransaction(transaction.getNonce()))
+                .put("dataType", getRpcItemFromTransaction(transaction.getDataType()))
+                .put("data", getRpcItemFromTransaction(transaction.getData()))
                 .build();
     }
 
-    RpcValue getRpcValueFromTransaction(BigInteger value) {
+    RpcItem getRpcItemFromTransaction(BigInteger value) {
         return value != null ? new RpcValue(value) : null;
     }
 
-    RpcValue getRpcValueFromTransaction(String value) {
+    RpcItem getRpcItemFromTransaction(String value) {
         return value != null ? new RpcValue(value) : null;
+    }
+
+    RpcItem getRpcItemFromTransaction(RpcItem item) {
+        return getSortedItem(item);
+    }
+
+    RpcItem getSortedItem(RpcItem item) {
+        if (item instanceof RpcObject) {
+            RpcObject.Builder builder = new RpcObject.Builder(RpcObject.Builder.Sort.KEY);
+            RpcObject rpcObject = item.asObject();
+            for (String key : rpcObject.keySet()) {
+                builder.put(key, getSortedItem(rpcObject.getItem(key)));
+            }
+            return builder.build();
+        } else if (item instanceof RpcArray) {
+            RpcArray.Builder builder = new RpcArray.Builder();
+            RpcArray rpcObject = item.asArray();
+            for (RpcItem childItem : rpcObject) {
+                builder.add(getSortedItem(childItem));
+            }
+            return builder.build();
+        } else if (item instanceof RpcValue) {
+            return new RpcValue(item.asValue());
+        }
+        return item;
     }
 
     /**

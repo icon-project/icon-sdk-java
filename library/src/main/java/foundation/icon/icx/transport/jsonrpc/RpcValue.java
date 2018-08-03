@@ -36,6 +36,10 @@ public class RpcValue implements RpcItem {
 
     private String value;
 
+    public RpcValue(RpcValue value) {
+        this.value = value.asString();
+    }
+
     public RpcValue(String value) {
         this.value = value;
     }

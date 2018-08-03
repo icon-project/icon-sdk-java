@@ -45,19 +45,6 @@ public class RpcObject implements RpcItem {
     }
 
     /**
-     * Returns new builder for using current RpcObject
-     *
-     * @return new builder
-     */
-    public Builder newBuilder() {
-        Builder builder = new Builder();
-        for (String key : keySet()) {
-            builder.put(key, getItem(key));
-        }
-        return builder;
-    }
-
-    /**
      * Builder for RpcObject
      */
     public static class Builder {
