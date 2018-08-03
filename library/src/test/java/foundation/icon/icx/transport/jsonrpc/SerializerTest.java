@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
 import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
 import foundation.icon.icx.transport.jsonrpc.Serializers.BytesSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
+import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +43,7 @@ class SerializerTest {
     void initAll() {
         mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addSerializer(RpcField.class, new RpcFieldSerializer());
+        module.addSerializer(RpcItem.class, new RpcItemSerializer());
         module.addSerializer(BigInteger.class, new BigIntegerSerializer());
         module.addSerializer(boolean.class, new BooleanSerializer());
         module.addSerializer(Boolean.class, new BooleanSerializer());
@@ -54,13 +54,13 @@ class SerializerTest {
     @Test
     void testRpcSerializer() throws JsonProcessingException {
 
-        RpcField intValue = new RpcValue(new BigInteger("1234"));
-        RpcField booleanValue = new RpcValue(false);
-        RpcField stringValue = new RpcValue("string");
-        RpcField bytesValue = new RpcValue(new byte[]{0x1, 0x2, 0x3});
-        RpcField escapeValue = new RpcValue("\\.{}[]");
+        RpcItem intValue = new RpcValue(new BigInteger("1234"));
+        RpcItem booleanValue = new RpcValue(false);
+        RpcItem stringValue = new RpcValue("string");
+        RpcItem bytesValue = new RpcValue(new byte[]{0x1, 0x2, 0x3});
+        RpcItem escapeValue = new RpcValue("\\.{}[]");
 
-        RpcField object = new RpcObject.Builder()
+        RpcItem object = new RpcObject.Builder()
                 .put("intValue", intValue)
                 .put("booleanValue", booleanValue)
                 .put("stringValue", stringValue)
@@ -68,7 +68,7 @@ class SerializerTest {
                 .put("escapeValue", escapeValue)
                 .build();
 
-        RpcField array = new RpcArray.Builder()
+        RpcItem array = new RpcArray.Builder()
                 .add(object)
                 .add(intValue)
                 .add(booleanValue)
@@ -76,7 +76,7 @@ class SerializerTest {
                 .add(bytesValue)
                 .build();
 
-        RpcField root = new RpcObject.Builder()
+        RpcItem root = new RpcObject.Builder()
                 .put("object", object)
                 .put("array", array)
                 .put("intValue", intValue)

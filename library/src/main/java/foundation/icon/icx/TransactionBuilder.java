@@ -18,8 +18,8 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.NetworkId;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
-import foundation.icon.icx.transport.jsonrpc.RpcFieldCreator;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
@@ -37,7 +37,7 @@ public final class TransactionBuilder {
     private BigInteger nid;
     private BigInteger nonce;
     private String dataType;
-    private RpcField data;
+    private RpcItem data;
 
     private TransactionBuilder() {
     }
@@ -136,7 +136,7 @@ public final class TransactionBuilder {
         }
 
         public <T> CallBuilder params(T params) {
-            dataBuilder.put("params", RpcFieldCreator.create(params));
+            dataBuilder.put("params", RpcItemCreator.create(params));
             return this;
         }
 
@@ -196,7 +196,7 @@ public final class TransactionBuilder {
         private BigInteger nid;
         private BigInteger nonce;
         private String dataType;
-        private RpcField data;
+        private RpcItem data;
 
         private SendingTransaction(TransactionBuilder txBuilder) {
             version = txBuilder.version;
@@ -257,7 +257,7 @@ public final class TransactionBuilder {
         }
 
         @Override
-        public RpcField getData() {
+        public RpcItem getData() {
             return data;
         }
     }

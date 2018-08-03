@@ -18,40 +18,39 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * A read-only data class of RpcArray
  */
-public class RpcArray implements RpcField, Iterable<RpcField> {
-    private final List<RpcField> fields;
+public class RpcArray implements RpcItem, Iterable<RpcItem> {
+    private final List<RpcItem> items;
 
-    private RpcArray(List<RpcField> fields) {
-        this.fields = fields;
+    private RpcArray(List<RpcItem> items) {
+        this.items = items;
     }
 
-    public Iterator<RpcField> iterator() {
-        return fields.iterator();
+    public Iterator<RpcItem> iterator() {
+        return items.iterator();
     }
 
-    public RpcField get(int index) {
-        return fields.get(index);
+    public RpcItem get(int index) {
+        return items.get(index);
     }
 
     public int size() {
-        return fields.size();
+        return items.size();
     }
 
-    public List<RpcField> asList() {
-        return new ArrayList<>(fields);
+    public List<RpcItem> asList() {
+        return new ArrayList<>(items);
     }
 
     @Override
     public String toString() {
         return "RpcArray(" +
-                "fields=" + fields +
+                "items=" + items +
                 ')';
     }
 
@@ -60,19 +59,19 @@ public class RpcArray implements RpcField, Iterable<RpcField> {
      */
     public static class Builder {
 
-        private final List<RpcField> fields;
+        private final List<RpcItem> items;
 
         public Builder() {
-            fields = new ArrayList<>();
+            items = new ArrayList<>();
         }
 
-        public Builder add(RpcField value) {
-            fields.add(value);
+        public Builder add(RpcItem item) {
+            items.add(item);
             return this;
         }
 
         public RpcArray build() {
-            return new RpcArray(fields);
+            return new RpcArray(items);
         }
     }
 }

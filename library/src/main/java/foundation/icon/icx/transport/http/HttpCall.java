@@ -17,7 +17,6 @@
 
 package foundation.icon.icx.transport.http;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -26,11 +25,11 @@ import foundation.icon.icx.Callback;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BigIntegerDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BooleanDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BytesDeserializer;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcFieldDeserializer;
+import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Response;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcError;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import okhttp3.ResponseBody;
 
 import java.io.IOException;
@@ -103,7 +102,7 @@ public class HttpCall<T> implements Call<T> {
 
     private SimpleModule createDeserializerModule() {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(RpcField.class, new RpcFieldDeserializer());
+        module.addDeserializer(RpcItem.class, new RpcItemDeserializer());
         module.addDeserializer(BigInteger.class, new BigIntegerDeserializer());
         module.addDeserializer(boolean.class, new BooleanDeserializer());
         module.addDeserializer(Boolean.class, new BooleanDeserializer());

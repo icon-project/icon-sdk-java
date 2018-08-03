@@ -19,7 +19,7 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import java.math.BigInteger;
 
-public interface RpcField {
+public interface RpcItem {
 
     default RpcObject asObject() {
         if (this instanceof RpcObject) return (RpcObject) this;

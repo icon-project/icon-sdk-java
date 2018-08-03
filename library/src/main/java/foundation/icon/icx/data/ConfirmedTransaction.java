@@ -17,9 +17,8 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.Transaction;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 
@@ -34,76 +33,89 @@ public class ConfirmedTransaction implements Transaction {
 
     @Override
     public BigInteger getVersion() {
-        return getProperty("version").asInteger();
+        return getSafeProperty("version").asInteger();
     }
 
     @Override
     public String getFrom() {
-        return getProperty("from").asString();
+        return getSafeProperty("from").asString();
     }
 
     @Override
     public String getTo() {
-        return getProperty("to").asString();
+        return getSafeProperty("to").asString();
     }
 
     @Override
     public BigInteger getValue() {
-        return getProperty("value").asInteger();
+        return getSafeProperty("value").asInteger();
     }
 
     @Override
     public BigInteger getStepLimit() {
-        return getProperty("stepLimit").asInteger();
+        return getSafeProperty("stepLimit").asInteger();
     }
 
     @Override
     public BigInteger getTimestamp() {
-        return getProperty("timestamp").asInteger();
+        return getSafeProperty("timestamp").asInteger();
     }
 
     @Override
     public BigInteger getNid() {
-        return getProperty("nid").asInteger();
+        return getSafeProperty("nid").asInteger();
     }
 
     @Override
     public BigInteger getNonce() {
-        return getProperty("nonce").asInteger();
+        return getSafeProperty("nonce").asInteger();
     }
 
     @Override
     public String getDataType() {
-        return getProperty("dataType").asString();
+        return getSafeProperty("dataType").asString();
     }
 
     @Override
-    public RpcField getData() {
-        return getProperty("data");
+    public RpcItem getData() {
+        return properties.getItem("data");
     }
 
     public String getTxHash() {
-        return getProperty("txHash").asString();
+        return getSafeProperty("txHash").asString();
     }
 
     public BigInteger getTxIndex() {
-        return getProperty("txIndex").asInteger();
+        return getSafeProperty("txIndex").asInteger();
     }
 
     public BigInteger getBlockHeight() {
-        return getProperty("blockHeight").asInteger();
+        return getSafeProperty("blockHeight").asInteger();
     }
 
     public String getBlockHash() {
-        return getProperty("blockHash").asString();
+        return getSafeProperty("blockHash").asString();
     }
 
     public String getSignature() {
-        return getProperty("signature").asString();
+        return getSafeProperty("signature").asString();
     }
 
-    RpcValue getProperty(String key) {
-        return (RpcValue) properties.getValue(key);
+    RpcItem getSafeProperty(String key) {
+        RpcItem item = properties.getItem(key);
+        if (item != null) item.asValue();
+        return new RpcItem() {
+
+            @Override
+            public String asString() {
+                return null;
+            }
+
+            @Override
+            public BigInteger asInteger() {
+                return null;
+            }
+        };
     }
 
 }

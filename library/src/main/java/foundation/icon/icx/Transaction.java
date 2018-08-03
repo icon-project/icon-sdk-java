@@ -17,7 +17,7 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 
 import java.math.BigInteger;
 
@@ -40,5 +40,5 @@ public interface Transaction {
 
     String getDataType();
 
-    RpcField getData();
+    RpcItem getData();
 }

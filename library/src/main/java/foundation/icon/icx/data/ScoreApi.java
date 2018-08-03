@@ -17,10 +17,10 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,39 +34,59 @@ public class ScoreApi {
     }
 
     public String getType() {
-        return getProperty("type").asString();
+        return getSafeProperty("type").asString();
     }
 
     public String getName() {
-        return getProperty("name").asString();
+        return getSafeProperty("name").asString();
     }
 
     public List<Param> getInputs() {
-        return getParams((RpcArray) properties.getValue("inputs"));
+        return getParams(getSafeProperty("inputs").asArray());
     }
 
     public List<Param> getOutputs() {
-        return getParams((RpcArray) properties.getValue("outputs"));
+        return getParams(getSafeProperty("outputs").asArray());
     }
 
     List<Param> getParams(RpcArray array) {
-        List<Param> params = new ArrayList<>(array.size());
-        for (RpcField rpcField : array) {
-            RpcObject object = (RpcObject) rpcField;
+        List<Param> params = new ArrayList<>();
+        if (array != null) {
+            for (RpcItem rpcItem : array) {
+                RpcObject object = (RpcObject) rpcItem;
 
-            String name = ((RpcValue) object.getValue("type")).asString();
-            String type = ((RpcValue) object.getValue("type")).asString();
-            params.add(new Param(name, type));
+                String name = object.getItem("name").asString();
+                String type = object.getItem("type").asString();
+                params.add(new Param(name, type));
+            }
         }
         return params;
     }
 
     public String getReadonly() {
-        return getProperty("readonly").asString();
+        return getSafeProperty("readonly").asString();
     }
 
-    RpcValue getProperty(String key) {
-        return (RpcValue) properties.getValue(key);
+    RpcItem getSafeProperty(String key) {
+        RpcItem item = properties.getItem(key);
+        if (item != null) item.asValue();
+        return new RpcItem() {
+
+            @Override
+            public String asString() {
+                return null;
+            }
+
+            @Override
+            public BigInteger asInteger() {
+                return null;
+            }
+
+            @Override
+            public RpcArray asArray() {
+                return null;
+            }
+        };
     }
 
     public class Param {

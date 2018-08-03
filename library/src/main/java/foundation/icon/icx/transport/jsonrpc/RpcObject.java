@@ -22,39 +22,26 @@ import java.util.*;
 /**
  * A read-only data class of RpcObject
  */
-public class RpcObject implements RpcField {
-    private final Map<String, RpcField> fields;
+public class RpcObject implements RpcItem {
+    private final Map<String, RpcItem> items;
 
-    private RpcObject(Map<String, RpcField> fields) {
-        this.fields = fields;
+    private RpcObject(Map<String, RpcItem> items) {
+        this.items = items;
     }
 
     public Set<String> keySet() {
-        return fields.keySet();
+        return items.keySet();
     }
 
-    public RpcField getValue(String key) {
-        return fields.get(key);
+    public RpcItem getItem(String key) {
+        return items.get(key);
     }
 
     @Override
     public String toString() {
         return "RpcObject(" +
-                "fields=" + fields +
+                "items=" + items +
                 ')';
-    }
-
-    /**
-     * Returns new builder for using current RpcObject
-     *
-     * @return new builder
-     */
-    public Builder newBuilder() {
-        Builder builder = new Builder();
-        for (String key : keySet()) {
-            builder.put(key, getValue(key));
-        }
-        return builder;
     }
 
     /**
@@ -71,7 +58,7 @@ public class RpcObject implements RpcField {
             INSERT
         }
 
-        private final Map<String, RpcField> fields;
+        private final Map<String, RpcItem> items;
 
         public Builder() {
             this(Sort.NONE);
@@ -80,24 +67,24 @@ public class RpcObject implements RpcField {
         public Builder(Sort sort) {
             switch (sort) {
                 case KEY:
-                    fields = new TreeMap<>();
+                    items = new TreeMap<>();
                     break;
                 case INSERT:
-                    fields = new LinkedHashMap<>();
+                    items = new LinkedHashMap<>();
                     break;
                 default:
-                    fields = new HashMap<>();
+                    items = new HashMap<>();
                     break;
             }
         }
 
-        public Builder put(String key, RpcField value) {
-            if (!fields.containsKey(key)) fields.put(key, value);
+        public Builder put(String key, RpcItem item) {
+            if (!items.containsKey(key)) items.put(key, item);
             return this;
         }
 
         public RpcObject build() {
-            return new RpcObject(fields);
+            return new RpcObject(items);
         }
     }
 }

@@ -63,16 +63,16 @@ public class Serializers {
         }
     }
 
-    public static class RpcFieldSerializer extends JsonSerializer<RpcField> {
+    public static class RpcItemSerializer extends JsonSerializer<RpcItem> {
 
         final char[] escapeChars = { '\\', '.', '{', '}', '[', ']' };
         final Map escapeMap = new HashMap();
         boolean useEscape = false;
 
-        public RpcFieldSerializer() {
+        public RpcItemSerializer() {
         }
 
-        public RpcFieldSerializer(boolean useEscape) {
+        public RpcItemSerializer(boolean useEscape) {
             initEscapeMap();
             this.useEscape = useEscape;
         }
@@ -90,34 +90,34 @@ public class Serializers {
 
         @Override
         public void serialize(
-                RpcField field, JsonGenerator gen, SerializerProvider serializers)
+                RpcItem item, JsonGenerator gen, SerializerProvider serializers)
                 throws IOException {
-            serialize(field, gen);
+            serialize(item, gen);
         }
 
-        private void serialize(RpcField field, JsonGenerator gen)
+        private void serialize(RpcItem item, JsonGenerator gen)
                 throws IOException {
 
-            if (field instanceof RpcObject) {
-                RpcObject object = (RpcObject) field;
+            if (item instanceof RpcObject) {
+                RpcObject object = (RpcObject) item;
                 gen.writeStartObject();
                 for (String key : object.keySet()) {
-                    RpcField value = object.getValue(key);
+                    RpcItem value = object.getItem(key);
                     if(value != null) {
                         gen.writeFieldName(key);
                         serialize(value, gen);
                     }
                 }
                 gen.writeEndObject();
-            } else if (field instanceof RpcArray) {
-                RpcArray array = (RpcArray) field;
+            } else if (item instanceof RpcArray) {
+                RpcArray array = (RpcArray) item;
                 gen.writeStartArray();
-                for (Iterator<RpcField> it = array.iterator(); it.hasNext(); ) {
+                for (Iterator<RpcItem> it = array.iterator(); it.hasNext(); ) {
                     serialize(it.next(), gen);
                 }
                 gen.writeEndArray();
             } else {
-                RpcValue value = (RpcValue) field;
+                RpcValue value = (RpcValue) item;
                 if (useEscape)
                     writeWithEscape(value.asString(), gen);
                 else
