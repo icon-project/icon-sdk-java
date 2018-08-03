@@ -29,7 +29,7 @@ public class ScoreApi {
 
     private RpcObject properties;
 
-    ScoreApi(RpcObject rpcObject) {
+    ScoreApi(RpcObject properties) {
         this.properties = properties;
     }
 
