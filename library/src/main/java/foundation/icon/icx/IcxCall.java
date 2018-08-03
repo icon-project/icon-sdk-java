@@ -17,92 +17,91 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.CallData;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcFieldCreator;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 /**
  * IcxCall contains parameters for querying request.
- * @param <T> input type of the parameter
+ *
+ * @param <O> Response type
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class IcxCall<T> {
+public class IcxCall<O> {
 
-    private String from;
-    private String to;
-    private String dataType = "call";
-    private CallData<T> data;
-    private Class<?> responseType;
+    private RpcObject properties;
+    private Class<O> responseType;
 
-    private IcxCall(
-            String from, String to, CallData<T> data, Class<?> responseType) {
-        this.from = from;
-        this.to = to;
-        this.data = data;
+    private IcxCall(RpcObject properties, Class<O> responseType) {
+        this.properties = properties;
         this.responseType = responseType;
     }
 
-    public String getFrom() {
-        return from;
+    public RpcObject getProperties() {
+        return properties;
     }
 
-    public String getTo() {
-        return to;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public CallData<T> getData() {
-        return data;
-    }
-
-    public Class<?> responseType() {
+    public Class<O> responseType() {
         return responseType;
     }
 
     /**
      * Builder for creating immutable object of  IcxCall
-     * @param <T> input type of the parameter
      */
-    public static class Builder<T> {
+    public static class Builder {
         private String from;
         private String to;
         private String method;
-        private T params;
-        private Class<?> responseType = RpcField.class;
+        private RpcField params;
 
-        public Builder<T> from(String from) {
+        /**
+         * Create builder with the response type
+         */
+        public Builder() {
+        }
+
+        public Builder from(String from) {
             this.from = from;
             return this;
         }
 
-        public Builder<T> to(String to) {
+        public Builder to(String to) {
             this.to = to;
             return this;
         }
 
-        public Builder<T> method(String method) {
+        public Builder method(String method) {
             this.method = method;
             return this;
         }
 
-        public Builder<T> params(T params) {
+        public <I> Builder params(I params) {
+            this.params = RpcFieldCreator.create(params);
+            return this;
+        }
+
+        public Builder params(RpcField params) {
             this.params = params;
             return this;
         }
 
-        public Builder<T> responseType(Class<?> responseType) {
-            this.responseType = responseType;
-            return this;
+        public IcxCall<RpcField> build() {
+            return buildWith(RpcField.class);
         }
 
-        public IcxCall<T> build() {
-            CallData<T> callData = new CallData.Builder<T>()
-                    .method(method)
-                    .params(params)
+        public <O> IcxCall<O> buildWith(Class<O> responseType) {
+            RpcObject data = new RpcObject.Builder()
+                    .put("method", new RpcValue(method))
+                    .put("params", params)
                     .build();
-            return new IcxCall<>(from, to, callData, responseType);
+
+            RpcObject properties = new RpcObject.Builder()
+                    .put("from", new RpcValue(from))
+                    .put("to", new RpcValue(to))
+                    .put("data", data)
+                    .build();
+            return new IcxCall<>(properties, responseType);
         }
     }
 

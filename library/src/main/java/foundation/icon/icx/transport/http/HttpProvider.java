@@ -20,13 +20,10 @@ package foundation.icon.icx.transport.http;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
-import java.io.IOException;
-import java.math.BigInteger;
-
 import foundation.icon.icx.Call;
 import foundation.icon.icx.Provider;
 import foundation.icon.icx.transport.jsonrpc.Request;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
 import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
@@ -36,6 +33,9 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+
+import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * HttpProvider class transports as http jsonrpc
@@ -55,8 +55,8 @@ public class HttpProvider implements Provider {
     }
 
     @Override
-    public <I, O> Call<O> request(
-            final Request<I> request, Class<O> responseType) {
+    public <O> Call<O> request(
+            final Request request, RpcConverter<O> converter) {
 
         // Makes the request body
         RequestBody body = new RequestBody() {
@@ -84,6 +84,7 @@ public class HttpProvider implements Provider {
                 .url(url)
                 .post(body)
                 .build();
-        return new HttpCall<>(httpClient.newCall(httpRequest), responseType);
+
+        return new HttpCall<>(httpClient.newCall(httpRequest), converter);
     }
 }

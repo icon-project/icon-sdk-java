@@ -20,17 +20,18 @@ package foundation.icon.icx.transport.jsonrpc;
 /**
  * A jsonrpc request to be execute
  */
-public class Request<T> {
+public class Request {
 
     private String jsonrpc = "2.0";
 
-    private String method;
-
     private long id;
 
-    private T params;
+    private String method;
 
-    public Request(String method, T params) {
+    private RpcObject params;
+
+    public Request(long id, String method, RpcObject params) {
+        this.id = id;
         this.method = method;
         this.params = params;
     }
@@ -39,15 +40,15 @@ public class Request<T> {
         return jsonrpc;
     }
 
-    public String getMethod() {
-        return method;
-    }
-
     public long getId() {
         return id;
     }
 
-    public T getParams() {
+    public String getMethod() {
+        return method;
+    }
+
+    public RpcObject getParams() {
         return params;
     }
 }

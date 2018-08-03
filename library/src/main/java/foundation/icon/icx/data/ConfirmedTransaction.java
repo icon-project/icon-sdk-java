@@ -16,87 +16,94 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.Transaction;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 
 
-public class ConfirmedTransaction {
+public class ConfirmedTransaction implements Transaction {
 
-    private BigInteger version;
-    private String from;
-    private String to;
-    private BigInteger value;
-    private BigInteger stepLimit;
-    private BigInteger timestamp;
-    private BigInteger nonce;
-    private BigInteger txIndex;
-    private BigInteger blockHeight;
-    private String blockHash;
-    private String signature;
-    private String dataType;
-    private RpcField data;
-    private String txHash;
-    private String nid;
+    private RpcObject properties;
 
+    ConfirmedTransaction(RpcObject properties) {
+        this.properties = properties;
+    }
+
+    @Override
     public BigInteger getVersion() {
-        return version;
+        return getProperty("version").asInteger();
     }
 
+    @Override
     public String getFrom() {
-        return from;
+        return getProperty("from").asString();
     }
 
+    @Override
     public String getTo() {
-        return to;
+        return getProperty("to").asString();
     }
 
+    @Override
     public BigInteger getValue() {
-        return value;
+        return getProperty("value").asInteger();
     }
 
+    @Override
     public BigInteger getStepLimit() {
-        return stepLimit;
+        return getProperty("stepLimit").asInteger();
     }
 
+    @Override
     public BigInteger getTimestamp() {
-        return timestamp;
+        return getProperty("timestamp").asInteger();
     }
 
+    @Override
+    public BigInteger getNid() {
+        return getProperty("nid").asInteger();
+    }
+
+    @Override
     public BigInteger getNonce() {
-        return nonce;
+        return getProperty("nonce").asInteger();
     }
 
-    public BigInteger getTxIndex() {
-        return txIndex;
-    }
-
-    public BigInteger getBlockHeight() {
-        return blockHeight;
-    }
-
-    public String getBlockHash() {
-        return blockHash;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
+    @Override
     public String getDataType() {
-        return dataType;
+        return getProperty("dataType").asString();
     }
 
+    @Override
     public RpcField getData() {
-        return data;
+        return getProperty("data");
     }
 
     public String getTxHash() {
-        return txHash;
+        return getProperty("txHash").asString();
     }
 
-    public String getNid() {
-        return nid;
+    public BigInteger getTxIndex() {
+        return getProperty("txIndex").asInteger();
+    }
+
+    public BigInteger getBlockHeight() {
+        return getProperty("blockHeight").asInteger();
+    }
+
+    public String getBlockHash() {
+        return getProperty("blockHash").asString();
+    }
+
+    public String getSignature() {
+        return getProperty("signature").asString();
+    }
+
+    RpcValue getProperty(String key) {
+        return (RpcValue) properties.getValue(key);
     }
 
 }

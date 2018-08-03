@@ -18,13 +18,14 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * A read-only data class of RpcArray
  */
-public class RpcArray implements RpcField {
+public class RpcArray implements RpcField, Iterable<RpcField> {
     private final List<RpcField> fields;
 
     private RpcArray(List<RpcField> fields) {
@@ -37,6 +38,14 @@ public class RpcArray implements RpcField {
 
     public RpcField get(int index) {
         return fields.get(index);
+    }
+
+    public int size() {
+        return fields.size();
+    }
+
+    public List<RpcField> asList() {
+        return new ArrayList<>(fields);
     }
 
     @Override

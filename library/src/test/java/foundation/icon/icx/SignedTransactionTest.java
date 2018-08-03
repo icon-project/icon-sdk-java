@@ -20,7 +20,9 @@ package foundation.icon.icx;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import foundation.icon.icx.transport.jsonrpc.Serializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +59,7 @@ class SignedTransactionTest {
 //                    "to": "hx5bfdb090f43a808005ffc27c25b213145e80b7cd",
 //                    "value": "0xde0b6b3a7640000",
 //                    "stepLimit": "0x12345",
+//                    "nid": "0x1",
 //                    "timestamp": "0x563a6cf330136",
 //                    "nonce": "0x1",
 //                    "signature": "VAia7YZ2Ji6igKWzjR2YsGa2m53nKPrfK7uXYW78QLE+ATehAVZPC40szvAiA6NEU5gCYB4c4qaQzqDh2ugcHgA="
@@ -64,10 +67,9 @@ class SignedTransactionTest {
 //        }
 //
 //        Expected output is:
-//        icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3
+//        icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nid.0x1.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3
 
-        IcxTransaction icxTransaction = new IcxTransaction.Builder()
-                .version(new BigInteger("3"))
+        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
                 .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
                 .value(new BigInteger("de0b6b3a7640000", 16))
@@ -76,9 +78,10 @@ class SignedTransactionTest {
                 .nonce(new BigInteger("1"))
                 .build();
         Wallet wallet = mock(Wallet.class);
-        SignedTransaction signedTransaction = new SignedTransaction(icxTransaction, wallet);
-        String serialize = signedTransaction.serialize();
-        assertEquals("icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3",
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+        RpcObject properties = signedTransaction.getTransactionProperties();
+        String serialize = signedTransaction.serialize(properties);
+        assertEquals("icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nid.0x1.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3",
                 serialize);
     }
 

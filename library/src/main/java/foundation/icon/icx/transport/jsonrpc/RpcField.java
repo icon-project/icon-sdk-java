@@ -17,4 +17,44 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
-public interface RpcField {}
+import java.math.BigInteger;
+
+public interface RpcField {
+
+    default RpcObject asObject() {
+        if (this instanceof RpcObject) return (RpcObject) this;
+        throw new RpcValueException("This item can not be converted to RpcObject");
+    }
+
+    default RpcArray asArray() {
+        if (this instanceof RpcArray) return (RpcArray) this;
+        throw new RpcValueException("This item can not be converted to RpcValue");
+    }
+
+    default RpcValue asValue() {
+        if (this instanceof RpcValue) return (RpcValue) this;
+        throw new RpcValueException("This item can not be converted to RpcValue");
+    }
+
+    default String asString() {
+        return asValue().asString();
+    }
+
+    default BigInteger asInteger() {
+        return asValue().asInteger();
+    }
+
+    default byte[] asBytes() {
+        return asValue().asBytes();
+    }
+
+    default boolean asBoolean() {
+        return asValue().asBoolean();
+    }
+
+    class RpcValueException extends IllegalArgumentException {
+        RpcValueException(String message) {
+            super(message);
+        }
+    }
+}

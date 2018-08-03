@@ -19,7 +19,6 @@ package foundation.icon.icx.transport.http;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import foundation.icon.icx.Call;
@@ -29,6 +28,7 @@ import foundation.icon.icx.transport.jsonrpc.Deserializers.BooleanDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.BytesDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcFieldDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Response;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcError;
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import okhttp3.ResponseBody;
@@ -38,16 +38,17 @@ import java.math.BigInteger;
 
 /**
  * Http call can be executed by this class
+ *
  * @param <T> the data type of the response
  */
 public class HttpCall<T> implements Call<T> {
 
     private final okhttp3.Call httpCall;
-    private final Class<T> responseType;
+    private final RpcConverter<T> converter;
 
-    HttpCall(okhttp3.Call httpCall, Class<T> responseType) {
+    HttpCall(okhttp3.Call httpCall, RpcConverter<T> converter) {
         this.httpCall = httpCall;
-        this.responseType = responseType;
+        this.converter = converter;
     }
 
     @Override
@@ -81,22 +82,20 @@ public class HttpCall<T> implements Call<T> {
             throws IOException {
         ResponseBody body = httpResponse.body();
         if (body != null) {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                mapper.registerModule(createDeserializerModule());
-                JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, responseType);
-                Response<T> response = mapper.readValue(body.byteStream(), type);
-                T params = response.getResult();
-                if(params != null) {
-                    return params;
-                } else {
-                    throw response.getError();
-                }
-            } catch (JsonParseException e) {
-                throw new RpcError(httpResponse.code(), httpResponse.message());
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.registerModule(createDeserializerModule());
+            String content = body.string();
+            Response response = mapper.readValue(content, Response.class);
+            if (converter == null) {
+                throw new IOException("Can not convert response params '" + content + "'");
             }
-
+            T params = converter.convertTo(response.getResult());
+            if (params != null) {
+                return params;
+            } else {
+                throw response.getError();
+            }
         } else {
             throw new RpcError(httpResponse.code(), httpResponse.message());
         }

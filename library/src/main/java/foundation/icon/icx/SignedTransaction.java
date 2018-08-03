@@ -22,14 +22,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-
 import foundation.icon.icx.transport.jsonrpc.RpcField;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import foundation.icon.icx.transport.jsonrpc.Serializers.RpcFieldSerializer;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+
+import java.math.BigInteger;
 
 /**
  * SignedTransaction serializes transaction messages and
@@ -50,12 +50,35 @@ public class SignedTransaction {
      *
      * @return parameters
      */
-    public RpcObject getParams() {
-        RpcObject params = transaction.getParams();
+    public RpcObject getProperties() {
+        RpcObject properties = getTransactionProperties();
 
-        Builder builder = params.newBuilder();
-        builder.put("signature", new RpcValue(getSignature()));
+        Builder builder = properties.newBuilder();
+        builder.put("signature", new RpcValue(getSignature(properties)));
         return builder.build();
+    }
+
+    RpcObject getTransactionProperties() {
+        return new Builder(Builder.Sort.KEY)
+                .put("version", getRpcValueFromTransaction(transaction.getVersion()))
+                .put("from", getRpcValueFromTransaction(transaction.getFrom()))
+                .put("to", getRpcValueFromTransaction(transaction.getTo()))
+                .put("value", getRpcValueFromTransaction(transaction.getValue()))
+                .put("stepLimit", getRpcValueFromTransaction(transaction.getStepLimit()))
+                .put("timestamp", getRpcValueFromTransaction(transaction.getTimestamp()))
+                .put("nid", getRpcValueFromTransaction(transaction.getNid()))
+                .put("nonce", getRpcValueFromTransaction(transaction.getNonce()))
+                .put("dataType", getRpcValueFromTransaction(transaction.getDataType()))
+                .put("data", transaction.getData())
+                .build();
+    }
+
+    RpcValue getRpcValueFromTransaction(BigInteger value) {
+        return value != null ? new RpcValue(value) : null;
+    }
+
+    RpcValue getRpcValueFromTransaction(String value) {
+        return value != null ? new RpcValue(value) : null;
     }
 
     /**
@@ -63,8 +86,8 @@ public class SignedTransaction {
      *
      * @return signature
      */
-    public String getSignature() {
-        String message = generateMessage();
+    String getSignature(RpcObject properties) {
+        String message = generateMessage(properties);
         return wallet.signMessage(message);
     }
 
@@ -73,8 +96,8 @@ public class SignedTransaction {
      *
      * @return message hash
      */
-    public String generateMessage() {
-        byte[] bHash = new SHA3.Digest256().digest(serialize().getBytes());
+    String generateMessage(RpcObject properties) {
+        byte[] bHash = new SHA3.Digest256().digest(serialize(properties).getBytes());
         return RpcValue.toHexString(bHash, false);
     }
 
@@ -84,19 +107,18 @@ public class SignedTransaction {
      * @return Serialized property
      */
     // TODO make own serializer
-    public String serialize() {
+    String serialize(RpcObject properties) {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
         module.addSerializer(RpcField.class, new RpcFieldSerializer(true));
         mapper.registerModule(module);
 
-        RpcObject params = transaction.getParams();
         String jsonString = null;
         try {
             SerializePrinter printer = new SerializePrinter();
             ObjectWriter writer = mapper.writer(printer);
-            jsonString = writer.writeValueAsString(params);
+            jsonString = writer.writeValueAsString(properties);
         } catch (JsonProcessingException ignored) {
         }
         if (jsonString == null || jsonString.length() < 2) return "";

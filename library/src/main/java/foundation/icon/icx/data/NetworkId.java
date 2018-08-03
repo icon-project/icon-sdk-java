@@ -15,39 +15,24 @@
  *
  */
 
-package foundation.icon.icx.transport.jsonrpc;
+package foundation.icon.icx.data;
 
-/**
- * A jsonrpc response of the request
- */
-public class Response {
-    private String jsonrpc = "2.0";
+import java.math.BigInteger;
 
-    private String method;
 
-    private long id;
+public enum NetworkId {
 
-    private RpcField result;
+    MAIN(new BigInteger("1")),
+    TEST(new BigInteger("2"));
 
-    private RpcError error;
+    private BigInteger nid;
 
-    public String getJsonrpc() {
-        return jsonrpc;
+    NetworkId(BigInteger nid) {
+        this.nid = nid;
     }
 
-    public String getMethod() {
-        return method;
+    public BigInteger getValue() {
+        return nid;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public RpcField getResult() {
-        return result;
-    }
-
-    public RpcError getError() {
-        return error;
-    }
 }

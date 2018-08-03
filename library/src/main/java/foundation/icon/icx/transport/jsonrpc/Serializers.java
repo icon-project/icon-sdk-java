@@ -102,8 +102,11 @@ public class Serializers {
                 RpcObject object = (RpcObject) field;
                 gen.writeStartObject();
                 for (String key : object.keySet()) {
-                    gen.writeFieldName(key);
-                    serialize(object.getValue(key), gen);
+                    RpcField value = object.getValue(key);
+                    if(value != null) {
+                        gen.writeFieldName(key);
+                        serialize(value, gen);
+                    }
                 }
                 gen.writeEndObject();
             } else if (field instanceof RpcArray) {

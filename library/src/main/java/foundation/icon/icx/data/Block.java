@@ -16,70 +16,68 @@
 
 package foundation.icon.icx.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Block {
 
-    @JsonProperty("prev_block_hash")
-    private String prevBlockHash;
+    private RpcObject properties;
 
-    @JsonProperty("merkle_tree_root_hash")
-    private String merkleTreeRootHash;
-
-    @JsonProperty("time_stamp")
-    private BigInteger timestamp;
-
-    @JsonProperty("confirmed_transaction_list")
-    private List<ConfirmedTransaction> transactions;
-
-    @JsonProperty("block_hash")
-    private String blockHash;
-
-    @JsonProperty("peer_id")
-    private String peerId;
-
-    private String version;
-    private BigInteger height;
-    private String signature;
+    Block(RpcObject properties) {
+        this.properties = properties;
+    }
 
     public String getPrevBlockHash() {
-        return prevBlockHash;
+        return getProperty("prev_block_hash").asString();
     }
 
     public String getMerkleTreeRootHash() {
-        return merkleTreeRootHash;
+        return getProperty("merkle_tree_root_hash").asString();
     }
 
     public BigInteger getTimestamp() {
-        return timestamp;
+        return getProperty("time_stamp").asInteger();
     }
 
     public List<ConfirmedTransaction> getTransactions() {
+        RpcArray array = (RpcArray) properties.getValue("confirmed_transaction_list");
+
+        List<ConfirmedTransaction> transactions = new ArrayList<>(array.size());
+        for (int i = 0; i < array.size(); i++) {
+            transactions.add(new ConfirmedTransaction((RpcObject) array.get(i)));
+        }
         return transactions;
     }
 
     public String getBlockHash() {
-        return blockHash;
+        return getProperty("block_hash").asString();
     }
 
     public String getPeerId() {
-        return peerId;
+        return getProperty("peer_id").asString();
     }
 
-    public String getVersion() {
-        return version;
+    public BigInteger getVersion() {
+        return getProperty("version").asInteger();
     }
 
     public BigInteger getHeight() {
-        return height;
+        return getProperty("height").asInteger();
     }
 
     public String getSignature() {
-        return signature;
+        return getProperty("signature").asString();
+    }
+
+
+    RpcValue getProperty(String key) {
+        return (RpcValue) properties.getValue(key);
     }
 
 }

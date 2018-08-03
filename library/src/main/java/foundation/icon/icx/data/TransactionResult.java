@@ -16,66 +16,85 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
+import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class TransactionResult {
 
-    private String status;
-    private String to;
-    private String txHash;
-    private BigInteger blockHeight;
-    private String blockHash;
-    private BigInteger cumulativeStepUsed;
-    private BigInteger stepUsed;
-    private BigInteger stepPrice;
-    private String scoreAddress;
-    private String logsBloom;
-    private List<EventLog> eventLogs;
+    private RpcObject properties;
 
-    public String getStatus() {
-        return status;
+    TransactionResult(RpcObject properties) {
+        this.properties = properties;
+    }
+
+    public BigInteger getStatus() {
+        return getPropertyAsInteger("status");
     }
 
     public String getTo() {
-        return to;
+        return getPropertyAsString("to");
     }
 
     public String getTxHash() {
-        return txHash;
+        return getPropertyAsString("txHash");
     }
 
     public BigInteger getBlockHeight() {
-        return blockHeight;
+        return getPropertyAsInteger("blockHeight");
     }
 
     public String getBlockHash() {
-        return blockHash;
+        return getPropertyAsString("blockHash");
     }
 
     public BigInteger getCumulativeStepUsed() {
-        return cumulativeStepUsed;
+        return getPropertyAsInteger("cumulativeStepUsed");
     }
 
     public BigInteger getStepUsed() {
-        return stepUsed;
+        return getPropertyAsInteger("stepUsed");
     }
 
     public BigInteger getStepPrice() {
-        return stepPrice;
+        return getPropertyAsInteger("stepPrice");
     }
 
     public String getScoreAddress() {
-        return scoreAddress;
+        return getPropertyAsString("scoreAddress");
     }
 
     public String getLogsBloom() {
-        return logsBloom;
+        return getPropertyAsString("logsBloom");
     }
 
     public List<EventLog> getEventLogs() {
+        RpcField field = properties.getValue("eventLogs");
+        return field != null ? getArray(field.asArray()) : null;
+    }
+
+    private List<EventLog> getArray(RpcArray array) {
+        List<EventLog> eventLogs = new ArrayList<>(array.size());
+        for (RpcField rpcField : array) {
+            eventLogs.add(new EventLog((RpcObject) rpcField));
+        }
         return eventLogs;
+    }
+
+    String getPropertyAsString(String key) {
+        RpcField value = properties.getValue(key);
+        return value != null ? value.asString() : null;
+    }
+
+    BigInteger getPropertyAsInteger(String key) {
+        RpcField value = properties.getValue(key);
+        return value != null ? value.asInteger() : null;
     }
 
 }
