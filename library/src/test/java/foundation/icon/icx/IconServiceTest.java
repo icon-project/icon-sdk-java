@@ -1,10 +1,8 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
-import foundation.icon.icx.transport.jsonrpc.Request;
-import foundation.icon.icx.transport.jsonrpc.RpcConverter;
-import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.data.*;
+import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -198,6 +196,69 @@ class IconServiceTest {
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testSendIcxTransaction() {
+        Provider provider = mock(Provider.class);
+
+        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
+                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .value(new BigInteger("de0b6b3a7640000", 16))
+                .stepLimit(new BigInteger("12345", 16))
+                .timestamp(new BigInteger("563a6cf330136", 16))
+                .nonce(new BigInteger("1"))
+                .build();
+        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+
+        IconService iconService = new IconService(provider);
+        iconService.sendTransaction(signedTransaction);
+
+        String expected = "xR6wKs+IA+7E91bT8966jFKlK5mayutXCvayuSMCrx9KB7670CsWa0B7LQzgsxU0GLXaovlAT2MLs1XuDiSaZQE=";
+        verify(provider).request(
+                argThat(request -> {
+                    boolean isMethodMathces = request.getMethod().equals("icx_sendTransaction");
+                    boolean isSignaureMatches = request.getParams().getItem("signature").asString().equals(expected);
+                    return isMethodMathces && isSignaureMatches;
+                }),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testTransferTokenTransaction() {
+        Provider provider = mock(Provider.class);
+
+        RpcObject params = new RpcObject.Builder()
+                .put("_to", new RpcValue("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .put("_value", new RpcValue(new BigInteger("1")))
+                .build();
+
+        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
+                .to("cx982aed605b065b50a2a639c1ea5710ef5a0501a9")
+                .stepLimit(new BigInteger("12345", 16))
+                .timestamp(new BigInteger("563a6cf330136", 16))
+                .nonce(new BigInteger("1"))
+                .call("transfer")
+                .params(params)
+                .build();
+
+        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+
+        IconService iconService = new IconService(provider);
+        iconService.sendTransaction(signedTransaction);
+
+        String expected = "ITpAdh3bUV4Xj0WQIPlfhv+ppA+K+LtXqaYMjnt8pMwV7QJwyZNQuhH2ljdGPR+31wG+GpKEdOEuqeYOwODBVwA=";
+        verify(provider).request(
+                argThat(request -> {
+                    boolean isMethodMathces = request.getMethod().equals("icx_sendTransaction");
+                    boolean isSignaureMatches = request.getParams().getItem("signature").asString().equals(expected);
+                    return isMethodMathces && isSignaureMatches;
+                }),
                 argThat(Objects::nonNull));
     }
 
