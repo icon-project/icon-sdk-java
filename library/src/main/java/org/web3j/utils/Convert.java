@@ -34,6 +34,7 @@ public final class Convert {
         SZABO("szabo", 12),
         FINNEY("finney", 15),
         ETHER("ether", 18),
+        ICX("icx", 18),
         KETHER("kether", 21),
         METHER("mether", 24),
         GETHER("gether", 27);
