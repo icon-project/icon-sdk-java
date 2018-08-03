@@ -1,19 +1,14 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
-import foundation.icon.icx.data.Block;
-import foundation.icon.icx.data.ConfirmedTransaction;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
-import foundation.icon.icx.transport.jsonrpc.Request;
-import foundation.icon.icx.transport.jsonrpc.RpcConverter;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.data.*;
+import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 import java.util.*;
 
+import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -202,6 +197,35 @@ class IconServiceTest {
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
                 argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testSendIcxTransaction() {
+        Provider provider = mock(Provider.class);
+
+        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
+                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .value(new BigInteger("de0b6b3a7640000", 16))
+                .stepLimit(new BigInteger("12345", 16))
+                .timestamp(new BigInteger("563a6cf330136", 16))
+                .nonce(new BigInteger("1"))
+                .build();
+        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+
+        IconService iconService = new IconService(provider);
+        iconService.sendTransaction(signedTransaction);
+
+        String expected = "xR6wKs+IA+7E91bT8966jFKlK5mayutXCvayuSMCrx9KB7670CsWa0B7LQzgsxU0GLXaovlAT2MLs1XuDiSaZQE=";
+        verify(provider).request(
+                argThat(request -> {
+                    boolean isMethodMathces = request.getMethod().equals("icx_sendTransaction");
+                    boolean isSignaureMatches = request.getParams().getValue("signature").asString().equals(expected);
+                    return isMethodMathces && isSignaureMatches;
+                }),
+                argThat(Objects::nonNull));
+
     }
 
     @SuppressWarnings("unchecked")
