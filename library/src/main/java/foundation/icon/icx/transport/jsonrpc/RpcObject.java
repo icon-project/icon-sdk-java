@@ -61,7 +61,7 @@ public class RpcObject implements RpcItem {
         private final Map<String, RpcItem> items;
 
         public Builder() {
-            this(Sort.NONE);
+            this(Sort.KEY);
         }
 
         public Builder(Sort sort) {
