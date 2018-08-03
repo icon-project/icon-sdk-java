@@ -27,15 +27,14 @@ import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static foundation.icon.icx.SampleKeys.ADDRESS;
+import static foundation.icon.icx.SampleKeys.PASSWORD;
+import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KeyWalletTest {
 
-    public static final String PRIVATE_KEY_STRING =
-            "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
-
-    public static final String PASSWORD = "Pa55w0rd";
     public File tempDir;
 
     private static File createTempDir() throws Exception {
@@ -51,7 +50,7 @@ public class KeyWalletTest {
     @Test
     public void testLoadWithPrivateKey() {
         KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
-        assertEquals("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31", wallet.getAddress());
+        assertEquals(ADDRESS, wallet.getAddress());
     }
 
     @Test
