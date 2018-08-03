@@ -100,6 +100,7 @@ public class IcxCall<O> {
                     .put("from", new RpcValue(from))
                     .put("to", new RpcValue(to))
                     .put("data", data)
+                    .put("dataType", new RpcValue("call"))
                     .build();
             return new IcxCall<>(properties, responseType);
         }
