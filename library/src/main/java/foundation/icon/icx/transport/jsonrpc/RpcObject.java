@@ -74,7 +74,7 @@ public class RpcObject implements RpcField {
         private final Map<String, RpcField> fields;
 
         public Builder() {
-            this(Sort.NONE);
+            this(Sort.KEY);
         }
 
         public Builder(Sort sort) {
