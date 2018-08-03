@@ -37,13 +37,13 @@ public class EventLog {
     }
 
     public List<RpcItem> getIndexed() {
-        RpcArray item = (RpcArray) properties.getItem("indexed");
-        return item != null ? item.asArray().asList() : null;
+        RpcArray field = (RpcArray) properties.getItem("indexed");
+        return field != null ? field.asArray().asList() : null;
     }
 
     public List<RpcItem> getData() {
-        RpcItem item = properties.getItem("data");
-        return item != null ? item.asArray().asList() : null;
+        RpcItem field = properties.getItem("data");
+        return field != null ? field.asArray().asList() : null;
     }
 
 }

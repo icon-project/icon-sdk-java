@@ -34,66 +34,76 @@ public class TransactionResult {
     }
 
     public BigInteger getStatus() {
-        return getPropertyAsInteger("status");
+        return getSafeProperty("status").asInteger();
     }
 
     public String getTo() {
-        return getPropertyAsString("to");
+        return getSafeProperty("to").asString();
     }
 
     public String getTxHash() {
-        return getPropertyAsString("txHash");
+        return getSafeProperty("txHash").asString();
     }
 
     public BigInteger getBlockHeight() {
-        return getPropertyAsInteger("blockHeight");
+        return getSafeProperty("blockHeight").asInteger();
     }
 
     public String getBlockHash() {
-        return getPropertyAsString("blockHash");
+        return getSafeProperty("blockHash").asString();
     }
 
     public BigInteger getCumulativeStepUsed() {
-        return getPropertyAsInteger("cumulativeStepUsed");
+        return getSafeProperty("cumulativeStepUsed").asInteger();
     }
 
     public BigInteger getStepUsed() {
-        return getPropertyAsInteger("stepUsed");
+        return getSafeProperty("stepUsed").asInteger();
     }
 
     public BigInteger getStepPrice() {
-        return getPropertyAsInteger("stepPrice");
+        return getSafeProperty("stepPrice").asInteger();
     }
 
     public String getScoreAddress() {
-        return getPropertyAsString("scoreAddress");
+        return getSafeProperty("scoreAddress").asString();
     }
 
     public String getLogsBloom() {
-        return getPropertyAsString("logsBloom");
+        return getSafeProperty("logsBloom").asString();
     }
 
     public List<EventLog> getEventLogs() {
-        RpcItem item = properties.getItem("eventLogs");
-        return item != null ? getArray(item.asArray()) : null;
-    }
-
-    private List<EventLog> getArray(RpcArray array) {
-        List<EventLog> eventLogs = new ArrayList<>(array.size());
-        for (RpcItem rpcItem : array) {
-            eventLogs.add(new EventLog((RpcObject) rpcItem));
+        RpcArray array = getSafeProperty("eventLogs").asArray();
+        List<EventLog> eventLogs = new ArrayList<>();
+        if (array != null) {
+            for (RpcItem rpcItem : array) {
+                eventLogs.add(new EventLog(rpcItem.asObject()));
+            }
         }
         return eventLogs;
     }
 
-    String getPropertyAsString(String key) {
-        RpcItem value = properties.getItem(key);
-        return value != null ? value.asString() : null;
-    }
+    RpcItem getSafeProperty(String key) {
+        RpcItem item = properties.getItem(key);
+        if (item != null) item.asValue();
+        return new RpcItem() {
 
-    BigInteger getPropertyAsInteger(String key) {
-        RpcItem value = properties.getItem(key);
-        return value != null ? value.asInteger() : null;
+            @Override
+            public String asString() {
+                return null;
+            }
+
+            @Override
+            public BigInteger asInteger() {
+                return null;
+            }
+
+            @Override
+            public RpcArray asArray() {
+                return null;
+            }
+        };
     }
 
 }
