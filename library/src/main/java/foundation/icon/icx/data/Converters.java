@@ -28,6 +28,20 @@ import java.util.List;
 public final class Converters {
     private Converters() {}
 
+    public static final RpcConverter<RpcField> RPC_FIELD
+            = new RpcConverter<RpcField>() {
+
+        @Override
+        public RpcField convertTo(RpcField object) {
+            return object;
+        }
+
+        @Override
+        public RpcField convertFrom(RpcField object) {
+            return object;
+        }
+    };
+
     public static final RpcConverter<BigInteger> BIG_INTEGER
             = new RpcConverter<BigInteger>() {
 
