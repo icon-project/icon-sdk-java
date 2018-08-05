@@ -1,12 +1,15 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
-import foundation.icon.icx.data.*;
+import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -53,6 +56,7 @@ class IconServiceTest {
                 return null;
             }
         });
+
 
         Person person = new Person();
         person.name = "gold bug";

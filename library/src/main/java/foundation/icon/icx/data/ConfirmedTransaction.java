@@ -107,6 +107,11 @@ public class ConfirmedTransaction implements Transaction {
         return new RpcItem() {
 
             @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
             public String asString() {
                 return null;
             }

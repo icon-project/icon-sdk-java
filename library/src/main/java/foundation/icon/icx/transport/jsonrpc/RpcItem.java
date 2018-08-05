@@ -21,6 +21,8 @@ import java.math.BigInteger;
 
 public interface RpcItem {
 
+    boolean isEmpty();
+
     default RpcObject asObject() {
         if (this instanceof RpcObject) return (RpcObject) this;
         throw new RpcValueException("This item can not be converted to RpcObject");

@@ -142,6 +142,22 @@ public class IconServiceVCRTest {
     }
 
     @Test
+    void testIcxCallWithGenericParam() throws IOException {
+        TokenBalance params = new TokenBalance();
+        params._owner = wallet.getAddress();
+
+        IcxCall<RpcItem> call = new IcxCall.Builder()
+                .from(wallet.getAddress())
+                .to(scoreAddress)
+                .method("balanceOf")
+                .params(params)
+                .build();
+
+        RpcItem result = iconService.query(call).execute();
+        assertEquals(BigInteger.ZERO, result.asInteger());
+    }
+
+    @Test
     void testSendToken() throws IOException {
         RpcObject params = new RpcObject.Builder()
                 .put("_to", new RpcValue("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31"))
@@ -203,6 +219,10 @@ public class IconServiceVCRTest {
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         String hash = iconService.sendTransaction(signedTransaction).execute();
         assertEquals("0x6096df310fd039453b39e8bece336fceb8fb9e1c9ed4938226169bf201da48cf", hash);
+    }
+
+    class TokenBalance {
+        public String _owner;
     }
 
 

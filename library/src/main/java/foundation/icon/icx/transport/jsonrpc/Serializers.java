@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,35 +32,7 @@ import java.util.Map;
  * Serializers for jsonrpc value
  */
 public class Serializers {
-    public static class BigIntegerSerializer extends JsonSerializer<BigInteger> {
 
-        @Override
-        public void serialize(
-                BigInteger value, JsonGenerator gen, SerializerProvider serializers)
-                throws IOException {
-            gen.writeString(new RpcValue(value).asString());
-        }
-    }
-
-    public static class BooleanSerializer extends JsonSerializer<Boolean> {
-
-        @Override
-        public void serialize(
-                Boolean value, JsonGenerator gen, SerializerProvider serializers)
-                throws IOException {
-            gen.writeString(new RpcValue(value).asString());
-        }
-    }
-
-    public static class BytesSerializer extends JsonSerializer<byte[]> {
-
-        @Override
-        public void serialize(
-                byte[] value, JsonGenerator gen, SerializerProvider serializers)
-                throws IOException {
-            gen.writeString(new RpcValue(value).asString());
-        }
-    }
 
     public static class RpcItemSerializer extends JsonSerializer<RpcItem> {
 

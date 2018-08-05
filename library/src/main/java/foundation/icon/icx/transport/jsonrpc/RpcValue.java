@@ -60,6 +60,11 @@ public class RpcValue implements RpcItem {
         this.value = toHexString(value, true);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return value.isEmpty();
+    }
+
     /**
      * Returns the value as string
      *

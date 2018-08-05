@@ -19,21 +19,14 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigInteger;
 
-import foundation.icon.icx.transport.jsonrpc.Deserializers.BigIntegerDeserializer;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.BooleanDeserializer;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.BytesDeserializer;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DeserializerTest {
     private ObjectMapper mapper;
@@ -43,10 +36,6 @@ class DeserializerTest {
         mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(RpcItem.class, new RpcItemDeserializer());
-        module.addDeserializer(BigInteger.class, new BigIntegerDeserializer());
-        module.addDeserializer(boolean.class, new BooleanDeserializer());
-        module.addDeserializer(Boolean.class, new BooleanDeserializer());
-        module.addDeserializer(byte[].class, new BytesDeserializer());
         mapper.registerModule(module);
     }
 
@@ -100,27 +89,4 @@ class DeserializerTest {
         assertEquals("0x1234", ((RpcValue) rpcItem).asString());
     }
 
-    @Test
-    void testObject() throws IOException {
-        String json = "{\"longValue\":1533018344753765,\"stringValue\":\"stringValue\",\"intValue\":\"0x1234\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x01020304\",\"intArrayValue\":[\"0x1234\",\"0x1234\"]}";
-        Custom custom = mapper.readValue(json, Custom.class);
-
-        assertEquals("stringValue", custom.stringValue);
-        assertEquals(new BigInteger("1234", 16), custom.intValue);
-        assertEquals(false, custom.booleanValue);
-        assertArrayEquals(new byte[]{0x1, 0x2, 0x3, 0x4}, custom.bytesValue);
-        assertEquals(new BigInteger("1234", 16), custom.intArrayValue[0]);
-        assertEquals(new BigInteger("1234", 16), custom.intArrayValue[1]);
-        assertEquals(new BigInteger(String.valueOf(1533018344753765L)), custom.longValue);
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    public static class Custom {
-        public String stringValue;
-        public BigInteger intValue;
-        public boolean booleanValue;
-        public byte[] bytesValue;
-        public BigInteger[] intArrayValue;
-        public BigInteger longValue;
-    }
 }

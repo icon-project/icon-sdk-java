@@ -83,6 +83,11 @@ public class ScoreApi {
             }
 
             @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
             public RpcArray asArray() {
                 return null;
             }
