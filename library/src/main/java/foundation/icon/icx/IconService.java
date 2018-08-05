@@ -33,7 +33,6 @@ public class IconService {
                 TransactionResult.class, Converters.TRANSACTION_RESULT));
         Class<List<ScoreApi>> listClass = ((Class) List.class);
         addConverterFactory(Converters.newFactory(listClass, Converters.SCORE_API_LIST));
-        addConverterFactory(Converters.newFactory(RpcItem.class, Converters.RPC_ITEM));
     }
 
     /**
