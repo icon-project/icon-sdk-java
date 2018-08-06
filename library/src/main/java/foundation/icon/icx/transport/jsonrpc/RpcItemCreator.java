@@ -17,6 +17,8 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.data.Address;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -105,6 +107,8 @@ public class RpcItemCreator {
             return new RpcValue((BigInteger) object);
         } else if (object.getClass().isAssignableFrom(byte[].class)) {
             return new RpcValue((byte[]) object);
+        } else if (object.getClass().isAssignableFrom(Address.class)) {
+            return new RpcValue((Address) object);
         }
         return null;
     }
