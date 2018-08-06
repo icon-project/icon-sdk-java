@@ -14,38 +14,52 @@
  * limitations under the License.
  */
 
-package com.example.iconsdk;
+package foundation.icon.icx;
 
-import foundation.icon.icx.Call;
-import foundation.icon.icx.IconService;
+import foundation.icon.icx.data.Block;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
-public class SimpleIconService {
-
+public class CallSyncAsync {
 
     public static final String URL = "http://localhost:9000/api/v3";
+    private IconService iconService;
 
-    public static void main(String... args) throws IOException {
-
+    public CallSyncAsync() {
         HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
         loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(loggning)
                 .build();
-        IconService iconService = new IconService(new HttpProvider(httpClient, URL));
-
-        BigInteger balance = iconService.getBalance("hx0000000000000000000000000000000000000000").execute();
-        System.out.println("balance:"+balance);
-
-        BigInteger totalSupply = iconService.getTotalSupply().execute();
-        System.out.println("totalSupply:"+totalSupply);
-
+        iconService = new IconService(new HttpProvider(httpClient, URL));
     }
 
+    public void sync() throws IOException {
+        Block block = iconService.getBlock("latest").execute();
+        System.out.println("sync call block hash:"+block.getBlockHash());
+    }
 
+    public void async() {
+        iconService.getBlock("latest").execute(new Callback<Block>() {
+            @Override
+            public void onSuccess(Block block) {
+                System.out.println("aysnc call block hash:"+block.getBlockHash());
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                // exception
+                System.out.println("exception:"+exception.getMessage());
+            }
+        });
+    }
+
+    public static void main(String[] args) throws IOException {
+        CallSyncAsync call = new CallSyncAsync();
+        call.sync();
+        call.async();
+    }
 }

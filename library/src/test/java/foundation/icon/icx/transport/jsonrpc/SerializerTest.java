@@ -18,22 +18,14 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BytesSerializer;
 import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SerializerTest {
@@ -44,10 +36,6 @@ class SerializerTest {
         mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addSerializer(RpcItem.class, new RpcItemSerializer());
-        module.addSerializer(BigInteger.class, new BigIntegerSerializer());
-        module.addSerializer(boolean.class, new BooleanSerializer());
-        module.addSerializer(Boolean.class, new BooleanSerializer());
-        module.addSerializer(byte[].class, new BytesSerializer());
         mapper.registerModule(module);
     }
 
@@ -89,50 +77,4 @@ class SerializerTest {
         assertTrue(json.length() > 0);
     }
 
-    @Test
-    void testBigIntegerSerializer() throws JsonProcessingException {
-        BigInteger intValue = new BigInteger("1234", 16);
-        String json = mapper.writeValueAsString(intValue);
-        System.out.print(json);
-        assertEquals("\"0x1234\"", json);
-    }
-
-    @Test
-    void testBooleanSerializer() throws JsonProcessingException {
-        String json = mapper.writeValueAsString(false);
-        System.out.print(json);
-        assertEquals("\"0x0\"", json);
-    }
-
-    @Test
-    void testBytesSerializer() throws JsonProcessingException {
-        String json = mapper.writeValueAsString(new byte[]{0x1, 0x2, 0x3, 0x4});
-        System.out.print(json);
-        assertEquals("\"0x01020304\"", json);
-    }
-
-    @Test
-    void testObject() throws IOException {
-        String json = mapper.writeValueAsString(new Custom());
-        System.out.print(json);
-        TypeReference<Map<String, Object>> type =
-                new TypeReference<Map<String, Object>>() {
-                };
-        Map<String, Object> value = mapper.readValue(json, type);
-        assertEquals("stringValue", value.get("stringValue"));
-        assertEquals("0x1234", value.get("intValue"));
-        assertEquals("0x0", value.get("booleanValue"));
-        assertEquals("0x01020304", value.get("bytesValue"));
-        assertEquals("0x1234", ((List) value.get("intArrayValue")).get(0));
-        assertEquals("0x1234", ((List) value.get("intArrayValue")).get(1));
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"})
-    public static class Custom {
-        public String stringValue = "stringValue";
-        public BigInteger intValue = new BigInteger("1234", 16);
-        public boolean booleanValue = false;
-        public byte[] bytesValue = new byte[]{0x1, 0x2, 0x3, 0x4};
-        public BigInteger[] intArrayValue = new BigInteger[]{intValue, intValue};
-    }
 }

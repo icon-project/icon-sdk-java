@@ -66,13 +66,13 @@ public class RpcItemCreator {
 
             Object fieldObject = null;
             try {
+                field.setAccessible(true);
                 fieldObject = field.get(parent);
             } catch (IllegalAccessException ignored) {
             }
-            if (fieldObject != null) {
-                field.setAccessible(true);
+            if (fieldObject != null || !type.isInstance(fieldObject)) {
                 RpcItem rpcItem = toRpcItem(type, fieldObject);
-                if (rpcItem != null) {
+                if (rpcItem != null && !rpcItem.isEmpty()) {
                     builder.put(key, rpcItem);
                 }
             }

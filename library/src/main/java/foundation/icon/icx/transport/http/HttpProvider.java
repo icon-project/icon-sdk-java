@@ -25,9 +25,6 @@ import foundation.icon.icx.Provider;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BigIntegerSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BooleanSerializer;
-import foundation.icon.icx.transport.jsonrpc.Serializers.BytesSerializer;
 import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -35,7 +32,6 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 /**
  * HttpProvider class transports as http jsonrpc
@@ -71,10 +67,6 @@ public class HttpProvider implements Provider {
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 SimpleModule module = new SimpleModule();
                 module.addSerializer(RpcItem.class, new RpcItemSerializer());
-                module.addSerializer(BigInteger.class, new BigIntegerSerializer());
-                module.addSerializer(boolean.class, new BooleanSerializer());
-                module.addSerializer(Boolean.class, new BooleanSerializer());
-                module.addSerializer(byte[].class, new BytesSerializer());
                 mapper.registerModule(module);
                 mapper.writeValue(sink.outputStream(), request);
             }

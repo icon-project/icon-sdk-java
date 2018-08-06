@@ -1,11 +1,8 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.*;
-import foundation.icon.icx.transport.jsonrpc.Request;
-import foundation.icon.icx.transport.jsonrpc.RpcConverter;
+import foundation.icon.icx.transport.jsonrpc.*;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
-import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -36,6 +33,7 @@ public class IconService {
                 TransactionResult.class, Converters.TRANSACTION_RESULT));
         Class<List<ScoreApi>> listClass = ((Class) List.class);
         addConverterFactory(Converters.newFactory(listClass, Converters.SCORE_API_LIST));
+        addConverterFactory(Converters.newFactory(RpcItem.class, Converters.RPC_ITEM));
     }
 
     /**

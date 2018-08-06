@@ -31,49 +31,6 @@ import java.util.Iterator;
  * Deserializers for jsonrpc value
  */
 public class Deserializers {
-    public static class BigIntegerDeserializer extends JsonDeserializer<BigInteger> {
-
-        @Override
-        public BigInteger deserialize(
-                JsonParser parser, DeserializationContext context)
-                throws IOException {
-            return deserialize(parser.readValueAsTree());
-        }
-
-        private BigInteger deserialize(JsonNode node) {
-            RpcValue rpcValue;
-            if (node.isLong()) {
-                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asLong())));
-            } else if (node.isInt()) {
-                rpcValue = new RpcValue(new BigInteger(String.valueOf(node.asInt())));
-            } else {
-                rpcValue = new RpcValue(node.asText());
-            }
-            return rpcValue.asInteger();
-        }
-    }
-
-    public static class BooleanDeserializer extends JsonDeserializer<Boolean> {
-
-        @Override
-        public Boolean deserialize(
-                JsonParser parser, DeserializationContext context)
-                throws IOException {
-            RpcValue rpcValue = new RpcValue(parser.getText());
-            return rpcValue.asBoolean();
-        }
-    }
-
-    public static class BytesDeserializer extends JsonDeserializer<byte[]> {
-
-        @Override
-        public byte[] deserialize(
-                JsonParser parser, DeserializationContext context)
-                throws IOException {
-            RpcValue rpcValue = new RpcValue(parser.getText());
-            return rpcValue.asBytes();
-        }
-    }
 
     public static class RpcItemDeserializer extends JsonDeserializer<RpcItem> {
 
