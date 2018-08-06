@@ -46,7 +46,7 @@ public class RpcObject implements RpcItem {
 
     @Override
     public boolean isEmpty() {
-        return items.isEmpty();
+        return items == null || items.isEmpty();
     }
 
 

@@ -62,7 +62,7 @@ public class RpcValue implements RpcItem {
 
     @Override
     public boolean isEmpty() {
-        return value.isEmpty();
+        return value == null || value.isEmpty();
     }
 
     /**
