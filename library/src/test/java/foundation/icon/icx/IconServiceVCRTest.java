@@ -22,6 +22,7 @@ import foundation.icon.icx.transport.jsonrpc.*;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.web3j.utils.Numeric;
 
@@ -31,6 +32,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class IconServiceVCRTest {
 
     public final String URL = "http://localhost:9000/api/v3";
