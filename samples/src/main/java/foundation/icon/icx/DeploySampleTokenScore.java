@@ -16,6 +16,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -52,8 +53,8 @@ public class DeploySampleTokenScore {
         String contentType = "application/zip";
         byte[] content = readFile();
         BigInteger networkId = new BigInteger("3");
-        String fromAddress = wallet.getAddress().asString();
-        String toAddress = "cx0000000000000000000000000000000000000000";
+        Address fromAddress = wallet.getAddress();
+        Address toAddress = Address.of("cx0000000000000000000000000000000000000000").build();
         BigInteger stepLimit = new BigInteger("14685000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");

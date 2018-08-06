@@ -16,10 +16,7 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Block;
-import foundation.icon.icx.data.ConfirmedTransaction;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 
@@ -39,7 +36,8 @@ public class BasicGetMethods {
     }
 
     public void getBalance() throws IOException {
-        BigInteger balance = iconService.getBalance("hx0000000000000000000000000000000000000000").execute();
+        Address address = Address.of("hx0000000000000000000000000000000000000000").build();
+        BigInteger balance = iconService.getBalance(address).execute();
         System.out.println("balance:"+balance);
     }
 
@@ -78,7 +76,7 @@ public class BasicGetMethods {
     }
 
     public void getScoreApi() throws IOException {
-        String scoreAddress = "cx2e6032c7598b882da4b156ed9334108a5b87f2dc";
+        Address scoreAddress = Address.of("cx2e6032c7598b882da4b156ed9334108a5b87f2dc").build();
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
         System.out.println("apis:"+apis);
     }

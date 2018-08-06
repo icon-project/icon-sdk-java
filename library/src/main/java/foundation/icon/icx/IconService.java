@@ -53,7 +53,7 @@ public class IconService {
      * @param address The address to get the balance of.
      * @return A BigNumber instance of the current balance for the given address in loop.
      */
-    public Call<BigInteger> getBalance(String address) {
+    public Call<BigInteger> getBalance(Address address) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(address))
@@ -112,7 +112,7 @@ public class IconService {
      * @return The ScoreApi object
      */
     @SuppressWarnings("unchecked")
-    public Call<List<ScoreApi>> getScoreApi(String scoreAddress) {
+    public Call<List<ScoreApi>> getScoreApi(Address scoreAddress) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))

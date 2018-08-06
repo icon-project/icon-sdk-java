@@ -16,6 +16,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
@@ -30,7 +31,7 @@ import java.math.BigInteger;
 public class CustomReponseClass {
 
     public final String URL = "http://localhost:9000/api/v3";
-    private final String scoreAddress = "cx0000000000000000000000000000000000000001";
+    private final Address scoreAddress = Address.of("cx0000000000000000000000000000000000000001").build();
 
     private IconService iconService;
 

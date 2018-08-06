@@ -37,12 +37,13 @@ public class IconServiceVCRTest {
     public final String PRIVATE_KEY_STRING =
             "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
 
-    private final String scoreAddress = "cx1ca4697e8229e29adce3cded4412a137be6d7edb";
+    private Address scoreAddress;
     private IconService iconService;
     private Wallet wallet;
 
     @BeforeEach
     void setUp() {
+        scoreAddress = Address.of("cx1ca4697e8229e29adce3cded4412a137be6d7edb").build();
         HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
         loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -54,7 +55,7 @@ public class IconServiceVCRTest {
 
     @Test
     void testGetBalance() throws IOException {
-        BigInteger balance = iconService.getBalance(wallet.getAddress().asString()).execute();
+        BigInteger balance = iconService.getBalance(wallet.getAddress()).execute();
         assertEquals(new BigInteger("1011444844999999999995"), balance);
     }
 
@@ -127,7 +128,7 @@ public class IconServiceVCRTest {
                 .build();
 
         IcxCall<RpcItem> call = new IcxCall.Builder()
-                .from(wallet.getAddress().asString())
+                .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
@@ -165,7 +166,7 @@ public class IconServiceVCRTest {
         });
 
         IcxCall<BalanceResponse> call = new IcxCall.Builder()
-                .from(wallet.getAddress().asString())
+                .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
@@ -182,11 +183,9 @@ public class IconServiceVCRTest {
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
-        Address toAddress = Address.of(scoreAddress).build();
-
         Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
                 .from(wallet.getAddress())
-                .to(toAddress)
+                .to(scoreAddress)
                 .stepLimit(new BigInteger("75000"))
                 .timestamp(new BigInteger("572812c5b0ae8", 16))
                 .nonce(new BigInteger("1"))

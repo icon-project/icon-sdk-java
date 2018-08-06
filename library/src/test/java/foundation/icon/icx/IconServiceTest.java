@@ -64,8 +64,8 @@ class IconServiceTest {
         person.hasPermission = false;
 
         IcxCall<PersonResponse> icxCall = new Builder()
-                .from("0x01")
-                .to("0x02")
+                .from(Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build())
+                .to(Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build())
                 .method("addUser")
                 .params(person)
                 .buildWith(PersonResponse.class);
@@ -94,7 +94,7 @@ class IconServiceTest {
     void testGetBalance() {
         Provider provider = mock(Provider.class);
 
-        String address = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address address = Address.of("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
 
         IconService iconService = new IconService(provider);
         iconService.getBalance(address);
@@ -156,7 +156,7 @@ class IconServiceTest {
     void testGetScoreApi() {
         Provider provider = mock(Provider.class);
 
-        String address = "cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address address = Address.of("cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
 
         IconService iconService = new IconService(provider);
         iconService.getScoreApi(address);
@@ -239,11 +239,11 @@ class IconServiceTest {
 
         Address fromAddress = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
         Address scoreAddress = Address.of("cx982aed605b065b50a2a639c1ea5710ef5a0501a9").build();
-        Address tokenAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+        Address toAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
         Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
 
         RpcObject params = new RpcObject.Builder()
-                .put("_to", new RpcValue(tokenAddress))
+                .put("_to", new RpcValue(toAddress))
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
