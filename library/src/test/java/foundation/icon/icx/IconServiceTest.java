@@ -31,53 +31,6 @@ class IconServiceTest {
         assertNotNull(iconService);
     }
 
-    @SuppressWarnings("unused")
-    @Test
-    void testQuery() {
-        Provider provider = mock(Provider.class);
-
-
-        IconService iconService = new IconService(provider);
-        iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
-            @Override
-            public <T> RpcConverter<T> create(Class<T> type) {
-                if(PersonResponse.class == type){
-                    return new RpcConverter<T>() {
-                        @Override
-                        public T convertTo(RpcItem object) {
-                            return null;
-                        }
-
-                        @Override
-                        public RpcItem convertFrom(T object) {
-                            return null;
-                        }
-                    };
-                }
-                return null;
-            }
-        });
-
-        Person person = new Person();
-        person.name = "gold bug";
-        person.age = new BigInteger("20");
-        person.hasPermission = false;
-
-        IcxCall<PersonResponse> icxCall = new Builder()
-                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
-                .to(new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
-                .method("addUser")
-                .params(person)
-                .buildWith(PersonResponse.class);
-
-        Call<PersonResponse> query = iconService.query(icxCall);
-
-        verify(provider).request(
-                argThat(Objects::nonNull),
-                argThat(Objects::nonNull));
-
-    }
-
     @Test
     void testGetTotalSupply() {
         Provider provider = mock(Provider.class);
@@ -132,7 +85,7 @@ class IconServiceTest {
         iconService.getBlock(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
-        params.put("hash", new RpcValue(hash));
+        params.put("hash", new RpcValue(hash.asBytes()));
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getBlockByHash", params)),
@@ -201,6 +154,61 @@ class IconServiceTest {
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
                 argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testQuery() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public RpcConverter<PersonResponse> create(Class type) {
+                if (PersonResponse.class == type) {
+                    return new RpcConverter<PersonResponse>() {
+                        @Override
+                        public PersonResponse convertTo(RpcItem object) {
+                            return new PersonResponse();
+                        }
+
+                        @Override
+                        public RpcItem convertFrom(PersonResponse object) {
+                            return null;
+                        }
+                    };
+                }
+                return null;
+            }
+        });
+
+        Person person = new Person();
+        person.name = "gold bug";
+        person.age = new BigInteger("20");
+        person.hasPermission = false;
+
+        IcxCall<PersonResponse> icxCall = new Builder()
+                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
+                .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .method("addUser")
+                .params(person)
+                .buildWith(PersonResponse.class);
+
+        @SuppressWarnings("unused")
+        Call<PersonResponse> query = iconService.query(icxCall);
+
+        verify(provider).request(
+                argThat(request -> {
+                    if (!request.getMethod().equals("icx_call")) return false;
+                    RpcObject params = request.getParams();
+                    RpcObject dataParams = params.getItem("data").asObject()
+                            .getItem("params").asObject();
+                    return dataParams.getItem("name").asString().equals(person.name) &&
+                            dataParams.getItem("age").asInteger().equals(person.age) &&
+                            dataParams.getItem("hasPermission").asBoolean() == person.hasPermission;
+                }),
+                argThat(Objects::nonNull));
+
     }
 
     @Test
@@ -276,29 +284,30 @@ class IconServiceTest {
     @SuppressWarnings("unchecked")
     private boolean isRequestMatches(Request request, String method, Map<String, RpcValue> params) {
 
-        boolean isMethodMatches = request.getMethod().equals(method);
-
-        boolean isParamMatches = (request.getParams() == null && params == null);
-        if (!isParamMatches && params.size() > 0) {
+        if (!request.getMethod().equals(method)) return false;
+        if (request.getParams() == null && params == null) return true;
+        if (request.getParams() != null && params != null) {
+            boolean isParamMatches = true;
             Set<String> keys = params.keySet();
             for (String key : keys) {
                 RpcValue value = ((RpcValue) (request.getParams()).getItem(key));
                 isParamMatches = value.asString().equals(params.get(key).asString());
                 if (!isParamMatches) break;
             }
+            return isParamMatches;
         }
-        return isMethodMatches && isParamMatches;
+        return false;
     }
 
     @SuppressWarnings("WeakerAccess")
-    class Person {
+    static class Person {
         public String name;
         public BigInteger age;
         public boolean hasPermission;
     }
 
     @SuppressWarnings("unused")
-    class PersonResponse {
+    static class PersonResponse {
         public boolean isOk;
         public String message;
     }

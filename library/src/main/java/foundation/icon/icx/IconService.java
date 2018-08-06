@@ -1,3 +1,20 @@
+/*
+ * Copyright 2018 ICON Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.*;
@@ -11,14 +28,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * IconService which provides APIs of ICON network
+ * IconService which provides APIs of ICON network.
  */
+@SuppressWarnings("WeakerAccess")
 public class IconService {
 
     private Provider provider;
     private List<RpcConverter.RpcConverterFactory> converterFactories = new ArrayList<>();
     private Map<Class, RpcConverter<?>> converterMap = new HashMap<>();
 
+    /**
+     * Creates IconService instance
+     *
+     * @param provider the worker that transporting requests
+     */
     @SuppressWarnings("unchecked")
     public IconService(Provider provider) {
         this.provider = provider;
@@ -192,6 +215,12 @@ public class IconService {
         return null;
     }
 
+    /**
+     * Adds Converter factory.
+     * It has a create function that creates the converter of the specific type.
+     *
+     * @param factory a converter factory
+     */
     public void addConverterFactory(RpcConverterFactory factory) {
         converterFactories.add(factory);
     }
