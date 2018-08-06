@@ -38,14 +38,12 @@ public class ConfirmedTransaction implements Transaction {
 
     @Override
     public Address getFrom() {
-        return Address.of(getSafeProperty("from").asString())
-                .build();
+        return getSafeProperty("from").asAddress();
     }
 
     @Override
     public Address getTo() {
-        return Address.of(getSafeProperty("to").asString())
-                .build();
+        return getSafeProperty("to").asAddress();
     }
 
     @Override
