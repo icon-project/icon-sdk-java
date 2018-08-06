@@ -83,9 +83,7 @@ public class IconService {
      * @param hash The block hash (without hex prefix) or the string 'latest'
      * @return The Block object
      */
-    public Call<Block> getBlock(String hash) {
-        if (hash.equals("latest")) return getLastBlock();
-
+    public Call<Block> getBlock(byte[] hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("hash", new RpcValue(hash))
@@ -93,6 +91,7 @@ public class IconService {
         Request request = new Request(requestId, "icx_getBlockByHash", params);
         return provider.request(request, findConverter(Block.class));
     }
+
 
     /**
      * Get the latest block.
@@ -129,7 +128,7 @@ public class IconService {
      * @param hash The transaction hash
      * @return The Transaction object
      */
-    public Call<ConfirmedTransaction> getTransaction(String hash) {
+    public Call<ConfirmedTransaction> getTransaction(byte[] hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
@@ -144,7 +143,7 @@ public class IconService {
      * @param hash The transaction hash
      * @return The TransactionResult object
      */
-    public Call<TransactionResult> getTransactionResult(String hash) {
+    public Call<TransactionResult> getTransactionResult(byte[] hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))

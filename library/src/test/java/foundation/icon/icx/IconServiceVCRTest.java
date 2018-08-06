@@ -73,14 +73,14 @@ public class IconServiceVCRTest {
 
     @Test
     void testGetBlockByHash() throws IOException {
-        String hash = "0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60";
-        Block block = iconService.getBlock(hash).execute();
-        assertEquals(Numeric.cleanHexPrefix(hash), Numeric.cleanHexPrefix(block.getBlockHash()));
+        RpcValue hash = new RpcValue("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
+        Block block = iconService.getBlock(hash.asBytes()).execute();
+        assertEquals(Numeric.cleanHexPrefix(hash.asString()), Numeric.cleanHexPrefix(block.getBlockHash()));
     }
 
     @Test
     void testGetLastBlock() throws IOException {
-        Block block = iconService.getBlock("latest").execute();
+        Block block = iconService.getLastBlock().execute();
         assertEquals("980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60", Numeric.cleanHexPrefix(block.getBlockHash()));
     }
 
@@ -92,15 +92,15 @@ public class IconServiceVCRTest {
 
     @Test
     void testGetTransaction() throws IOException {
-        String txHash = "0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7";
-        ConfirmedTransaction tx = iconService.getTransaction(txHash).execute();
+        RpcValue txHash = new RpcValue("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        ConfirmedTransaction tx = iconService.getTransaction(txHash.asBytes()).execute();
         assertEquals(txHash, tx.getTxHash());
     }
 
     @Test
     void testGetTransactionResult() throws IOException {
-        String txHash = "0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7";
-        TransactionResult tx = iconService.getTransactionResult(txHash).execute();
+        RpcValue txHash = new RpcValue("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        TransactionResult tx = iconService.getTransactionResult(txHash.asBytes()).execute();
         assertEquals(txHash, tx.getTxHash());
     }
 

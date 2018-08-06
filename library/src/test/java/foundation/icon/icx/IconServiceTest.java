@@ -126,10 +126,10 @@ class IconServiceTest {
     void testGetBlockByHash() {
         Provider provider = mock(Provider.class);
 
-        String hash = "033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7";
+        RpcValue hash = new RpcValue("0x033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7");
 
         IconService iconService = new IconService(provider);
-        iconService.getBlock(hash);
+        iconService.getBlock(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("hash", new RpcValue(hash));
@@ -144,7 +144,7 @@ class IconServiceTest {
         Provider provider = mock(Provider.class);
 
         IconService iconService = new IconService(provider);
-        iconService.getBlock("latest");
+        iconService.getLastBlock();
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getLastBlock", null)),
@@ -173,10 +173,10 @@ class IconServiceTest {
     void testGetTransaction() {
         Provider provider = mock(Provider.class);
 
-        String hash = "0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
+        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransaction(hash);
+        iconService.getTransaction(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
@@ -190,10 +190,10 @@ class IconServiceTest {
     void testGetTransactionResult() {
         Provider provider = mock(Provider.class);
 
-        String hash = "0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
+        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransactionResult(hash);
+        iconService.getTransactionResult(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
