@@ -17,7 +17,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.transport.http.HttpProvider;
-import foundation.icon.icx.transport.jsonrpc.RpcField;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
@@ -50,14 +50,14 @@ public class ScoreQuery {
                 .put("_owner", new RpcValue(fromAddress))
                 .build();
 
-        IcxCall<RpcField> call = new IcxCall.Builder()
+        IcxCall<RpcItem> call = new IcxCall.Builder()
                 .from(fromAddress)
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
                 .build();
 
-        RpcField result = iconService.query(call).execute();
+        RpcItem result = iconService.query(call).execute();
         System.out.println("result:"+result.asInteger());
     }
 
