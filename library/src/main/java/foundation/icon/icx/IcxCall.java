@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
  *
  * @param <O> Response type
  */
-public class IcxCall<O> {
+public final class IcxCall<O> {
 
     private RpcObject properties;
     private Class<O> responseType;
@@ -38,26 +38,30 @@ public class IcxCall<O> {
         this.responseType = responseType;
     }
 
-    public RpcObject getProperties() {
+
+    RpcObject getProperties() {
         return properties;
     }
 
-    public Class<O> responseType() {
+    Class<O> responseType() {
         return responseType;
     }
 
     /**
-     * Builder for creating immutable object of  IcxCall
+     * Builder for creating immutable object of IcxCall.<br />
+     * It has following properties<br />
+     * - {@link #from(String)} the request account<br />
+     * - {@link #to(String)} the SCORE address to call<br />
+     * - {@link #method(String)} )} the method name to call<br />
+     * - {@link #params(Object)}  the parameter of call<br />
      */
+    @SuppressWarnings("WeakerAccess")
     public static class Builder {
         private Address from;
         private Address to;
         private String method;
         private RpcItem params;
 
-        /**
-         * Create builder with the response type
-         */
         public Builder() {
         }
 
@@ -86,10 +90,21 @@ public class IcxCall<O> {
             return this;
         }
 
+        /**
+         * Builds with RpcItem. that means the return type is RpcItem
+         *
+         * @return IcxCall
+         */
         public IcxCall<RpcItem> build() {
             return buildWith(RpcItem.class);
         }
 
+        /**
+         * Builds with User defined class. an object of the class would be returned
+         *
+         * @param responseType Response type
+         * @return IcxCall
+         */
         public <O> IcxCall<O> buildWith(Class<O> responseType) {
             RpcObject data = new RpcObject.Builder()
                     .put("method", new RpcValue(method))
