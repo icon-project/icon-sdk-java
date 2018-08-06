@@ -46,7 +46,7 @@ public class Block {
     }
 
     public List<ConfirmedTransaction> getTransactions() {
-        RpcArray array = getSafeProperty("time_stamp").asArray();
+        RpcArray array = properties.getItem("confirmed_transaction_list").asArray();
         List<ConfirmedTransaction> transactions = new ArrayList<>();
         if (array != null) {
             for (int i = 0; i < array.size(); i++) {
