@@ -46,7 +46,7 @@ public class RpcObject implements RpcItem {
 
     @Override
     public boolean isEmpty() {
-        return items.isEmpty();
+        return items == null || items.isEmpty();
     }
 
 
@@ -85,12 +85,16 @@ public class RpcObject implements RpcItem {
         }
 
         public Builder put(String key, RpcItem item) {
-            if (!items.containsKey(key)) items.put(key, item);
+            if (!items.containsKey(key) && !isNullOrEmpty(item)) items.put(key, item);
             return this;
         }
 
         public RpcObject build() {
             return new RpcObject(items);
+        }
+
+        public boolean isNullOrEmpty(RpcItem item) {
+            return item == null || item.isEmpty();
         }
     }
 }

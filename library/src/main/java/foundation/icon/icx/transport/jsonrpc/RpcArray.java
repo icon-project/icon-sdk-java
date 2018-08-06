@@ -56,7 +56,7 @@ public class RpcArray implements RpcItem, Iterable<RpcItem> {
 
     @Override
     public boolean isEmpty() {
-        return items.isEmpty();
+        return items == null || items.isEmpty();
     }
 
     /**
