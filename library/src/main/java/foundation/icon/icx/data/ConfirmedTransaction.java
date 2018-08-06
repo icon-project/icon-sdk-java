@@ -103,7 +103,7 @@ public class ConfirmedTransaction implements Transaction {
 
     RpcItem getSafeProperty(String key) {
         RpcItem item = properties.getItem(key);
-        if (item != null) item.asValue();
+        if (item != null) return item.asValue();
         return new RpcItem() {
 
             @Override

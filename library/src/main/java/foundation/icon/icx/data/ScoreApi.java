@@ -69,7 +69,7 @@ public class ScoreApi {
 
     RpcItem getSafeProperty(String key) {
         RpcItem item = properties.getItem(key);
-        if (item != null) item.asValue();
+        if (item != null) return item.asValue();
         return new RpcItem() {
 
             @Override
