@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.example.iconsdk;
+package foundation.icon.icx;
 
-import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.data.ScoreApi;

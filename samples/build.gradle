@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.example.iconsdk'
+group 'foundation.icon.icx'
 
 sourceCompatibility = 1.8
 

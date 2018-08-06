@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.example.iconsdk;
+package foundation.icon.icx;
 
-import foundation.icon.icx.*;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -25,7 +24,7 @@ import org.web3j.utils.Convert;
 import java.io.IOException;
 import java.math.BigInteger;
 
-public class SendIcxTransaction {
+public class SendMessageTransaction {
 
     public final String URL = "http://localhost:9000/api/v3";
     public final String PRIVATE_KEY_STRING =
@@ -34,7 +33,7 @@ public class SendIcxTransaction {
     private IconService iconService;
     private Wallet wallet;
 
-    public SendIcxTransaction() {
+    public SendMessageTransaction() {
         HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
         loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -52,14 +51,15 @@ public class SendIcxTransaction {
         BigInteger stepLimit = new BigInteger("75000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
+        String message = "Hello World";
 
         Transaction transaction = TransactionBuilder.of(networkId)
                 .from(fromAddress)
                 .to(toAddress)
-                .value(value)
                 .stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .nonce(nonce)
+                .message(message)
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
@@ -68,6 +68,6 @@ public class SendIcxTransaction {
     }
 
     public static void main(String[] args) throws IOException {
-        new SendIcxTransaction().sendTransaction();
+        new SendMessageTransaction().sendTransaction();
     }
 }
