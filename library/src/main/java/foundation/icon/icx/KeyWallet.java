@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package foundation.icon.icx;
@@ -33,25 +34,35 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+/**
+ * An implementation of Wallet which uses of the key pair.
+ */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class KeyWallet implements Wallet {
 
     private ECKeyPair ecKeyPair;
 
-    public KeyWallet(ECKeyPair ecKeyPair) {
+    KeyWallet(ECKeyPair ecKeyPair) {
         this.ecKeyPair = ecKeyPair;
     }
 
+    /**
+     * {@see Wallet#getAddress()}
+     */
     @Override
     public Address getAddress() {
         return IconKeys.getAddress(ecKeyPair);
     }
 
+    /**
+     * {@see Wallet#signMessage(String)}
+     */
     @Override
     public byte[] signMessage(byte[] hash) {
         return signMessage(hash, ecKeyPair);
     }
 
-    protected ECKeyPair getEcKeyPair() {
+    ECKeyPair getEcKeyPair() {
         return ecKeyPair;
     }
 
@@ -61,36 +72,56 @@ public class KeyWallet implements Wallet {
         ByteBuffer buffer = ByteBuffer.allocate(data.getR().length + data.getS().length + 1);
         buffer.put(data.getR());
         buffer.put(data.getS());
-        buffer.put((byte)(data.getV() - 27));
+        buffer.put((byte) (data.getV() - 27));
         return buffer.array();
     }
 
-    public static KeyWallet create() {
-        try {
-            ECKeyPair ecKeyPair = IconKeys.createEcKeyPair();
-            return new KeyWallet(ecKeyPair);
-        } catch (InvalidAlgorithmParameterException e1) {
-            e1.printStackTrace();
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-        } catch (NoSuchProviderException e1) {
-            e1.printStackTrace();
-        }
-        return null;
+    /**
+     * Creates a new KeyWallet with generating a new key pair.
+     *
+     * @return new KeyWallet
+     */
+    public static KeyWallet create() throws
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        ECKeyPair ecKeyPair = IconKeys.createEcKeyPair();
+        return new KeyWallet(ecKeyPair);
     }
 
+    /**
+     * Loads a key wallet from the private key
+     *
+     * @param privateKey the private key to load
+     * @return KeyWallet
+     */
     public static KeyWallet load(String privateKey) {
         Credentials credentials = Credentials.create(privateKey);
         return new KeyWallet(credentials.getEcKeyPair());
     }
 
-    public static String store(KeyWallet wallet, String password, File destinationDirectory) throws CipherException, IOException {
-        KeystoreFile keystoreFile = Keystore.createLight(password, wallet.getEcKeyPair());
-        return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
-    }
-
+    /**
+     * Loads a key wallet from the KeyStore file
+     *
+     * @param password the password of KeyStore
+     * @param file     the KeyStore file
+     * @return KeyWallet
+     */
     public static KeyWallet load(String password, File file) throws IOException, CipherException {
         Credentials credentials = KeyStoreUtils.loadCredentials(password, file);
         return new KeyWallet(credentials.getEcKeyPair());
     }
+
+    /**
+     * Stores the KeyWallet as a KeyStore
+     *
+     * @param wallet               the wallet to store
+     * @param password             the password of KeyStore
+     * @param destinationDirectory the KeyStore file is stored at.
+     * @return name of the KeyStore file
+     */
+    public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
+            CipherException, IOException {
+        KeystoreFile keystoreFile = Keystore.createLight(password, wallet.getEcKeyPair());
+        return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
+    }
+
 }

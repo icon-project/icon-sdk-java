@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,14 @@ public interface Wallet {
     /**
      * Gets the address corresponding the key of the wallet
      *
-     * @return
+     * @return address
      */
     Address getAddress();
 
     /**
-     * @param message a message to sign
+     * Signs the message to generate a signature
+     *
+     * @param message the message to sign
      * @return signature
      */
     byte[] signMessage(byte[] message);
