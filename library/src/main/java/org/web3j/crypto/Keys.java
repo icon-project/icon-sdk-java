@@ -20,7 +20,7 @@ import static org.web3j.crypto.SecureRandomUtils.secureRandom;
 public class Keys {
 
     public static final int PRIVATE_KEY_SIZE = 32;
-    static final int PUBLIC_KEY_SIZE = 64;
+    public static final int PUBLIC_KEY_SIZE = 64;
 
     public static final int ADDRESS_SIZE = 160;
     public static final int ADDRESS_LENGTH_IN_HEX = ADDRESS_SIZE >> 2;

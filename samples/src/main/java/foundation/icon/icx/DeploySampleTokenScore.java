@@ -52,7 +52,7 @@ public class DeploySampleTokenScore {
         String contentType = "application/zip";
         byte[] content = readFile();
         BigInteger networkId = new BigInteger("3");
-        String fromAddress = wallet.getAddress();
+        String fromAddress = wallet.getAddress().asString();
         String toAddress = "cx0000000000000000000000000000000000000000";
         BigInteger stepLimit = new BigInteger("14685000");
         long timestamp = System.currentTimeMillis() * 1000L;

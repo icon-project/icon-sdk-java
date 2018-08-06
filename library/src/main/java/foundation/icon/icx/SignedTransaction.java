@@ -66,8 +66,8 @@ public class SignedTransaction {
     RpcObject getTransactionProperties() {
         return new Builder(Builder.Sort.KEY)
                 .put("version", getRpcItemFromTransaction(transaction.getVersion()))
-                .put("from", getRpcItemFromTransaction(transaction.getFrom()))
-                .put("to", getRpcItemFromTransaction(transaction.getTo()))
+                .put("from", getRpcItemFromTransaction(transaction.getFrom().asString()))
+                .put("to", getRpcItemFromTransaction(transaction.getTo().asString()))
                 .put("value", getRpcItemFromTransaction(transaction.getValue()))
                 .put("stepLimit", getRpcItemFromTransaction(transaction.getStepLimit()))
                 .put("timestamp", getRpcItemFromTransaction(transaction.getTimestamp()))

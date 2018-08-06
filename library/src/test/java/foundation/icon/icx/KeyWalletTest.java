@@ -50,15 +50,15 @@ public class KeyWalletTest {
     @Test
     public void testLoadWithPrivateKey() {
         KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
-        assertEquals(ADDRESS, wallet.getAddress());
+        assertEquals(ADDRESS, wallet.getAddress().asString());
     }
 
     @Test
     public void testCreate() {
         KeyWallet wallet = KeyWallet.create();
-        assertTrue(IconKeys.isValidAddress(wallet.getAddress()));
+        assertTrue(IconKeys.isValidAddress(wallet.getAddress().asString()));
         Wallet loadWallet = KeyWallet.load(wallet.getEcKeyPair().getPrivateKey().toString(16));
-        assertEquals(wallet.getAddress(), loadWallet.getAddress());
+        assertEquals(wallet.getAddress().asString(), loadWallet.getAddress().asString());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class KeyWalletTest {
         String fileName = KeyWallet.store(wallet, PASSWORD, tempDir);
         Matcher matcher = Pattern.compile("hx[0-9a-fA-F]{40}").matcher(fileName);
         if (matcher.find()) {
-            assertEquals(wallet.getAddress(), matcher.group());
+            assertEquals(wallet.getAddress().asString(), matcher.group());
         }
     }
 

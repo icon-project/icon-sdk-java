@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
@@ -29,8 +30,8 @@ import java.nio.charset.StandardCharsets;
 public final class TransactionBuilder {
 
     private BigInteger version = new BigInteger("3");
-    private String from;
-    private String to;
+    private Address from;
+    private Address to;
     private BigInteger value;
     private BigInteger stepLimit;
     private BigInteger timestamp;
@@ -69,12 +70,12 @@ public final class TransactionBuilder {
             return this;
         }
 
-        public IcxBuilder from(String from) {
+        public IcxBuilder from(Address from) {
             txBuilder.from = from;
             return this;
         }
 
-        public IcxBuilder to(String to) {
+        public IcxBuilder to(Address to) {
             txBuilder.to = to;
             return this;
         }
@@ -188,8 +189,8 @@ public final class TransactionBuilder {
 
     private static class SendingTransaction implements Transaction {
         private BigInteger version;
-        private String from;
-        private String to;
+        private Address from;
+        private Address to;
         private BigInteger value;
         private BigInteger stepLimit;
         private BigInteger timestamp;
@@ -217,12 +218,12 @@ public final class TransactionBuilder {
         }
 
         @Override
-        public String getFrom() {
+        public Address getFrom() {
             return from;
         }
 
         @Override
-        public String getTo() {
+        public Address getTo() {
             return to;
         }
 

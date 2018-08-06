@@ -20,6 +20,7 @@ package foundation.icon.icx;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -68,10 +69,12 @@ class SignedTransactionTest {
 //
 //        Expected output is:
 //        icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nid.0x1.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3
+        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address to = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .from(from)
+                .to(to)
                 .value(new BigInteger("de0b6b3a7640000", 16))
                 .stepLimit(new BigInteger("12345", 16))
                 .timestamp(new BigInteger("563a6cf330136", 16))
@@ -93,9 +96,12 @@ class SignedTransactionTest {
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
+        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address to = Address.of("cx982aed605b065b50a2a639c1ea5710ef5a0501a9").build();
+
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("cx982aed605b065b50a2a639c1ea5710ef5a0501a9")
+                .from(from)
+                .to(to)
                 .value(BigInteger.ONE)
                 .stepLimit(new BigInteger("75000"))
                 .timestamp(new BigInteger("5727e42882650", 16))
@@ -125,9 +131,12 @@ class SignedTransactionTest {
                 .put("symbol", new RpcValue("ICX"))
                 .build();
 
+        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address to = Address.of("cx0000000000000000000000000000000000000000").build();
+
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("cx0000000000000000000000000000000000000000")
+                .from(from)
+                .to(to)
                 .stepLimit(new BigInteger("e01348", 16))
                 .timestamp(new BigInteger("5727e42882650", 16))
                 .nonce(new BigInteger("1"))
@@ -147,9 +156,12 @@ class SignedTransactionTest {
     @Test
     void testMessageTransactionSerialize() {
 
+        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address to = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .from(from)
+                .to(to)
                 .stepLimit(new BigInteger("e01348", 16))
                 .timestamp(new BigInteger("5727e42882650", 16))
                 .nonce(new BigInteger("1"))

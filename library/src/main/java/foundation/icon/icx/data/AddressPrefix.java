@@ -12,30 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package foundation.icon.icx;
+package foundation.icon.icx.data;
 
-import foundation.icon.icx.data.Address;
+public enum AddressPrefix {
 
-/**
- * Wallet class signs the message(a transaction message to send)
- * using own key-pair
- */
-public interface Wallet {
+    EOA("hx"),
+    CONTRACT("cx");
 
-    /**
-     * Gets the address corresponding the key of the wallet
-     *
-     * @return
-     */
-    Address getAddress();
+    private String prefix;
 
-    /**
-     * @param message a message to sign
-     * @return signature
-     */
-    String signMessage(String message);
+    AddressPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
+    public String getValue() {
+        return prefix;
+    }
+
+    public static AddressPrefix fromString(String prefix) {
+        if (prefix != null) {
+            for (AddressPrefix p : AddressPrefix.values()) {
+                if (prefix.equalsIgnoreCase(p.getValue())) {
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
 }

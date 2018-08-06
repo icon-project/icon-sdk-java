@@ -1,6 +1,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
@@ -205,10 +206,12 @@ class IconServiceTest {
     @Test
     void testSendIcxTransaction() {
         Provider provider = mock(Provider.class);
+        Address fromAddress = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address toAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .from(fromAddress)
+                .to(toAddress)
                 .value(new BigInteger("de0b6b3a7640000", 16))
                 .stepLimit(new BigInteger("12345", 16))
                 .timestamp(new BigInteger("563a6cf330136", 16))
@@ -234,14 +237,19 @@ class IconServiceTest {
     void testTransferTokenTransaction() {
         Provider provider = mock(Provider.class);
 
+        Address fromAddress = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address scoreAddress = Address.of("cx982aed605b065b50a2a639c1ea5710ef5a0501a9").build();
+        Address tokenAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+        Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+
         RpcObject params = new RpcObject.Builder()
-                .put("_to", new RpcValue("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .put("_to", new RpcValue(tokenAddress))
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("cx982aed605b065b50a2a639c1ea5710ef5a0501a9")
+                .from(fromAddress)
+                .to(scoreAddress)
                 .stepLimit(new BigInteger("12345", 16))
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))

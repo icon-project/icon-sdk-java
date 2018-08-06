@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 
 import java.math.BigInteger;
@@ -24,9 +25,9 @@ import java.math.BigInteger;
 public interface Transaction {
     BigInteger getVersion();
 
-    String getFrom();
+    Address getFrom();
 
-    String getTo();
+    Address getTo();
 
     BigInteger getValue();
 

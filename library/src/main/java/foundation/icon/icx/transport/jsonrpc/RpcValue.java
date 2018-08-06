@@ -17,6 +17,8 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.data.Address;
+
 import java.math.BigInteger;
 
 /**
@@ -37,6 +39,10 @@ public class RpcValue implements RpcItem {
     private String value;
 
     public RpcValue(RpcValue value) {
+        this.value = value.asString();
+    }
+
+    public RpcValue(Address value) {
         this.value = value.asString();
     }
 
@@ -100,6 +106,11 @@ public class RpcValue implements RpcItem {
                     body.substring(2 * i, 2 * i + 2), 16);
         }
         return bytes;
+    }
+
+    @Override
+    public Address asAddress() {
+        return Address.of(value).build();
     }
 
     /**

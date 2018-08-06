@@ -17,6 +17,8 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.data.Address;
+
 import java.math.BigInteger;
 
 public interface RpcItem {
@@ -52,6 +54,10 @@ public interface RpcItem {
 
     default boolean asBoolean() {
         return asValue().asBoolean();
+    }
+
+    default Address asAddress() {
+        return asValue().asAddress();
     }
 
     class RpcValueException extends IllegalArgumentException {

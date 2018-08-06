@@ -45,7 +45,7 @@ public class SendIcxTransaction {
 
     public void sendTransaction() throws IOException {
         BigInteger networkId = new BigInteger("3");
-        String fromAddress = wallet.getAddress();
+        String fromAddress = wallet.getAddress().asString();
         String toAddress = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
 
         BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();

@@ -20,14 +20,13 @@ import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.crypto.KeyStoreUtils;
 import foundation.icon.icx.crypto.Keystore;
 import foundation.icon.icx.crypto.KeystoreFile;
+import foundation.icon.icx.data.Address;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -45,7 +44,7 @@ public class KeyWallet implements Wallet {
     }
 
     @Override
-    public String getAddress() {
+    public Address getAddress() {
         return IconKeys.getAddress(ecKeyPair);
     }
 
