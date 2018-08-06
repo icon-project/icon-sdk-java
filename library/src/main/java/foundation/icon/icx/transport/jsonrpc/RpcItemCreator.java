@@ -62,8 +62,9 @@ public class RpcItemCreator {
     static void addObjectFields(RpcObject.Builder builder, Object parent, Field[] fields) {
         for (Field field : fields) {
             String key = getKeyFromObjectField(field);
-            Class<?> type = field.getType();
+            if (key.equals("this$0")) continue;
 
+            Class<?> type = field.getType();
             Object fieldObject = null;
             try {
                 field.setAccessible(true);
@@ -76,6 +77,7 @@ public class RpcItemCreator {
                     builder.put(key, rpcItem);
                 }
             }
+
         }
     }
 
