@@ -43,7 +43,9 @@ public class RpcValue implements RpcItem {
     }
 
     public RpcValue(Address value) {
-        this.value = value.asString();
+        if (value != null) {
+            this.value = value.asString();
+        }
     }
 
     public RpcValue(String value) {
