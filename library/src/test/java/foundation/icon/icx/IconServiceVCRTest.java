@@ -21,9 +21,7 @@ import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.data.ScoreApi;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
-import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.transport.jsonrpc.*;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,19 +140,41 @@ public class IconServiceVCRTest {
     }
 
     @Test
-    void testIcxCallWithGenericParam() throws IOException {
+    void testIcxCallWithClassParam() throws IOException {
         TokenBalance params = new TokenBalance();
         params._owner = wallet.getAddress();
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
+            @Override
+            public <T> RpcConverter<T> create(Class<T> type) {
+                if (BalanceResponse.class == type) {
+                    return new RpcConverter<T>() {
+                        @Override
+                        public T convertTo(RpcItem object) {
+                            BalanceResponse response = new BalanceResponse();
+                            response.balance = object.asInteger();
+                            return (T) response;
+                        }
+
+                        @Override
+                        public RpcItem convertFrom(T object) {
+                            return RpcItemCreator.create(object);
+                        }
+                    };
+                }
+                return null;
+            }
+        });
+
+        IcxCall<BalanceResponse> call = new IcxCall.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
-                .build();
+                .buildWith(BalanceResponse.class);
 
-        RpcItem result = iconService.query(call).execute();
-        assertEquals(BigInteger.ZERO, result.asInteger());
+        BalanceResponse result = iconService.query(call).execute();
+        assertEquals(BigInteger.ZERO, result.balance);
     }
 
     @Test
@@ -223,6 +243,10 @@ public class IconServiceVCRTest {
 
     class TokenBalance {
         public String _owner;
+    }
+
+    class BalanceResponse {
+        public BigInteger balance;
     }
 
 
