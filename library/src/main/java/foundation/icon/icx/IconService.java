@@ -106,7 +106,7 @@ public class IconService {
      * @param hash The block hash (without hex prefix) or the string 'latest'
      * @return The Block object
      */
-    public Call<Block> getBlock(byte[] hash) {
+    public Call<Block> getBlock(Hex hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("hash", new RpcValue(hash))
@@ -151,7 +151,7 @@ public class IconService {
      * @param hash The transaction hash
      * @return The Transaction object
      */
-    public Call<ConfirmedTransaction> getTransaction(byte[] hash) {
+    public Call<ConfirmedTransaction> getTransaction(Hex hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))
@@ -166,7 +166,7 @@ public class IconService {
      * @param hash The transaction hash
      * @return The TransactionResult object
      */
-    public Call<TransactionResult> getTransactionResult(byte[] hash) {
+    public Call<TransactionResult> getTransactionResult(Hex hash) {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("txHash", new RpcValue(hash))

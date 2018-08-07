@@ -61,6 +61,10 @@ public class RpcValue implements RpcItem {
         this.value = Hex.toHexString(value, true);
     }
 
+    public RpcValue(Hex value) {
+        this.value = value.asString();
+    }
+
     @Override
     public boolean isEmpty() {
         return value == null || value.isEmpty();
@@ -101,6 +105,11 @@ public class RpcValue implements RpcItem {
         return new Address(value);
     }
 
+    @Override
+    public Hex asHex() {
+        return new Hex(value);
+    }
+
     /**
      * Returns the value as integer
      *
@@ -108,7 +117,7 @@ public class RpcValue implements RpcItem {
      */
     @Override
     public BigInteger asInteger() {
-        if (!(value.startsWith(HEX_PREFIX) || value.startsWith('-'+HEX_PREFIX))) {
+        if (!(value.startsWith(HEX_PREFIX) || value.startsWith('-' + HEX_PREFIX))) {
             throw new RpcValueException("The value is not hex string.");
         }
 

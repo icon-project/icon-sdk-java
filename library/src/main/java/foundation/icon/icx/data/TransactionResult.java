@@ -41,16 +41,16 @@ public class TransactionResult {
         return getSafeProperty("to").asString();
     }
 
-    public String getTxHash() {
-        return getSafeProperty("txHash").asString();
+    public Hex getTxHash() {
+        return getSafeProperty("txHash").asHex();
     }
 
     public BigInteger getBlockHeight() {
         return getSafeProperty("blockHeight").asInteger();
     }
 
-    public String getBlockHash() {
-        return getSafeProperty("blockHash").asString();
+    public Hex getBlockHash() {
+        return getSafeProperty("blockHash").asHex();
     }
 
     public BigInteger getCumulativeStepUsed() {

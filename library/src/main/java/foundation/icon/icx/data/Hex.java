@@ -16,13 +16,11 @@
 
 package foundation.icon.icx.data;
 
-import org.web3j.utils.Strings;
-
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 public class Hex {
     public static final String HEX_PREFIX = "0x";
-
     private final static char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9', 'a', 'b',
@@ -31,6 +29,30 @@ public class Hex {
             'o', 'p', 'q', 'r', 's', 't',
             'u', 'v', 'w', 'x', 'y', 'z'
     };
+
+    private String noPrefixValue;
+
+    public Hex(String value) {
+        if (isValidHex(value)) this.noPrefixValue = cleanHexPrefix(value);
+        else throw new IllegalArgumentException("The value is not hex string.");
+    }
+
+    public String asString() {
+        return withPrefix(noPrefixValue, true);
+    }
+
+    public String asString(boolean withPrefix) {
+        return withPrefix(noPrefixValue, withPrefix);
+    }
+
+    public byte[] asBytes() {
+        return hexStringToByteArray(noPrefixValue);
+    }
+
+    public static boolean isValidHex(String value) {
+        String v = cleanHexPrefix(value);
+        return v.matches("^[0-9a-fA-F]+$");
+    }
 
     public static String toHexStringZeroPadded(BigInteger value, int size, boolean withPrefix) {
         String result = toHexString(value, false);
@@ -44,37 +66,25 @@ public class Hex {
         }
 
         if (length < size) {
-            result = Strings.zeros(size - length) + result;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i > size - length; i++) {
+                sb.append('0');
+            }
+            result = sb.append(result).toString();
         }
 
-        if (withPrefix) {
-            return HEX_PREFIX + result;
-        } else {
-            return result;
-        }
+        return withPrefix(result, withPrefix);
     }
 
     public static byte[] toBytesPadded(BigInteger value, int length) {
-        byte[] result = new byte[length];
         byte[] bytes = value.toByteArray();
-
-        int bytesLength;
-        int srcOffset;
-        if (bytes[0] == 0) {
-            bytesLength = bytes.length - 1;
-            srcOffset = 1;
-        } else {
-            bytesLength = bytes.length;
-            srcOffset = 0;
-        }
-
+        int bytesLength = bytes.length;
         if (bytesLength > length) {
             throw new RuntimeException("Input is too large to put in byte array of size " + length);
         }
 
-        int destOffset = length - bytesLength;
-        System.arraycopy(bytes, srcOffset, result, destOffset, bytesLength);
-        return result;
+        byte[] zero = new byte[length - bytesLength];
+        return ByteBuffer.wrap(new byte[length]).put(zero).put(bytes).array();
     }
 
     public static byte[] hexStringToByteArray(String input) {
@@ -83,25 +93,25 @@ public class Hex {
         int len = cleanInput.length();
 
         if (len == 0) {
-            return new byte[] {};
+            return new byte[]{};
         }
 
-        byte[] data;
-        int startIdx;
+        byte[] bytes;
+        int start;
         if (len % 2 != 0) {
-            data = new byte[(len / 2) + 1];
-            data[0] = (byte) Character.digit(cleanInput.charAt(0), 16);
-            startIdx = 1;
+            bytes = new byte[(len / 2) + 1];
+            bytes[0] = (byte) Integer.parseInt("0", 16);
+            start = 1;
         } else {
-            data = new byte[len / 2];
-            startIdx = 0;
+            bytes = new byte[len / 2];
+            start = 0;
         }
 
-        for (int i = startIdx; i < len; i += 2) {
-            data[(i + 1) / 2] = (byte) ((Character.digit(cleanInput.charAt(i), 16) << 4)
-                    + Character.digit(cleanInput.charAt(i + 1), 16));
+        for (int i = start; i < bytes.length; i++) {
+            bytes[i] = (byte) Integer.parseInt(
+                    cleanInput.substring(2 * i, 2 * i + 2), 16);
         }
-        return data;
+        return bytes;
     }
 
     public static String cleanHexPrefix(String input) {
@@ -113,7 +123,7 @@ public class Hex {
     }
 
     public static boolean containsHexPrefix(String input) {
-        return input.length() > 1 && input.charAt(0) == '0' && input.charAt(1) == 'x';
+        return input.matches("^0x.*");
     }
 
     /**
@@ -124,8 +134,7 @@ public class Hex {
      * @return hex string
      */
     public static String toHexString(BigInteger value, boolean withPrefix) {
-        if (withPrefix) return HEX_PREFIX + value.toString(16);
-        else return value.toString(16);
+        return withPrefix(value.toString(16), withPrefix);
     }
 
     /**
@@ -153,24 +162,32 @@ public class Hex {
      * @return hex string
      */
     public static String toHexString(boolean value, boolean withPrefix) {
-        if (withPrefix) return value ? "0x1" : "0x0";
-        else return value ? "1" : "0";
+        String v = value ? "1" : "0";
+        return withPrefix(v, withPrefix);
     }
 
     /**
      * Convert hex string to BigInteger
      *
-     * @param value      a hex string to convert
+     * @param value a hex string to convert
      * @return BigInteger
      */
     public static BigInteger toBigInteger(String value) {
         String body = "";
         if (value.charAt(0) == '-') {
-            body = value.substring(0,1);
+            body = value.substring(0, 1);
             value = value.substring(1);
         }
         body = body + cleanHexPrefix(value);
         return new BigInteger(body, 16);
+    }
+
+    public static String withPrefix(String value, boolean withPrefix) {
+        if (withPrefix) {
+            return HEX_PREFIX + value;
+        } else {
+            return value;
+        }
     }
 
 }

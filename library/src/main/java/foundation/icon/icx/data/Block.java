@@ -56,8 +56,8 @@ public class Block {
         return transactions;
     }
 
-    public String getBlockHash() {
-        return getSafeProperty("block_hash").asString();
+    public Hex getBlockHash() {
+        return getSafeProperty("block_hash").asHex();
     }
 
     public String getPeerId() {
