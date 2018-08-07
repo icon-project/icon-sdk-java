@@ -269,6 +269,10 @@ Person memberPerson = iconService.query(call).execute();
 ```
 
 
+## Version
+
+0.9.0 beta
+
 
 ## License
 
