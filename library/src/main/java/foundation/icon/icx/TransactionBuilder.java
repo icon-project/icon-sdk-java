@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,13 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Builder for the transaction to send<br />
+ * There are four builder types.<br />
+ * IcxBuilder is a basic builder to send ICXs.<br />
+ * CallBuilder, DeployBuilder, MessageBuilder is an extended builder for each purpose.
+ * They can be initiated from IcxBuilder.
+ */
 public final class TransactionBuilder {
 
     private BigInteger version = new BigInteger("3");
@@ -47,16 +54,31 @@ public final class TransactionBuilder {
         return new SendingTransaction(this);
     }
 
+    /**
+     * Creates a builder for the given network ID
+     *
+     * @param nid network ID
+     * @return new builder
+     */
     public static IcxBuilder of(NetworkId nid) {
         IcxBuilder icxBuilder = new IcxBuilder(new TransactionBuilder());
         return icxBuilder.nid(nid.getValue());
     }
 
+    /**
+     * Creates a builder for the given network ID
+     *
+     * @param nid network ID in BigInteger
+     * @return new builder
+     */
     public static IcxBuilder of(BigInteger nid) {
         IcxBuilder icxBuilder = new IcxBuilder(new TransactionBuilder());
         return icxBuilder.nid(nid);
     }
 
+    /**
+     * A Builder for the simple icx sending transaction.
+     */
     public static final class IcxBuilder {
 
         private TransactionBuilder txBuilder;
@@ -100,14 +122,33 @@ public final class TransactionBuilder {
             return this;
         }
 
+        /**
+         * Converts the builder to CallBuilder with the calling method name
+         *
+         * @param method calling method name
+         * @return CallBuilder
+         */
         public CallBuilder call(String method) {
             return new CallBuilder(txBuilder, method);
         }
 
+        /**
+         * Converts the builder to DeployBuilder with the deploying content
+         *
+         * @param contentType content type
+         * @param content     deploying content
+         * @return DeployBuilder
+         */
         public DeployBuilder deploy(String contentType, byte[] content) {
             return new DeployBuilder(txBuilder, contentType, content);
         }
 
+        /**
+         * Converts the builder to MessageBuilder with the message
+         *
+         * @param message message
+         * @return MessageBuilder
+         */
         public MessageBuilder message(String message) {
             return new MessageBuilder(txBuilder, message);
         }
@@ -118,6 +159,9 @@ public final class TransactionBuilder {
 
     }
 
+    /**
+     * A Builder for the calling SCORE transaction.
+     */
     public static final class CallBuilder {
 
         private TransactionBuilder txBuilder;
@@ -147,6 +191,9 @@ public final class TransactionBuilder {
         }
     }
 
+    /**
+     * A Builder for the deploy transaction.
+     */
     public static final class DeployBuilder {
 
         private TransactionBuilder txBuilder;
@@ -172,6 +219,9 @@ public final class TransactionBuilder {
         }
     }
 
+    /**
+     * A Builder for the message transaction.
+     */
     public static final class MessageBuilder {
         private TransactionBuilder txBuilder;
 
