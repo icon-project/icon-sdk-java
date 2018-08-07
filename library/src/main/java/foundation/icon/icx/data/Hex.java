@@ -67,7 +67,7 @@ public class Hex {
 
         if (length < size) {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i > size - length; i++) {
+            for (int i = 0; i < size - length; i++) {
                 sb.append('0');
             }
             result = sb.append(result).toString();
