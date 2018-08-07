@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.InputMismatchException;
 
 import static org.web3j.crypto.Keys.ADDRESS_LENGTH_IN_HEX;
 import static org.web3j.crypto.Keys.PRIVATE_KEY_LENGTH_IN_HEX;
@@ -65,6 +66,8 @@ public class KeyStoreUtils {
         module.addDeserializer(KeystoreFile.class, new KeystoreFile.WalletFileDeserializer());
         mapper.registerModule(module);
         KeystoreFile keystoreFile = mapper.readValue(source, KeystoreFile.class);
+        if (keystoreFile.getCoinType() == null || !keystoreFile.getCoinType().equalsIgnoreCase("icx"))
+            throw new InputMismatchException("Invalid Keystore file");
         return Credentials.create(Keystore.decrypt(password, keystoreFile));
     }
 
