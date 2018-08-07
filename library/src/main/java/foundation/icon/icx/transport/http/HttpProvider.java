@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,11 @@ public class HttpProvider implements Provider {
         this(new OkHttpClient.Builder().build(), url);
     }
 
+    /**
+     * {@see Provider#request(Request, RpcConverter)}
+     */
     @Override
-    public <O> Call<O> request(
-            final Request request, RpcConverter<O> converter) {
+    public <O> Call<O> request(final Request request, RpcConverter<O> converter) {
 
         // Makes the request body
         RequestBody body = new RequestBody() {
