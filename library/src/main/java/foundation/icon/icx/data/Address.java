@@ -72,4 +72,31 @@ public class Address {
             return new Address(prefix, body);
         }
     }
+
+    public enum AddressPrefix {
+
+        EOA("hx"),
+        CONTRACT("cx");
+
+        private String prefix;
+
+        AddressPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getValue() {
+            return prefix;
+        }
+
+        public static AddressPrefix fromString(String prefix) {
+            if (prefix != null) {
+                for (AddressPrefix p : AddressPrefix.values()) {
+                    if (prefix.equalsIgnoreCase(p.getValue())) {
+                        return p;
+                    }
+                }
+            }
+            return null;
+        }
+    }
 }

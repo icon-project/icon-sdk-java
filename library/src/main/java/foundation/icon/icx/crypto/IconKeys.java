@@ -18,7 +18,6 @@ package foundation.icon.icx.crypto;
 
 
 import foundation.icon.icx.data.Address;
-import foundation.icon.icx.data.AddressPrefix;
 import foundation.icon.icx.data.Hex;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.web3j.crypto.ECKeyPair;
@@ -47,7 +46,7 @@ public class IconKeys {
 
     public static Address getAddress(ECKeyPair ecKeyPair) {
         return new Address.Builder()
-                .prefix(AddressPrefix.EOA)
+                .prefix(Address.AddressPrefix.EOA)
                 .body(getAddressHash(ecKeyPair.getPublicKey()))
                 .build();
     }
@@ -97,8 +96,8 @@ public class IconKeys {
         return getAddressHexPrefix(input) != null;
     }
 
-    public static AddressPrefix getAddressHexPrefix(String input) {
-        return AddressPrefix.fromString(input.substring(0, 2));
+    public static Address.AddressPrefix getAddressHexPrefix(String input) {
+        return Address.AddressPrefix.fromString(input.substring(0, 2));
     }
 
     public static byte[] getHexAddress(String input) {
