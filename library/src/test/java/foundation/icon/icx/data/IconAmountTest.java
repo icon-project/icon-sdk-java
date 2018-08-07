@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 theloop Inc.
+ * Copyright 2018 ICON Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package foundation.icon.icx.transport.jsonrpc.utils;
+package foundation.icon.icx.data;
 
-import foundation.icon.icx.data.IconAmount;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
