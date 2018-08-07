@@ -1,6 +1,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
@@ -63,8 +64,8 @@ class IconServiceTest {
         person.hasPermission = false;
 
         IcxCall<PersonResponse> icxCall = new Builder()
-                .from("0x01")
-                .to("0x02")
+                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
+                .to(new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
                 .params(person)
                 .buildWith(PersonResponse.class);
@@ -93,7 +94,7 @@ class IconServiceTest {
     void testGetBalance() {
         Provider provider = mock(Provider.class);
 
-        String address = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         IconService iconService = new IconService(provider);
         iconService.getBalance(address);
@@ -125,10 +126,10 @@ class IconServiceTest {
     void testGetBlockByHash() {
         Provider provider = mock(Provider.class);
 
-        String hash = "033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7";
+        RpcValue hash = new RpcValue("0x033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7");
 
         IconService iconService = new IconService(provider);
-        iconService.getBlock(hash);
+        iconService.getBlock(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("hash", new RpcValue(hash));
@@ -143,7 +144,7 @@ class IconServiceTest {
         Provider provider = mock(Provider.class);
 
         IconService iconService = new IconService(provider);
-        iconService.getBlock("latest");
+        iconService.getLastBlock();
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getLastBlock", null)),
@@ -155,7 +156,7 @@ class IconServiceTest {
     void testGetScoreApi() {
         Provider provider = mock(Provider.class);
 
-        String address = "cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address address = new Address("cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         IconService iconService = new IconService(provider);
         iconService.getScoreApi(address);
@@ -172,10 +173,10 @@ class IconServiceTest {
     void testGetTransaction() {
         Provider provider = mock(Provider.class);
 
-        String hash = "0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
+        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransaction(hash);
+        iconService.getTransaction(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
@@ -189,10 +190,10 @@ class IconServiceTest {
     void testGetTransactionResult() {
         Provider provider = mock(Provider.class);
 
-        String hash = "0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
+        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransactionResult(hash);
+        iconService.getTransactionResult(hash.asBytes());
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
@@ -205,10 +206,12 @@ class IconServiceTest {
     @Test
     void testSendIcxTransaction() {
         Provider provider = mock(Provider.class);
+        Address fromAddress = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address toAddress = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("hx5bfdb090f43a808005ffc27c25b213145e80b7cd")
+                .from(fromAddress)
+                .to(toAddress)
                 .value(new BigInteger("de0b6b3a7640000", 16))
                 .stepLimit(new BigInteger("12345", 16))
                 .timestamp(new BigInteger("563a6cf330136", 16))
@@ -234,14 +237,19 @@ class IconServiceTest {
     void testTransferTokenTransaction() {
         Provider provider = mock(Provider.class);
 
+        Address fromAddress = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address scoreAddress = new Address("cx982aed605b065b50a2a639c1ea5710ef5a0501a9");
+        Address toAddress = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
+        new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+
         RpcObject params = new RpcObject.Builder()
-                .put("_to", new RpcValue("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .put("_to", new RpcValue(toAddress))
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
-                .from("hxbe258ceb872e08851f1f59694dac2558708ece11")
-                .to("cx982aed605b065b50a2a639c1ea5710ef5a0501a9")
+                .from(fromAddress)
+                .to(scoreAddress)
                 .stepLimit(new BigInteger("12345", 16))
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))

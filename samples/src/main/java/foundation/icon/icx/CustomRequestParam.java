@@ -16,6 +16,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import okhttp3.OkHttpClient;
@@ -26,7 +27,7 @@ import java.io.IOException;
 public class CustomRequestParam {
 
     public final String URL = "http://localhost:9000/api/v3";
-    private final String scoreAddress = "cxca23d7fd434fd37d5cd01c7183adf7658375a6db";
+    private final Address scoreAddress = new Address("cxca23d7fd434fd37d5cd01c7183adf7658375a6db");
 
     private IconService iconService;
 
@@ -40,7 +41,7 @@ public class CustomRequestParam {
     }
 
     public void getBalance() throws IOException {
-        String address = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
         Param params = new Param();
         params._owner = address;
 
@@ -56,7 +57,7 @@ public class CustomRequestParam {
     }
 
     class Param {
-        public String _owner;
+        public Address _owner;
     }
 
     public static void main(String[] args) throws IOException {

@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -49,8 +50,8 @@ public class IcxCall<O> {
      * Builder for creating immutable object of  IcxCall
      */
     public static class Builder {
-        private String from;
-        private String to;
+        private Address from;
+        private Address to;
         private String method;
         private RpcItem params;
 
@@ -60,12 +61,12 @@ public class IcxCall<O> {
         public Builder() {
         }
 
-        public Builder from(String from) {
+        public Builder from(Address from) {
             this.from = from;
             return this;
         }
 
-        public Builder to(String to) {
+        public Builder to(Address to) {
             this.to = to;
             return this;
         }

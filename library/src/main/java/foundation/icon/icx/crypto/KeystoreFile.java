@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.web3j.utils.Numeric;
+import foundation.icon.icx.data.Address;
 
 import java.io.IOException;
 
@@ -53,6 +53,10 @@ public class KeystoreFile {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address.asString();
     }
 
     public Crypto getCrypto() {
@@ -129,18 +133,6 @@ public class KeystoreFile {
         result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         result = 31 * result + version;
         return result;
-    }
-
-    static class WalletFileDeserializer extends JsonDeserializer<KeystoreFile> {
-
-        @Override
-        public KeystoreFile deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            JsonNode jsonNode = p.getCodec().readTree(p);
-            ObjectMapper mapper = new ObjectMapper();
-            KeystoreFile wallet = mapper.convertValue(jsonNode, KeystoreFile.class);
-            wallet.setAddress(Numeric.cleanIcxAddressPrefix(wallet.getAddress()));
-            return wallet;
-        }
     }
 
     public static class Crypto {

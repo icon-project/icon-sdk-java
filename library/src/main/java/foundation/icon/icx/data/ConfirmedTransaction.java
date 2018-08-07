@@ -37,13 +37,13 @@ public class ConfirmedTransaction implements Transaction {
     }
 
     @Override
-    public String getFrom() {
-        return getSafeProperty("from").asString();
+    public Address getFrom() {
+        return getSafeProperty("from").asAddress();
     }
 
     @Override
-    public String getTo() {
-        return getSafeProperty("to").asString();
+    public Address getTo() {
+        return getSafeProperty("to").asAddress();
     }
 
     @Override

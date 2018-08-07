@@ -16,12 +16,11 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.IconAmount;
 import foundation.icon.icx.transport.http.HttpProvider;
-import foundation.icon.icx.transport.utils.Convert;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-
-
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -47,10 +46,10 @@ public class SendIcxTransaction {
 
     public void sendTransaction() throws IOException {
         BigInteger networkId = new BigInteger("3");
-        String fromAddress = wallet.getAddress();
-        String toAddress = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
+        Address fromAddress = wallet.getAddress();
+        Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
-        BigInteger value = Convert.toLoop("1", Convert.Unit.ICX);
+        BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
         BigInteger stepLimit = new BigInteger("75000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");

@@ -20,21 +20,18 @@ import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.crypto.KeyStoreUtils;
 import foundation.icon.icx.crypto.Keystore;
 import foundation.icon.icx.crypto.KeystoreFile;
+import foundation.icon.icx.data.Address;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Sign;
-import org.web3j.utils.Numeric;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Base64;
 
 public class KeyWallet implements Wallet {
 
@@ -45,12 +42,12 @@ public class KeyWallet implements Wallet {
     }
 
     @Override
-    public String getAddress() {
+    public Address getAddress() {
         return IconKeys.getAddress(ecKeyPair);
     }
 
     @Override
-    public String signMessage(String hash) {
+    public byte[] signMessage(byte[] hash) {
         return signMessage(hash, ecKeyPair);
     }
 
@@ -58,15 +55,14 @@ public class KeyWallet implements Wallet {
         return ecKeyPair;
     }
 
-    private String signMessage(String hash, ECKeyPair ecKeyPair) {
-        byte[] bHash=Numeric.hexStringToByteArray(hash);
+    private byte[] signMessage(byte[] bHash, ECKeyPair ecKeyPair) {
         Sign.SignatureData data = Sign.signMessage(bHash, ecKeyPair, false);
 
         ByteBuffer buffer = ByteBuffer.allocate(data.getR().length + data.getS().length + 1);
         buffer.put(data.getR());
         buffer.put(data.getS());
         buffer.put((byte)(data.getV() - 27));
-        return Base64.getEncoder().encodeToString(buffer.array());
+        return buffer.array();
     }
 
     public static KeyWallet create() {

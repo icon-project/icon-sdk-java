@@ -17,10 +17,11 @@
 package foundation.icon.icx.crypto;
 
 
+import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Hex;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -28,6 +29,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import static org.web3j.crypto.Keys.ADDRESS_LENGTH_IN_HEX;
 import static org.web3j.crypto.Keys.PUBLIC_KEY_LENGTH_IN_HEX;
 
 /**
@@ -42,25 +44,21 @@ public class IconKeys {
         return ECKeyPair.create(keyPair);
     }
 
-    public static ECKeyPair createEcKeyPair(String privateKey) {
-        return ECKeyPair.create(Numeric.toBigInt(privateKey));
+    public static Address getAddress(ECKeyPair ecKeyPair) {
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(ecKeyPair.getPublicKey()));
     }
 
-    public static String getAddress(ECKeyPair ecKeyPair) {
-        return getAddress(ecKeyPair.getPublicKey());
+    public static byte[] getAddressHash(BigInteger publicKey) {
+        return getAddressHash(Hex.toHexStringZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX, true));
     }
 
-    public static String getAddress(BigInteger publicKey) {
-        return getAddress(Numeric.toHexStringWithPrefixZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX));
+    public static byte[] getAddressHash(String publicKey) {
+        String publicKeyNoPrefix = cleanHexPrefix(publicKey);
+        return getAddressHash(Hex.hexStringToByteArray(publicKeyNoPrefix));
+//        return "hx" + RpcValue.toHexString(b, false);
     }
 
-    public static String getAddress(String publicKey) {
-        String publicKeyNoPrefix = Numeric.cleanHexPrefix(publicKey);
-        byte[] b = getAddress(Numeric.hexStringToByteArray(publicKeyNoPrefix));
-        return "hx" + Numeric.toHexString(b, 0, b.length, false);
-    }
-
-    public static byte[] getAddress(byte[] publicKey) {
+    public static byte[] getAddressHash(byte[] publicKey) {
         byte[] hash = new SHA3.Digest256().digest(publicKey);
 
         int length = 20;
@@ -69,7 +67,43 @@ public class IconKeys {
         return result;
     }
 
-    public static boolean isValidAddress(String address) {
-        return address.matches("^hx[0-9a-fA-F]{40}$");
+    public static boolean isValidAddress(Address input) {
+        return isValidAddress(input.asString());
     }
+
+    public static boolean isValidAddress(String input) {
+        String cleanInput = cleanHexPrefix(input);
+        try {
+            cleanInput.matches("^[0-9a-fA-F]{40}$");
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return cleanInput.length() == ADDRESS_LENGTH_IN_HEX;
+    }
+
+    public static String cleanHexPrefix(String input) {
+        if (containsHexPrefix(input)) {
+            return input.substring(2);
+        } else {
+            return input;
+        }
+    }
+
+    public static boolean containsHexPrefix(String input) {
+        return getAddressHexPrefix(input) != null;
+    }
+
+    public static Address.AddressPrefix getAddressHexPrefix(String input) {
+        return Address.AddressPrefix.fromString(input.substring(0, 2));
+    }
+
+    public static byte[] getHexAddress(String input) {
+        String cleanInput = cleanHexPrefix(input);
+        return Hex.hexStringToByteArray(cleanInput);
+    }
+
+    public static String getHexAddress(byte[] input) {
+        return Hex.toHexString(input, false);
+    }
+
 }

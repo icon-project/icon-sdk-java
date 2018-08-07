@@ -17,6 +17,8 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
+
 /**
  * Wallet class signs the message(a transaction message to send)
  * using own key-pair
@@ -28,12 +30,12 @@ public interface Wallet {
      *
      * @return
      */
-    String getAddress();
+    Address getAddress();
 
     /**
      * @param message a message to sign
      * @return signature
      */
-    String signMessage(String message);
+    byte[] signMessage(byte[] message);
 
 }

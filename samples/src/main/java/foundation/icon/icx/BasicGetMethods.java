@@ -16,11 +16,9 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Block;
-import foundation.icon.icx.data.ConfirmedTransaction;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 
 import java.io.IOException;
@@ -39,7 +37,8 @@ public class BasicGetMethods {
     }
 
     public void getBalance() throws IOException {
-        BigInteger balance = iconService.getBalance("hx0000000000000000000000000000000000000000").execute();
+        Address address = new Address("hx0000000000000000000000000000000000000000");
+        BigInteger balance = iconService.getBalance(address).execute();
         System.out.println("balance:"+balance);
     }
 
@@ -55,30 +54,30 @@ public class BasicGetMethods {
     }
 
     public void getBlockByHash() throws IOException {
-        String hash = "0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60";
-        Block block = iconService.getBlock(hash).execute();
+        RpcValue hash = new RpcValue("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
+        Block block = iconService.getBlock(hash.asBytes()).execute();
         System.out.println("block:"+block);
     }
 
     public void getLastBlock() throws IOException {
-        Block block = iconService.getBlock("latest").execute();
+        Block block = iconService.getLastBlock().execute();
         System.out.println("block:"+block);
     }
 
     public void getTransaction() throws IOException {
-        String txHash = "0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7";
-        ConfirmedTransaction tx = iconService.getTransaction(txHash).execute();
+        RpcValue txHash = new RpcValue("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        ConfirmedTransaction tx = iconService.getTransaction(txHash.asBytes()).execute();
         System.out.println("transaction:"+tx);
     }
 
     public void getTransactionResult() throws IOException {
-        String txHash = "0x864cac2cbbde571116f4a8390047dfc88239168a2ddf70cb96601eb987a97cb7";
-        TransactionResult tx = iconService.getTransactionResult(txHash).execute();
+        RpcValue txHash = new RpcValue("0x864cac2cbbde571116f4a8390047dfc88239168a2ddf70cb96601eb987a97cb7");
+        TransactionResult tx = iconService.getTransactionResult(txHash.asBytes()).execute();
         System.out.println("transaction:"+tx);
     }
 
     public void getScoreApi() throws IOException {
-        String scoreAddress = "cx2e6032c7598b882da4b156ed9334108a5b87f2dc";
+        Address scoreAddress = new Address("cx2e6032c7598b882da4b156ed9334108a5b87f2dc");
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
         System.out.println("apis:"+apis);
     }
