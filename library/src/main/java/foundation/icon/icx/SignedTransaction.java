@@ -17,8 +17,10 @@
 
 package foundation.icon.icx;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -30,6 +32,7 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Base64;
 
@@ -154,6 +157,19 @@ public class SignedTransaction {
         if (jsonString == null || jsonString.length() < 2) return "";
         return "icx_sendTransaction." +
                 jsonString.substring(1, jsonString.length() - 1);
+    }
+
+    private static class SerializePrinter extends MinimalPrettyPrinter {
+
+        @Override
+        public void writeObjectFieldValueSeparator(JsonGenerator jg) throws IOException {
+            jg.writeRaw('.');
+        }
+
+        @Override
+        public void writeObjectEntrySeparator(JsonGenerator jg) throws IOException, JsonGenerationException {
+            jg.writeRaw('.');
+        }
     }
 
 }
