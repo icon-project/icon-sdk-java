@@ -31,6 +31,7 @@ import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 import java.math.BigInteger;
+import java.util.Base64;
 
 /**
  * SignedTransaction serializes transaction messages and
@@ -59,7 +60,8 @@ public class SignedTransaction {
             builder.put(key, getSortedItem(properties.getItem(key)));
         }
 
-        builder.put("signature", new RpcValue(getSignature(properties)));
+        String signature = Base64.getEncoder().encodeToString(getSignature(properties));
+        builder.put("signature", new RpcValue(signature));
         return builder.build();
     }
 
@@ -116,9 +118,8 @@ public class SignedTransaction {
      *
      * @return signature
      */
-    String getSignature(RpcObject properties) {
-        String message = generateMessage(properties);
-        return wallet.signMessage(message);
+    byte[] getSignature(RpcObject properties) {
+        return wallet.signMessage(generateMessage(properties));
     }
 
     /**
@@ -126,9 +127,8 @@ public class SignedTransaction {
      *
      * @return message hash
      */
-    String generateMessage(RpcObject properties) {
-        byte[] bHash = new SHA3.Digest256().digest(serialize(properties).getBytes());
-        return RpcValue.toHexString(bHash, false);
+    byte[] generateMessage(RpcObject properties) {
+        return new SHA3.Digest256().digest(serialize(properties).getBytes());
     }
 
     /**

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +29,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
-
-import static org.web3j.crypto.Keys.ADDRESS_LENGTH_IN_HEX;
-import static org.web3j.crypto.Keys.PRIVATE_KEY_LENGTH_IN_HEX;
 
 
 /**
@@ -62,9 +58,6 @@ public class KeyStoreUtils {
     public static Credentials loadCredentials(String password, File source)
             throws IOException, CipherException {
         ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule("WalletModule");
-        module.addDeserializer(KeystoreFile.class, new KeystoreFile.WalletFileDeserializer());
-        mapper.registerModule(module);
         KeystoreFile keystoreFile = mapper.readValue(source, KeystoreFile.class);
         if (keystoreFile.getCoinType() == null || !keystoreFile.getCoinType().equalsIgnoreCase("icx"))
             throw new InputMismatchException("Invalid Keystore file");
@@ -79,20 +72,4 @@ public class KeyStoreUtils {
         return now.format(format) + keystoreFile.getAddress() + ".json";
     }
 
-    public static boolean isValidPrivateKey(String privateKey) {
-        String cleanPrivateKey = Numeric.cleanHexPrefix(privateKey);
-        return cleanPrivateKey.length() == PRIVATE_KEY_LENGTH_IN_HEX;
-    }
-
-    public static boolean isValidAddress(String input) {
-        String cleanInput = Numeric.cleanHexPrefix(input);
-
-        try {
-            Numeric.toBigIntNoPrefix(cleanInput);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-
-        return cleanInput.length() == ADDRESS_LENGTH_IN_HEX;
-    }
 }

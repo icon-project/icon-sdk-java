@@ -36,6 +36,6 @@ public interface Wallet {
      * @param message a message to sign
      * @return signature
      */
-    String signMessage(String message);
+    byte[] signMessage(byte[] message);
 
 }

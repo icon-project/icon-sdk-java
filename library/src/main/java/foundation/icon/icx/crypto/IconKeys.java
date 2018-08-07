@@ -19,11 +19,10 @@ package foundation.icon.icx.crypto;
 
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.AddressPrefix;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.data.Hex;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -54,12 +53,12 @@ public class IconKeys {
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {
-        return getAddressHash(Numeric.toHexStringWithPrefixZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX));
+        return getAddressHash(Hex.toHexStringZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX, true));
     }
 
     public static byte[] getAddressHash(String publicKey) {
         String publicKeyNoPrefix = cleanHexPrefix(publicKey);
-        return getAddressHash(Numeric.hexStringToByteArray(publicKeyNoPrefix));
+        return getAddressHash(Hex.hexStringToByteArray(publicKeyNoPrefix));
 //        return "hx" + RpcValue.toHexString(b, false);
     }
 
@@ -104,11 +103,11 @@ public class IconKeys {
 
     public static byte[] getHexAddress(String input) {
         String cleanInput = cleanHexPrefix(input);
-        return Numeric.hexStringToByteArray(cleanInput);
+        return Hex.hexStringToByteArray(cleanInput);
     }
 
     public static String getHexAddress(byte[] input) {
-        return RpcValue.toHexString(input, false);
+        return Hex.toHexString(input, false);
     }
 
 }
