@@ -19,6 +19,7 @@ package foundation.icon.icx.data;
 import foundation.icon.icx.crypto.IconKeys;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 
 public class Address {
 
@@ -44,6 +45,17 @@ public class Address {
 
     public String asString() {
         return getPrefix().getValue() + IconKeys.getHexAddress(body);
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj instanceof Address) {
+            Address other = (Address) obj;
+            return other.prefix == prefix && Arrays.equals(other.body, body);
+        }
+        return false;
     }
 
     public enum AddressPrefix {
@@ -72,4 +84,5 @@ public class Address {
             return null;
         }
     }
+
 }

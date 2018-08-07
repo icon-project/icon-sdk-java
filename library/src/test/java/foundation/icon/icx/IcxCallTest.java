@@ -1,5 +1,6 @@
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,8 @@ import java.math.BigInteger;
 class IcxCallTest {
     @Test
     void testIcxCallBuilder() {
-        String from = "hx0000000000000000000000000000000000000000";
-        String to = "cx1111111111111111111111111111111111111111";
+        Address from = new Address("hx0000000000000000000000000000000000000000");
+        Address to = new Address("cx1111111111111111111111111111111111111111");
         String method = "myMethod";
         Person person = new Person();
         person.name = "gold bug";
@@ -27,8 +28,8 @@ class IcxCallTest {
         RpcObject data = properties.getItem("data").asObject();
         RpcObject dataParams = data.getItem("params").asObject();
 
-        Assertions.assertEquals(from, properties.getItem("from").asString());
-        Assertions.assertEquals(to, properties.getItem("to").asString());
+        Assertions.assertEquals(from, properties.getItem("from").asAddress());
+        Assertions.assertEquals(to, properties.getItem("to").asAddress());
         Assertions.assertEquals(method, data.getItem("method").asString());
         Assertions.assertEquals(person.name, dataParams.getItem("name").asString());
         Assertions.assertEquals(person.age, dataParams.getItem("age").asInteger());

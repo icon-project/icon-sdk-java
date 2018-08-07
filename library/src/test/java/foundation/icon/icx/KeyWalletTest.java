@@ -19,6 +19,7 @@ package foundation.icon.icx;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import foundation.icon.icx.crypto.IconKeys;
+import foundation.icon.icx.data.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.web3j.crypto.CipherException;
@@ -54,7 +55,7 @@ public class KeyWalletTest {
     @Test
     public void testLoadWithPrivateKey() {
         KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
-        assertEquals(ADDRESS, wallet.getAddress());
+        assertEquals(new Address(ADDRESS), wallet.getAddress());
     }
 
     @Test
