@@ -33,7 +33,7 @@ public class AddressTest {
 
     @Test
     void testEoaAddress() {
-        Address address = new Address.Builder().address(eoa).build();
+        Address address = new Address(eoa);
         assertEquals(eoa, address.asString());
         assertEquals(EOA, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
@@ -41,7 +41,7 @@ public class AddressTest {
 
     @Test
     void testContractCreate() {
-        Address address = new Address.Builder().address(contract).build();
+        Address address = new Address(contract);
         assertEquals(contract, address.asString());
         assertEquals(CONTRACT, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
@@ -51,22 +51,22 @@ public class AddressTest {
     void testInvalidCreate() {
         String noPrefix = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
         assertThrows(InvalidParameterException.class, () -> {
-            new Address.Builder().address(noPrefix).build();
+            new Address(noPrefix);
         });
 
         String missCharacter = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd3";
         assertThrows(InvalidParameterException.class, () -> {
-            new Address.Builder().address(missCharacter).build();
+            new Address(missCharacter);
         });
 
         String notHex = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd3g";
         assertThrows(InvalidParameterException.class, () -> {
-            new Address.Builder().address(notHex).build();
+            new Address(notHex);
         });
 
         String words = "helloworldhelloworldhelloworldhelloworld";
         assertThrows(InvalidParameterException.class, () -> {
-            new Address.Builder().address(words).build();
+            new Address(words);
         });
     }
 

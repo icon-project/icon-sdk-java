@@ -45,10 +45,7 @@ public class IconKeys {
     }
 
     public static Address getAddress(ECKeyPair ecKeyPair) {
-        return new Address.Builder()
-                .prefix(Address.AddressPrefix.EOA)
-                .body(getAddressHash(ecKeyPair.getPublicKey()))
-                .build();
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(ecKeyPair.getPublicKey()));
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {

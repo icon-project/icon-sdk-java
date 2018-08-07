@@ -69,8 +69,8 @@ class SignedTransactionTest {
 //
 //        Expected output is:
 //        icx_sendTransaction.from.hxbe258ceb872e08851f1f59694dac2558708ece11.nid.0x1.nonce.0x1.stepLimit.0x12345.timestamp.0x563a6cf330136.to.hx5bfdb090f43a808005ffc27c25b213145e80b7cd.value.0xde0b6b3a7640000.version.0x3
-        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address to = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+        Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address to = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from(from)
@@ -96,8 +96,8 @@ class SignedTransactionTest {
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
-        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address to = Address.of("cx982aed605b065b50a2a639c1ea5710ef5a0501a9").build();
+        Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address to = new Address("cx982aed605b065b50a2a639c1ea5710ef5a0501a9");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from(from)
@@ -131,8 +131,8 @@ class SignedTransactionTest {
                 .put("symbol", new RpcValue("ICX"))
                 .build();
 
-        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address to = Address.of("cx0000000000000000000000000000000000000000").build();
+        Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address to = new Address("cx0000000000000000000000000000000000000000");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from(from)
@@ -156,8 +156,8 @@ class SignedTransactionTest {
     @Test
     void testMessageTransactionSerialize() {
 
-        Address from = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address to = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+        Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address to = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from(from)

@@ -31,7 +31,7 @@ import java.math.BigInteger;
 public class CustomReponseClass {
 
     public final String URL = "http://localhost:9000/api/v3";
-    private final Address scoreAddress = Address.of("cx0000000000000000000000000000000000000001").build();
+    private final Address scoreAddress = new Address("cx0000000000000000000000000000000000000001");
 
     private IconService iconService;
 

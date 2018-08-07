@@ -54,7 +54,7 @@ public class DeploySampleTokenScore {
         byte[] content = readFile();
         BigInteger networkId = new BigInteger("3");
         Address fromAddress = wallet.getAddress();
-        Address toAddress = Address.of("cx0000000000000000000000000000000000000000").build();
+        Address toAddress = new Address("cx0000000000000000000000000000000000000000");
         BigInteger stepLimit = new BigInteger("14685000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");

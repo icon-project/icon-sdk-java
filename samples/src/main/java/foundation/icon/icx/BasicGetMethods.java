@@ -37,7 +37,7 @@ public class BasicGetMethods {
     }
 
     public void getBalance() throws IOException {
-        Address address = Address.of("hx0000000000000000000000000000000000000000").build();
+        Address address = new Address("hx0000000000000000000000000000000000000000");
         BigInteger balance = iconService.getBalance(address).execute();
         System.out.println("balance:"+balance);
     }
@@ -77,7 +77,7 @@ public class BasicGetMethods {
     }
 
     public void getScoreApi() throws IOException {
-        Address scoreAddress = Address.of("cx2e6032c7598b882da4b156ed9334108a5b87f2dc").build();
+        Address scoreAddress = new Address("cx2e6032c7598b882da4b156ed9334108a5b87f2dc");
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
         System.out.println("apis:"+apis);
     }

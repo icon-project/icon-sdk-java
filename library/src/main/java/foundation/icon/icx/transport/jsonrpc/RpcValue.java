@@ -98,7 +98,7 @@ public class RpcValue implements RpcItem {
 
     @Override
     public Address asAddress() {
-        return Address.of(value).build();
+        return new Address(value);
     }
 
     /**

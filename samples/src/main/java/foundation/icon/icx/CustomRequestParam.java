@@ -27,7 +27,7 @@ import java.io.IOException;
 public class CustomRequestParam {
 
     public final String URL = "http://localhost:9000/api/v3";
-    private final Address scoreAddress = Address.of("cxca23d7fd434fd37d5cd01c7183adf7658375a6db").build();
+    private final Address scoreAddress = new Address("cxca23d7fd434fd37d5cd01c7183adf7658375a6db");
 
     private IconService iconService;
 
@@ -41,7 +41,7 @@ public class CustomRequestParam {
     }
 
     public void getBalance() throws IOException {
-        Address address = Address.of("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
+        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
         Param params = new Param();
         params._owner = address;
 

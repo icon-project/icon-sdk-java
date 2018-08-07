@@ -31,7 +31,7 @@ public class ScoreQuery {
     public final String URL = "http://localhost:9000/api/v3";
     public final String PRIVATE_KEY_STRING =
             "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
-    private final Address scoreAddress = Address.of("cx2e6032c7598b882da4b156ed9334108a5b87f2dc").build();
+    private final Address scoreAddress = new Address("cx2e6032c7598b882da4b156ed9334108a5b87f2dc");
 
     private IconService iconService;
 
@@ -45,7 +45,7 @@ public class ScoreQuery {
     }
 
     public void query() throws IOException {
-        Address fromAddress = Address.of("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
+        Address fromAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         RpcObject params = new RpcObject.Builder()
                 .put("_owner", new RpcValue(fromAddress))

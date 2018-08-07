@@ -25,7 +25,15 @@ public class Address {
     private AddressPrefix prefix;
     private byte[] body;
 
-    Address(AddressPrefix prefix, byte[] body) {
+    public Address(String address) {
+        AddressPrefix prefix = IconKeys.getAddressHexPrefix(address);
+        if (prefix == null || !IconKeys.isValidAddress(address))
+            throw new InvalidParameterException("Invalid address");
+        this.prefix = prefix;
+        this.body = IconKeys.getHexAddress(address);
+    }
+
+    public Address(AddressPrefix prefix, byte[] body) {
         this.prefix = prefix;
         this.body = body;
     }
@@ -36,41 +44,6 @@ public class Address {
 
     public String asString() {
         return getPrefix().getValue() + IconKeys.getHexAddress(body);
-    }
-
-    public static Address.Builder of(String address) {
-        return new Builder().address(address);
-    }
-
-    public static final class Builder {
-        private AddressPrefix prefix;
-        private byte[] body;
-
-        public Builder() {
-        }
-
-        public Builder address(String address) {
-            AddressPrefix prefix = IconKeys.getAddressHexPrefix(address);
-            if (prefix == null || !IconKeys.isValidAddress(address))
-                throw new InvalidParameterException("Invalid address");
-            this.prefix = prefix;
-            this.body = IconKeys.getHexAddress(address);
-            return this;
-        }
-
-        public Builder prefix(AddressPrefix prefix) {
-            this.prefix = prefix;
-            return this;
-        }
-
-        public Builder body(byte[] body) {
-            this.body = body;
-            return this;
-        }
-
-        public Address build() {
-            return new Address(prefix, body);
-        }
     }
 
     public enum AddressPrefix {

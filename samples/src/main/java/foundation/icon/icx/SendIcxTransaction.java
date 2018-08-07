@@ -47,7 +47,7 @@ public class SendIcxTransaction {
     public void sendTransaction() throws IOException {
         BigInteger networkId = new BigInteger("3");
         Address fromAddress = wallet.getAddress();
-        Address toAddress = Address.of("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
+        Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
         BigInteger stepLimit = new BigInteger("75000");

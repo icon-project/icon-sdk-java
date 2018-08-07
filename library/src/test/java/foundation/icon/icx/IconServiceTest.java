@@ -64,8 +64,8 @@ class IconServiceTest {
         person.hasPermission = false;
 
         IcxCall<PersonResponse> icxCall = new Builder()
-                .from(Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build())
-                .to(Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build())
+                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
+                .to(new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
                 .params(person)
                 .buildWith(PersonResponse.class);
@@ -94,7 +94,7 @@ class IconServiceTest {
     void testGetBalance() {
         Provider provider = mock(Provider.class);
 
-        Address address = Address.of("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
+        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         IconService iconService = new IconService(provider);
         iconService.getBalance(address);
@@ -156,7 +156,7 @@ class IconServiceTest {
     void testGetScoreApi() {
         Provider provider = mock(Provider.class);
 
-        Address address = Address.of("cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31").build();
+        Address address = new Address("cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         IconService iconService = new IconService(provider);
         iconService.getScoreApi(address);
@@ -206,8 +206,8 @@ class IconServiceTest {
     @Test
     void testSendIcxTransaction() {
         Provider provider = mock(Provider.class);
-        Address fromAddress = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address toAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
+        Address fromAddress = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address toAddress = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
         Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
                 .from(fromAddress)
@@ -237,10 +237,10 @@ class IconServiceTest {
     void testTransferTokenTransaction() {
         Provider provider = mock(Provider.class);
 
-        Address fromAddress = Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
-        Address scoreAddress = Address.of("cx982aed605b065b50a2a639c1ea5710ef5a0501a9").build();
-        Address toAddress = Address.of("hx5bfdb090f43a808005ffc27c25b213145e80b7cd").build();
-        Address.of("hxbe258ceb872e08851f1f59694dac2558708ece11").build();
+        Address fromAddress = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
+        Address scoreAddress = new Address("cx982aed605b065b50a2a639c1ea5710ef5a0501a9");
+        Address toAddress = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
+        new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
 
         RpcObject params = new RpcObject.Builder()
                 .put("_to", new RpcValue(toAddress))
