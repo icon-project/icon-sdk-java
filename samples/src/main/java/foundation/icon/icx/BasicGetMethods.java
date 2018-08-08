@@ -2,7 +2,6 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
-import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class BasicGetMethods {
     }
 
     public void getBlockByHash() throws IOException {
-        Hex hash = new Hex("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
+        Bytes hash = new Bytes("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
         Block block = iconService.getBlock(hash).execute();
         System.out.println("block:" + block);
     }
@@ -49,13 +48,13 @@ public class BasicGetMethods {
     }
 
     public void getTransaction() throws IOException {
-        Hex txHash = new Hex("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        Bytes txHash = new Bytes("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
         ConfirmedTransaction tx = iconService.getTransaction(txHash).execute();
         System.out.println("transaction:" + tx);
     }
 
     public void getTransactionResult() throws IOException {
-        Hex txHash = new Hex("0x864cac2cbbde571116f4a8390047dfc88239168a2ddf70cb96601eb987a97cb7");
+        Bytes txHash = new Bytes("0x864cac2cbbde571116f4a8390047dfc88239168a2ddf70cb96601eb987a97cb7");
         TransactionResult tx = iconService.getTransactionResult(txHash).execute();
         System.out.println("transaction:" + tx);
     }

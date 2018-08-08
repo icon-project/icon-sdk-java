@@ -18,6 +18,7 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.Hex;
 
 import java.math.BigInteger;
@@ -49,8 +50,8 @@ public interface RpcItem {
         return asValue().asInteger();
     }
 
-    default byte[] asBytes() {
-        return asValue().asBytes();
+    default byte[] asByteArray() {
+        return asValue().asByteArray();
     }
 
     default boolean asBoolean() {
@@ -59,6 +60,10 @@ public interface RpcItem {
 
     default Address asAddress() {
         return asValue().asAddress();
+    }
+
+    default Bytes asBytes() {
+        return asValue().asBytes();
     }
 
     default Hex asHex() {

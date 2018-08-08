@@ -71,20 +71,21 @@ public class IconServiceVCRTest {
     @Test
     void testGetBlockByHeight() throws IOException {
         Block block = iconService.getBlock(BigInteger.ONE).execute();
-        assertEquals("aa9b739597043e25e669dbc20eadbc17455b898540bf88018c7f065bdedb393a", block.getBlockHash().asString(false));
+        assertEquals("aa9b739597043e25e669dbc20eadbc17455b898540bf88018c7f065bdedb393a", block.getBlockHash().toHexString(false));
     }
 
     @Test
     void testGetBlockByHash() throws IOException {
-        Hex hash = new Hex("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
+        Bytes hash = new Bytes("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
         Block block = iconService.getBlock(hash).execute();
-        assertEquals(Numeric.cleanHexPrefix(hash.asString()), block.getBlockHash().asString(false));
+        assertEquals(hash, block.getBlockHash());
     }
 
     @Test
     void testGetLastBlock() throws IOException {
+        Bytes hash = new Bytes("980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
         Block block = iconService.getLastBlock().execute();
-        assertEquals("980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60", block.getBlockHash().asString(false));
+        assertEquals(hash, block.getBlockHash());
     }
 
     @Test
@@ -95,16 +96,16 @@ public class IconServiceVCRTest {
 
     @Test
     void testGetTransaction() throws IOException {
-        Hex txHash = new Hex("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        Bytes txHash = new Bytes("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
         ConfirmedTransaction tx = iconService.getTransaction(txHash).execute();
-        assertEquals(txHash.asString(), tx.getTxHash().asString());
+        assertEquals(txHash, tx.getTxHash());
     }
 
     @Test
     void testGetTransactionResult() throws IOException {
-        Hex txHash = new Hex("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+        Bytes txHash = new Bytes("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
         TransactionResult tx = iconService.getTransactionResult(txHash).execute();
-        assertEquals(txHash.asString(), tx.getTxHash().asString());
+        assertEquals(txHash, tx.getTxHash());
     }
 
     @Test

@@ -57,7 +57,7 @@ class DeserializerTest {
         rpcValue = (RpcValue) obj.getItem("stringValue");
         assertEquals("string", rpcValue.asString());
         rpcValue = (RpcValue) obj.getItem("bytesValue");
-        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
+        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asByteArray());
         rpcValue = (RpcValue) obj.getItem("longValue");
         assertEquals(new BigInteger(String.valueOf(1533018344753765L)), rpcValue.asInteger());
 
@@ -68,7 +68,7 @@ class DeserializerTest {
         rpcValue = (RpcValue) array.get(3);
         assertEquals("string", rpcValue.asString());
         rpcValue = (RpcValue) array.get(4);
-        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
+        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asByteArray());
 
         rpcValue = (RpcValue) root.getItem("intValue");
         assertEquals(new BigInteger("4d2", 16), rpcValue.asInteger());
@@ -77,7 +77,7 @@ class DeserializerTest {
         rpcValue = (RpcValue) root.getItem("stringValue");
         assertEquals("string", rpcValue.asString());
         rpcValue = (RpcValue) root.getItem("bytesValue");
-        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asBytes());
+        assertArrayEquals(new byte[]{0x1, 0x2, 0x3}, rpcValue.asByteArray());
     }
 
     @Test

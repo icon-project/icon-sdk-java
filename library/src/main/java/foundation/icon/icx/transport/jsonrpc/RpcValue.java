@@ -18,6 +18,7 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.Hex;
 
 import java.math.BigInteger;
@@ -65,6 +66,10 @@ public class RpcValue implements RpcItem {
         this.value = value.asString();
     }
 
+    public RpcValue(Bytes value) {
+        this.value = value.toString();
+    }
+
     @Override
     public boolean isEmpty() {
         return value == null || value.isEmpty();
@@ -86,7 +91,7 @@ public class RpcValue implements RpcItem {
      * @return the value as bytes
      */
     @Override
-    public byte[] asBytes() {
+    public byte[] asByteArray() {
         if (!value.startsWith(HEX_PREFIX)) {
             throw new RpcValueException("The value is not hex string.");
         }
@@ -103,6 +108,11 @@ public class RpcValue implements RpcItem {
     @Override
     public Address asAddress() {
         return new Address(value);
+    }
+
+    @Override
+    public Bytes asBytes() {
+        return new Bytes(value);
     }
 
     @Override

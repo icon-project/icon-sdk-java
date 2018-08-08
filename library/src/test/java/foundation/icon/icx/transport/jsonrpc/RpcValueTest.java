@@ -56,11 +56,11 @@ class RpcValueTest {
 
     @Test
     void testAsBytes() {
-        assertThrows(RpcValueException.class, plainStringValue::asBytes);
-        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, bytesValue.asBytes());
-        assertThrows(RpcValueException.class, oddIntegerValue::asBytes);
-        assertArrayEquals(new byte[]{-15, 35}, evenIntegerValue.asBytes());
-        assertThrows(RpcValueException.class, booleanValue::asBytes);
+        assertThrows(RpcValueException.class, plainStringValue::asByteArray);
+        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, bytesValue.asByteArray());
+        assertThrows(RpcValueException.class, oddIntegerValue::asByteArray);
+        assertArrayEquals(new byte[]{-15, 35}, evenIntegerValue.asByteArray());
+        assertThrows(RpcValueException.class, booleanValue::asByteArray);
     }
 
     @Test

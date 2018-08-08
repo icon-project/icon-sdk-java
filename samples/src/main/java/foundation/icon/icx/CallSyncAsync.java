@@ -23,14 +23,14 @@ public class CallSyncAsync {
 
     public void sync() throws IOException {
         Block block = iconService.getLastBlock().execute();
-        System.out.println("sync call block hash:" + block.getBlockHash().asString());
+        System.out.println("sync call block hash:" + block.getBlockHash());
     }
 
     public void async() {
         iconService.getLastBlock().execute(new Callback<Block>() {
             @Override
             public void onSuccess(Block block) {
-                System.out.println("aysnc call block hash:" + block.getBlockHash().asString());
+                System.out.println("aysnc call block hash:" + block.getBlockHash());
             }
 
             @Override
