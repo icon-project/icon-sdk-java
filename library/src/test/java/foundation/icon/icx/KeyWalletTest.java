@@ -63,9 +63,9 @@ public class KeyWalletTest {
     public void testCreate() throws
             InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         KeyWallet wallet = KeyWallet.create();
-        assertTrue(IconKeys.isValidAddress(wallet.getAddress().asString()));
+        assertTrue(IconKeys.isValidAddress(wallet.getAddress().toString()));
         Wallet loadWallet = KeyWallet.load(wallet.getEcKeyPair().getPrivateKey().toString(16));
-        assertEquals(wallet.getAddress().asString(), loadWallet.getAddress().asString());
+        assertEquals(wallet.getAddress(), loadWallet.getAddress());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class KeyWalletTest {
         String fileName = KeyWallet.store(wallet, PASSWORD, tempDir);
         Matcher matcher = Pattern.compile("hx[0-9a-fA-F]{40}").matcher(fileName);
         if (matcher.find()) {
-            assertEquals(wallet.getAddress().asString(), matcher.group());
+            assertEquals(wallet.getAddress().toString(), matcher.group());
         }
     }
 
@@ -90,7 +90,7 @@ public class KeyWalletTest {
         mapper.writeValue(file, map);
 
         Wallet wallet = KeyWallet.load(PASSWORD, file);
-        assertEquals("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31", wallet.getAddress().asString());
+        assertEquals("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31", wallet.getAddress().toString());
     }
 
     @Test

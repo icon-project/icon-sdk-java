@@ -81,8 +81,8 @@ public class ConfirmedTransaction implements Transaction {
         return properties.getItem("data");
     }
 
-    public String getTxHash() {
-        return getSafeProperty("txHash").asString();
+    public Bytes getTxHash() {
+        return getSafeProperty("txHash").asBytes();
     }
 
     public BigInteger getTxIndex() {
@@ -93,8 +93,8 @@ public class ConfirmedTransaction implements Transaction {
         return getSafeProperty("blockHeight").asInteger();
     }
 
-    public String getBlockHash() {
-        return getSafeProperty("blockHash").asString();
+    public Bytes getBlockHash() {
+        return getSafeProperty("blockHash").asBytes();
     }
 
     public String getSignature() {

@@ -35,7 +35,7 @@ public class AddressTest {
     @Test
     void testEoaAddress() {
         Address address = new Address(eoa);
-        assertEquals(eoa, address.asString());
+        assertEquals(eoa, address.toString());
         assertEquals(EOA, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
     }
@@ -43,7 +43,7 @@ public class AddressTest {
     @Test
     void testContractCreate() {
         Address address = new Address(contract);
-        assertEquals(contract, address.asString());
+        assertEquals(contract, address.toString());
         assertEquals(CONTRACT, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
     }

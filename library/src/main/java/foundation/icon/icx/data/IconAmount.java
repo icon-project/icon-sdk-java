@@ -34,12 +34,13 @@ public class IconAmount {
         return digit;
     }
 
-    public String asString() {
-        return asDecimal().toString();
+    @Override
+    public String toString() {
+        return value.toString();
     }
 
     public BigInteger asInteger() {
-        return asDecimal().toBigInteger();
+        return value.toBigInteger();
     }
 
     public BigDecimal asDecimal() {

@@ -71,7 +71,7 @@ public class DeploySampleTokenScore {
     }
 
     private byte[] readFile() throws IOException {
-        File file = new File(getClass().getClassLoader().getResource("test.zip").getFile());
+        File file = new File(getClass().getClassLoader().getResource("test.zi").getFile());
         return readBytes(file);
     }
 

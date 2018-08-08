@@ -18,11 +18,13 @@
 package foundation.icon.icx.transport.jsonrpc;
 
 import foundation.icon.icx.data.Address;
-import foundation.icon.icx.data.Hex;
+import foundation.icon.icx.data.Bytes;
+import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
-import static foundation.icon.icx.data.Hex.HEX_PREFIX;
+import static org.web3j.utils.Numeric.HEX_PREFIX;
+
 
 /**
  * RpcValue contains a leaf value such as string, bytes, integer, boolean
@@ -37,7 +39,7 @@ public class RpcValue implements RpcItem {
 
     public RpcValue(Address value) {
         if (value != null) {
-            this.value = value.asString();
+            this.value = value.toString();
         }
     }
 
@@ -46,19 +48,24 @@ public class RpcValue implements RpcItem {
     }
 
     public RpcValue(byte[] value) {
-        this.value = Hex.toHexString(value, true);
+        this.value = Numeric.toHexString(value);
     }
 
     public RpcValue(BigInteger value) {
-        this.value = Hex.toHexString(value, true);
-    }
-
-    public RpcValue(Boolean value) {
-        this.value = Hex.toHexString(value, true);
+        String sign = (value.signum() == -1) ? "-" : "";
+        this.value = sign + Numeric.encodeQuantity(value.abs());
     }
 
     public RpcValue(boolean value) {
-        this.value = Hex.toHexString(value, true);
+        this.value = value ? "0x1" : "0x0";
+    }
+
+    public RpcValue(Boolean value) {
+        this(value.booleanValue());
+    }
+
+    public RpcValue(Bytes value) {
+        this.value = value.toString();
     }
 
     @Override
@@ -82,7 +89,7 @@ public class RpcValue implements RpcItem {
      * @return the value as bytes
      */
     @Override
-    public byte[] asBytes() {
+    public byte[] asByteArray() {
         if (!value.startsWith(HEX_PREFIX)) {
             throw new RpcValueException("The value is not hex string.");
         }
@@ -93,12 +100,17 @@ public class RpcValue implements RpcItem {
                     "The hex value is not bytes format.");
         }
 
-        return Hex.hexStringToByteArray(value);
+        return Numeric.hexStringToByteArray(value);
     }
 
     @Override
     public Address asAddress() {
         return new Address(value);
+    }
+
+    @Override
+    public Bytes asBytes() {
+        return new Bytes(value);
     }
 
     /**
@@ -108,12 +120,18 @@ public class RpcValue implements RpcItem {
      */
     @Override
     public BigInteger asInteger() {
-        if (!(value.startsWith(HEX_PREFIX) || value.startsWith('-'+HEX_PREFIX))) {
+        if (!(value.startsWith(HEX_PREFIX) || value.startsWith('-' + HEX_PREFIX))) {
             throw new RpcValueException("The value is not hex string.");
         }
 
         try {
-            return Hex.toBigInteger(value);
+            String sign = "";
+            if (value.charAt(0) == '-') {
+                sign = value.substring(0, 1);
+                value = value.substring(1);
+            }
+            String result = sign + Numeric.cleanHexPrefix(value);
+            return new BigInteger(result, 16);
         } catch (NumberFormatException e) {
             throw new RpcValueException("The value is not hex string.");
         }

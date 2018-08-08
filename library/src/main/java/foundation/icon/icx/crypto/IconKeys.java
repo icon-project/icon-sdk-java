@@ -2,10 +2,11 @@ package foundation.icon.icx.crypto;
 
 
 import foundation.icon.icx.data.Address;
-import foundation.icon.icx.data.Hex;
+import foundation.icon.icx.data.Bytes;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
+import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -14,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
 import static org.web3j.crypto.Keys.ADDRESS_LENGTH_IN_HEX;
-import static org.web3j.crypto.Keys.PUBLIC_KEY_LENGTH_IN_HEX;
+import static org.web3j.crypto.Keys.PUBLIC_KEY_SIZE;
 
 /**
  * Implementation from
@@ -33,13 +34,7 @@ public class IconKeys {
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {
-        return getAddressHash(Hex.toHexStringZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX, true));
-    }
-
-    public static byte[] getAddressHash(String publicKey) {
-        String publicKeyNoPrefix = cleanHexPrefix(publicKey);
-        return getAddressHash(Hex.hexStringToByteArray(publicKeyNoPrefix));
-//        return "hx" + RpcValue.toHexString(b, false);
+        return getAddressHash(new Bytes(publicKey).toByteArray(PUBLIC_KEY_SIZE));
     }
 
     public static byte[] getAddressHash(byte[] publicKey) {
@@ -52,7 +47,7 @@ public class IconKeys {
     }
 
     public static boolean isValidAddress(Address input) {
-        return isValidAddress(input.asString());
+        return isValidAddress(input.toString());
     }
 
     public static boolean isValidAddress(String input) {
@@ -83,11 +78,11 @@ public class IconKeys {
 
     public static byte[] getHexAddress(String input) {
         String cleanInput = cleanHexPrefix(input);
-        return Hex.hexStringToByteArray(cleanInput);
+        return Numeric.hexStringToByteArray(cleanInput);
     }
 
     public static String getHexAddress(byte[] input) {
-        return Hex.toHexString(input, false);
+        return Numeric.toHexStringNoPrefix(input);
     }
 
 }

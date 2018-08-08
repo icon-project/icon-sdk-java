@@ -19,6 +19,7 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.IcxCall.Builder;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.*;
 import org.junit.jupiter.api.Test;
@@ -96,13 +97,13 @@ class IconServiceTest {
     void testGetBlockByHash() {
         Provider provider = mock(Provider.class);
 
-        RpcValue hash = new RpcValue("0x033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7");
+        Bytes hash = new Bytes("0x033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7");
 
         IconService iconService = new IconService(provider);
-        iconService.getBlock(hash.asBytes());
+        iconService.getBlock(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
-        params.put("hash", new RpcValue(hash.asBytes()));
+        params.put("hash", new RpcValue(hash));
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getBlockByHash", params)),
@@ -143,10 +144,10 @@ class IconServiceTest {
     void testGetTransaction() {
         Provider provider = mock(Provider.class);
 
-        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
+        Bytes hash = new Bytes("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransaction(hash.asBytes());
+        iconService.getTransaction(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));
@@ -160,10 +161,10 @@ class IconServiceTest {
     void testGetTransactionResult() {
         Provider provider = mock(Provider.class);
 
-        RpcValue hash = new RpcValue("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
+        Bytes hash = new Bytes("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
 
         IconService iconService = new IconService(provider);
-        iconService.getTransactionResult(hash.asBytes());
+        iconService.getTransactionResult(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("txHash", new RpcValue(hash));

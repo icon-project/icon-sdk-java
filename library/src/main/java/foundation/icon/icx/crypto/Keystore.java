@@ -1,7 +1,6 @@
 package foundation.icon.icx.crypto;
 
 
-import foundation.icon.icx.data.Hex;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.generators.SCrypt;
@@ -10,6 +9,7 @@ import org.web3j.crypto.CipherException;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
+import org.web3j.utils.Numeric;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -82,10 +82,10 @@ public class Keystore {
         byte[] iv = generateRandomBytes(16);
 
         byte[] privateKeyBytes =
-                Hex.toBytesPadded(ecKeyPair.getPrivateKey(), Keys.PRIVATE_KEY_SIZE);
+                Numeric.toBytesPadded(ecKeyPair.getPrivateKey(), Keys.PRIVATE_KEY_SIZE);
 
         byte[] cipherText = performCipherOperation(
-                    Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
+                Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
 
         byte[] mac = generateMac(derivedKey, cipherText);
 
@@ -111,11 +111,11 @@ public class Keystore {
 
         KeystoreFile.Crypto crypto = new KeystoreFile.Crypto();
         crypto.setCipher(CIPHER);
-        crypto.setCiphertext(Hex.toHexString(cipherText, false));
+        crypto.setCiphertext(Numeric.toHexStringNoPrefix(cipherText));
         keystoreFile.setCrypto(crypto);
 
         KeystoreFile.CipherParams cipherParams = new KeystoreFile.CipherParams();
-        cipherParams.setIv(Hex.toHexString(iv, false));
+        cipherParams.setIv(Numeric.toHexStringNoPrefix(iv));
         crypto.setCipherparams(cipherParams);
 
         crypto.setKdf(SCRYPT);
@@ -124,10 +124,10 @@ public class Keystore {
         kdfParams.setN(n);
         kdfParams.setP(p);
         kdfParams.setR(R);
-        kdfParams.setSalt(Hex.toHexString(salt, false));
+        kdfParams.setSalt(Numeric.toHexStringNoPrefix(salt));
         crypto.setKdfparams(kdfParams);
 
-        crypto.setMac(Hex.toHexString(mac, false));
+        crypto.setMac(Numeric.toHexStringNoPrefix(mac));
         keystoreFile.setCrypto(crypto);
         keystoreFile.setId(UUID.randomUUID().toString());
         keystoreFile.setVersion(CURRENT_VERSION);
@@ -188,9 +188,9 @@ public class Keystore {
 
         KeystoreFile.Crypto crypto = keystoreFile.getCrypto();
 
-        byte[] mac = Hex.hexStringToByteArray(crypto.getMac());
-        byte[] iv = Hex.hexStringToByteArray(crypto.getCipherparams().getIv());
-        byte[] cipherText = Hex.hexStringToByteArray(crypto.getCiphertext());
+        byte[] mac = Numeric.hexStringToByteArray(crypto.getMac());
+        byte[] iv = Numeric.hexStringToByteArray(crypto.getCipherparams().getIv());
+        byte[] cipherText = Numeric.hexStringToByteArray(crypto.getCiphertext());
 
         byte[] derivedKey;
 
@@ -202,14 +202,14 @@ public class Keystore {
             int n = scryptKdfParams.getN();
             int p = scryptKdfParams.getP();
             int r = scryptKdfParams.getR();
-            byte[] salt = Hex.hexStringToByteArray(scryptKdfParams.getSalt());
+            byte[] salt = Numeric.hexStringToByteArray(scryptKdfParams.getSalt());
             derivedKey = generateDerivedScryptKey(password.getBytes(UTF_8), salt, n, r, p, dklen);
         } else if (kdfParams instanceof KeystoreFile.Aes128CtrKdfParams) {
             KeystoreFile.Aes128CtrKdfParams aes128CtrKdfParams =
                     (KeystoreFile.Aes128CtrKdfParams) crypto.getKdfparams();
             int c = aes128CtrKdfParams.getC();
             String prf = aes128CtrKdfParams.getPrf();
-            byte[] salt = Hex.hexStringToByteArray(aes128CtrKdfParams.getSalt());
+            byte[] salt = Numeric.hexStringToByteArray(aes128CtrKdfParams.getSalt());
 
             derivedKey = generateAes128CtrDerivedKey(password.getBytes(UTF_8), salt, c, prf);
         } else {

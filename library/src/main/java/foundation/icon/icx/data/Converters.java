@@ -26,7 +26,8 @@ import java.util.List;
 
 @SuppressWarnings("unchecked")
 public final class Converters {
-    private Converters() {}
+    private Converters() {
+    }
 
     public static final RpcConverter<RpcItem> RPC_ITEM
             = new RpcConverter<RpcItem>() {
@@ -90,7 +91,7 @@ public final class Converters {
 
         @Override
         public byte[] convertTo(RpcItem object) {
-            return object.asBytes();
+            return object.asByteArray();
         }
 
         @Override

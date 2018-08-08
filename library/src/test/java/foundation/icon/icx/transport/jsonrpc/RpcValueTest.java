@@ -17,17 +17,13 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.transport.jsonrpc.RpcItem.RpcValueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import foundation.icon.icx.transport.jsonrpc.RpcItem.RpcValueException;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RpcValueTest {
     private RpcValue plainStringValue;
@@ -56,11 +52,11 @@ class RpcValueTest {
 
     @Test
     void testAsBytes() {
-        assertThrows(RpcValueException.class, plainStringValue::asBytes);
-        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, bytesValue.asBytes());
-        assertThrows(RpcValueException.class, oddIntegerValue::asBytes);
-        assertArrayEquals(new byte[]{-15, 35}, evenIntegerValue.asBytes());
-        assertThrows(RpcValueException.class, booleanValue::asBytes);
+        assertThrows(RpcValueException.class, plainStringValue::asByteArray);
+        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, bytesValue.asByteArray());
+        assertThrows(RpcValueException.class, oddIntegerValue::asByteArray);
+        assertArrayEquals(new byte[]{-15, 35}, evenIntegerValue.asByteArray());
+        assertThrows(RpcValueException.class, booleanValue::asByteArray);
     }
 
     @Test
