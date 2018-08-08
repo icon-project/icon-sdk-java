@@ -47,7 +47,7 @@ public class IconKeys {
     }
 
     public static boolean isValidAddress(Address input) {
-        return isValidAddress(input.asString());
+        return isValidAddress(input.toString());
     }
 
     public static boolean isValidAddress(String input) {

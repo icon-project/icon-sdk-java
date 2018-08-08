@@ -145,7 +145,7 @@ public class IconServiceVCRTest {
     @Test
     void testIcxCallWithClassParam() throws IOException {
         TokenBalance params = new TokenBalance();
-        params._owner = wallet.getAddress().asString();
+        params._owner = wallet.getAddress().toString();
 
         iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
             @Override

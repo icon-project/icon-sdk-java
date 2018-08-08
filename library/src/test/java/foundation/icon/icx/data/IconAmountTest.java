@@ -36,7 +36,7 @@ public class IconAmountTest {
         assertEquals(IconAmount.Unit.ICX.getValue(), amount.getDigit());
 
         amount = IconAmount.of("1000000000000000000", IconAmount.Unit.LOOP);
-        assertEquals("1000000000000000000", amount.asString());
+        assertEquals("1000000000000000000", amount.toString());
         assertEquals(IconAmount.Unit.LOOP.getValue(), amount.getDigit());
 
         amount = IconAmount.of(new BigInteger("1000000000000000000"), 16);

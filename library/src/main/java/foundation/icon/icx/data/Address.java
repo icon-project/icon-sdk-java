@@ -44,7 +44,8 @@ public class Address {
         return prefix;
     }
 
-    public String asString() {
+    @Override
+    public String toString() {
         return getPrefix().getValue() + IconKeys.getHexAddress(body);
     }
 
