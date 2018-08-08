@@ -13,8 +13,6 @@ import java.io.IOException;
 public class ScoreQuery {
 
     public final String URL = "http://localhost:9000/api/v3";
-    public final String PRIVATE_KEY_STRING =
-            "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
     private final Address scoreAddress = new Address("cx2e6032c7598b882da4b156ed9334108a5b87f2dc");
 
     private IconService iconService;
