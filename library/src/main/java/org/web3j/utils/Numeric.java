@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 public final class Numeric {
 
-    private static final String HEX_PREFIX = "0x";
+    public static final String HEX_PREFIX = "0x";
 
     private Numeric() {
     }

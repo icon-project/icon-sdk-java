@@ -19,7 +19,6 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
-import foundation.icon.icx.data.Hex;
 
 import java.math.BigInteger;
 
@@ -64,10 +63,6 @@ public interface RpcItem {
 
     default Bytes asBytes() {
         return asValue().asBytes();
-    }
-
-    default Hex asHex() {
-        return asValue().asHex();
     }
 
     class RpcValueException extends IllegalArgumentException {

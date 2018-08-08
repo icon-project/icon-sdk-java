@@ -17,17 +17,13 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.transport.jsonrpc.RpcItem.RpcValueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import foundation.icon.icx.transport.jsonrpc.RpcItem.RpcValueException;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RpcValueTest {
     private RpcValue plainStringValue;
