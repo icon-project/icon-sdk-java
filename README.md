@@ -82,7 +82,7 @@ The querying APIs are as follows.
 // Gets the block
 Request<Block> request = iconService.getBlock(1000); // by height
 
-Request<Block> request = iconService.getBlock(new Hex("0x000...000"); // by hash
+Request<Block> request = iconService.getBlock(new Bytes("0x000...000"); // by hash
 
 Request<Block> request = iconService.getLatestBlock(); // latest block
      
@@ -100,11 +100,11 @@ Request<BigInteger> request = iconService.getTotalSupply();
 
 
 // Gets a transaction matching the given transaction hash
-Request<Transaction> request = iconService.getTransaction(new Hex("0x000...000"));
+Request<Transaction> request = iconService.getTransaction(new Byes("0x000...000"));
 
 
 // Gets the result of the transaction matching the given transaction hash
-Request<TransactionResult> request = iconService.getTransactionResult(new Hex("0x000...000"));
+Request<TransactionResult> request = iconService.getTransactionResult(new Bytes("0x000...000"));
 
 
 // Calls a SCORE API just for reading
@@ -132,7 +132,7 @@ Before sending a transaction, the transaction should be signed. It can be done u
 Wallet wallet = KeyWallet.create();
 
 // Loads a wallet from the private key.
-Wallet wallet = KeyWallet.load(new Hex("0x0000"));
+Wallet wallet = KeyWallet.load(new Bytes("0x0000"));
 
 // Loads a wallet from the key store file.
 File file = new File("./key.keystore");
@@ -194,22 +194,22 @@ And the request is executed as **Synchronized** or **Asynchronized** like a quer
 ```java
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
-Request<Hex> request = iconService.sendTransaction(signedTransaction);
+Request<Bytes> request = iconService.sendTransaction(signedTransaction);
 
 // Asynchronized request execution
-request.execute(new Callback<Hex>(){
+request.execute(new Callback<Bytes>(){
     void onFailure(Throwable t) {
         ...
     }
      
-    void onResponse(Hex txHash) {
+    void onResponse(Bytes txHash) {
         ...
     }
 });
 
 // Synchronized request execution
 try {
-    Hex txHash = request.execute();
+    Bytes txHash = request.execute();
     ...
 } catch (Exception e) {
     ...
