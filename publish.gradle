@@ -59,7 +59,11 @@ publishing {
 
 def setExtraProperty(String key) {
     Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def file = project.rootProject.file('local.properties')
+    if (file.exists()) {
+        properties.load(file.newDataInputStream())
+    }
+
     if (project.hasProperty(key))
         project.ext.set(key, bintrayUser)
     else if (properties.getProperty(key) == null)
