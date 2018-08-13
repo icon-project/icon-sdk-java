@@ -24,6 +24,13 @@ def pomConfig = {
         }
     }
 
+    developers {
+        developer {
+            id "amuyu-icon"
+            email "amuyu@icon.foundation"
+        }
+    }
+
     scm {
         url POM_SCM_URL
     }
@@ -82,7 +89,8 @@ bintray {
     user = bintrayUser
     key = bintrayKey
     publications = ['mavenJava']
-    publish true
+    publish = true
+    override = true
     pkg {
         userOrg = BINTRAY_USER_ORG
         repo = BINTRAY_REPO
@@ -90,8 +98,9 @@ bintray {
 
         version {
             name = project.version
+            //Optional configuration for GPG signing
             gpg {
-                sign = true
+                sign = true //Determines whether to GPG sign the files. The default is false
             }
         }
     }
