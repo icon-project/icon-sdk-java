@@ -28,9 +28,9 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Builder for the transaction to send<br />
- * There are four builder types.<br />
- * IcxBuilder is a basic builder to send ICXs.<br />
+ * Builder for the transaction to send<br>
+ * There are four builder types.<br>
+ * IcxBuilder is a basic builder to send ICXs.<br>
  * CallBuilder, DeployBuilder, MessageBuilder is an extended builder for each purpose.
  * They can be initiated from IcxBuilder.
  */

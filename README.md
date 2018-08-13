@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/icon/icon-sdk/icon-sdk/images/download.svg) ](https://bintray.com/icon/icon-sdk/icon-sdk/_latestVersion)
+
 # ICON SDK for Java
 
 ICON supports SDK for 3rd party or user services development. You can integrate ICON SDK for your project and utilize ICON’s functionality.
@@ -100,7 +102,7 @@ Request<BigInteger> request = iconService.getTotalSupply();
 
 
 // Gets a transaction matching the given transaction hash
-Request<Transaction> request = iconService.getTransaction(new Byes("0x000...000"));
+Request<Transaction> request = iconService.getTransaction(new Bytes("0x000...000"));
 
 
 // Gets the result of the transaction matching the given transaction hash
@@ -273,6 +275,24 @@ Person memberPerson = iconService.query(call).execute();
 
 0.9.0 beta
 
+## Download
+
+Download [the latest JAR](https://search.maven.org/remote_content?g=foundation.icon&a=icon-sdk&v=LATEST) or grab via Maven:
+
+```
+<dependency>
+  <groupId>foundation.icon</groupId>
+  <artifactId>icon-sdk</artifactId>
+  <version>0.9.0</version>
+  <type>pom</type>
+</dependency>
+```
+
+or Gradle:
+
+```
+implementation 'foundation.icon:icon-sdk:0.9.0'
+```
 
 ## License
 

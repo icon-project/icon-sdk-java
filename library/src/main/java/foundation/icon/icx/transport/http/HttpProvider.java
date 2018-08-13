@@ -51,7 +51,7 @@ public class HttpProvider implements Provider {
     }
 
     /**
-     * {@see Provider#request(Request, RpcConverter)}
+     * @see Provider#request(Request, RpcConverter)
      */
     @Override
     public <O> Call<O> request(final Request request, RpcConverter<O> converter) {

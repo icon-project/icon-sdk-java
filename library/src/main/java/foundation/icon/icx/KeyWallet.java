@@ -47,7 +47,7 @@ public class KeyWallet implements Wallet {
     }
 
     /**
-     * {@see Wallet#getAddress()}
+     * @see Wallet#getAddress()
      */
     @Override
     public Address getAddress() {
@@ -55,7 +55,7 @@ public class KeyWallet implements Wallet {
     }
 
     /**
-     * {@see Wallet#signMessage(String)}
+     * @see Wallet#signMessage(byte[])
      */
     @Override
     public byte[] signMessage(byte[] hash) {

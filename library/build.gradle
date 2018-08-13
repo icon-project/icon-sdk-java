@@ -1,5 +1,7 @@
 plugins {
     id 'java-library'
+    id "com.jfrog.bintray" version "1.8.4"
+    id "maven-publish"
 }
 
 sourceCompatibility = 1.8
@@ -27,3 +29,17 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+apply from: '../deploy.gradle'
+
+
