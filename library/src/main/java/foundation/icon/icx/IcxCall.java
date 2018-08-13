@@ -48,12 +48,12 @@ public final class IcxCall<O> {
     }
 
     /**
-     * Builder for creating immutable object of IcxCall.<br />
-     * It has following properties<br />
-     * - {@link #from(String)} the request account<br />
-     * - {@link #to(String)} the SCORE address to call<br />
-     * - {@link #method(String)} )} the method name to call<br />
-     * - {@link #params(Object)}  the parameter of call<br />
+     * Builder for creating immutable object of IcxCall.<br>
+     * It has following properties<br>
+     * - {@link #from(Address)} the request account<br>
+     * - {@link #to(Address)} the SCORE address to call<br>
+     * - {@link #method(String)}  the method name to call<br>
+     * - {@link #params(Object)}  the parameter of call<br>
      */
     @SuppressWarnings("WeakerAccess")
     public static class Builder {
