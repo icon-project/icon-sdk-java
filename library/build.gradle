@@ -30,6 +30,16 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 apply from: '../deploy.gradle'
 
 
