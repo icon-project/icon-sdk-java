@@ -25,13 +25,13 @@ def pomConfig = {
     }
 
     scm {
-        url "https://github.com/icon-project/icon-sdk-java"
+        url POM_SCM_URL
     }
 }
 
 publishing {
     publications {
-        MyPublication(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
@@ -77,7 +77,7 @@ task bintrayKeySetting {
 bintray {
     user = bintrayUser
     key = bintrayKey
-    publications = ['MyPublication']
+    publications = ['mavenJava']
     publish true
     pkg {
         userOrg = BINTRAY_USER_ORG
