@@ -26,8 +26,9 @@ def pomConfig = {
 
     developers {
         developer {
-            id "amuyu-icon"
-            email "amuyu@icon.foundation"
+            id "iconfoundation"
+            name "icon.foundation"
+            email "foo@icon.foundation"
         }
     }
 
