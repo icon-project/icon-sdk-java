@@ -1,4 +1,6 @@
 [ ![Download](https://api.bintray.com/packages/icon/icon-sdk/icon-sdk/images/download.svg) ](https://bintray.com/icon/icon-sdk/icon-sdk/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/foundation.icon/icon-sdk/badge.svg)](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk)
+[![Javadocs](http://www.javadoc.io/badge/foundation.icon/icon-sdk.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
 
 # ICON SDK for Java
 
@@ -277,7 +279,7 @@ Person memberPerson = iconService.query(call).execute();
 
 ## Download
 
-Download [the latest JAR](https://search.maven.org/remote_content?g=foundation.icon&a=icon-sdk&v=LATEST) or grab via Maven:
+Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk) or grab via Maven:
 
 ```
 <dependency>
