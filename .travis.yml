@@ -1,0 +1,15 @@
+language: java
+
+jobs:
+  include:
+    - 
+      if: branch = develop
+      script: 
+        - echo "on develop"
+        - ./gradlew clean assemble javadocJar sourcesJar test --scan -s
+    - 
+      if: branch = master
+      script: 
+        - echo "on master"
+        - ./gradlew clean assemble javadocJar sourcesJar test bintrayUpload  --scan -s
+       
