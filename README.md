@@ -16,11 +16,11 @@ A simple query of the block by height is as follows.
 IconService iconService = new IconService(new HttpProvider("https://url"));
 
 // Gets a block matching the block height.
-Request<Block> request = iconService.getBlock(1209);
+Request<Block> request = iconService.getBlock(height);
 try {
     Block block = request.execute();
     ...
-} catch (Exception e) {
+} catch (IOException e) {
     ...    
 }
 ```
@@ -58,11 +58,11 @@ All queries are requested by a `Request` object.
 Its requests are executed as **Synchronized** or **Asynchronized**.
 
 ```java
-Request<Block> request = iconService.getBlock(1209);
+Request<Block> request = iconService.getBlock(height);
 
 // Asynchronized request execution
 request.execute(new Callback<Block>(){
-    void onFailure(Throwable t) {
+    void onFailure(Exception exception) {
         ...
     }
      
@@ -75,7 +75,7 @@ request.execute(new Callback<Block>(){
 try {
     Block block = request.execute();
     ...
-} catch (Exception e) {
+} catch (IOException e) {
     ...
 }
 ```
@@ -84,7 +84,7 @@ The querying APIs are as follows.
 
 ```java
 // Gets the block
-Request<Block> request = iconService.getBlock(1000); // by height
+Request<Block> request = iconService.getBlock(new BigInteger("1000")); // by height
 
 Request<Block> request = iconService.getBlock(new Bytes("0x000...000"); // by hash
 
@@ -117,7 +117,7 @@ IcxCall<BigInteger> call = new IcxCall.Builder()
     .to(scoreAddress)
     .method("balanceOf")
     .params(params)
-    .build();
+    .buildWith(BigInteger.class);
 Request<BigInteger> request = iconService.call(call);
 ```
 
@@ -202,7 +202,7 @@ Request<Bytes> request = iconService.sendTransaction(signedTransaction);
 
 // Asynchronized request execution
 request.execute(new Callback<Bytes>(){
-    void onFailure(Throwable t) {
+    void onFailure(Exception e) {
         ...
     }
      
@@ -266,8 +266,8 @@ IcxCall<Person> call = new IcxCall.Builder()
                 .from(fromAddress)
                 .to(scoreAddress)
                 .method("searchMember")
-                .params(person)
-                .build();
+                .params(person) // the input parameter is an instance of Person type
+                .buildWith(Person.class); // build with the response type 'Person'
 
 Person memberPerson = iconService.query(call).execute();
 ```
