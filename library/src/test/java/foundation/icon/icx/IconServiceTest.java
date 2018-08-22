@@ -32,6 +32,7 @@ import java.util.Set;
 
 import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -297,6 +298,28 @@ class IconServiceTest {
                     return isMethodMathces && isSignaureMatches;
                 }),
                 argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testConverterNotfound() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Person person = new Person();
+        person.name = "gold bug";
+        person.age = new BigInteger("20");
+        person.hasPermission = false;
+
+        IcxCall<PersonResponse> icxCall = new Builder()
+                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
+                .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .method("addUser")
+                .params(person)
+                .buildWith(PersonResponse.class);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            iconService.query(icxCall);
+        });
     }
 
     @SuppressWarnings("unchecked")

@@ -83,7 +83,7 @@ public class HttpCall<T> implements Call<T> {
             String content = body.string();
             Response response = mapper.readValue(content, Response.class);
             if (converter == null) {
-                throw new IOException("Can not convert response params '" + content + "'");
+                throw new IllegalArgumentException("There is no converter for response:'" + content + "'");
             }
             if (response.getResult() != null) {
                 return converter.convertTo(response.getResult());

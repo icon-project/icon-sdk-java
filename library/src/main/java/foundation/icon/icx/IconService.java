@@ -212,7 +212,8 @@ public class IconService {
                 return converter;
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("Could not locate response converter for:'" + type + "'");
     }
 
     /**
