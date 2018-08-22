@@ -193,11 +193,11 @@ public class IconService {
      * @param signedTransaction parameters including signatures
      * @return the Call object can execute a request (result type is txHash)
      */
-    public Call<String> sendTransaction(SignedTransaction signedTransaction) {
+    public Call<Bytes> sendTransaction(SignedTransaction signedTransaction) {
         long requestId = System.currentTimeMillis();
         Request request = new Request(
                 requestId, "icx_sendTransaction", signedTransaction.getProperties());
-        return provider.request(request, findConverter(String.class));
+        return provider.request(request, findConverter(Bytes.class));
     }
 
     @SuppressWarnings("unchecked")

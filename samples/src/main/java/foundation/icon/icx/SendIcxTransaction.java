@@ -1,6 +1,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.IconAmount;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
@@ -48,7 +49,7 @@ public class SendIcxTransaction {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         System.out.println("txHash:"+hash);
     }
 

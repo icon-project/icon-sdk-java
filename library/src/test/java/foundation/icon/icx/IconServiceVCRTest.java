@@ -121,8 +121,8 @@ public class IconServiceVCRTest {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0xefc935bb4a944ccf02b4ff4a601f5bb47d60b55e21aa9683aaf17bf1d79129ae", hash);
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
+        assertEquals("0xefc935bb4a944ccf02b4ff4a601f5bb47d60b55e21aa9683aaf17bf1d79129ae", hash.toString());
     }
 
     @Test
@@ -200,8 +200,8 @@ public class IconServiceVCRTest {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x78bb0b6a9eca9b67bc782a03918a951b0dde875eae5a531902a3fefb6ae819b5", hash);
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
+        assertEquals("0x78bb0b6a9eca9b67bc782a03918a951b0dde875eae5a531902a3fefb6ae819b5", hash.toString());
     }
 
     @Test
@@ -229,8 +229,8 @@ public class IconServiceVCRTest {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x4a0b10b28c455eceeff4d8940c30995b741947f7856bbb1b95763510c750fa94", hash);
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
+        assertEquals("0x4a0b10b28c455eceeff4d8940c30995b741947f7856bbb1b95763510c750fa94", hash.toString());
     }
 
     @Test
@@ -249,8 +249,8 @@ public class IconServiceVCRTest {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x40a74b203a30c49a28245fe22f3f04005f0b391b367debd03b1f5d4583498089", hash);
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
+        assertEquals("0x40a74b203a30c49a28245fe22f3f04005f0b391b367debd03b1f5d4583498089", hash.toString());
     }
 
     class TokenBalance {

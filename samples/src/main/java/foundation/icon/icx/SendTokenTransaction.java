@@ -1,6 +1,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.IconAmount;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -58,7 +59,7 @@ public class SendTokenTransaction {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         System.out.println("txHash:"+hash);
     }
 

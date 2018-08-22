@@ -1,6 +1,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -66,7 +67,7 @@ public class DeploySampleTokenScore {
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        String hash = iconService.sendTransaction(signedTransaction).execute();
+        Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         System.out.println("txHash:"+hash);
     }
 
@@ -84,7 +85,7 @@ public class DeploySampleTokenScore {
         return result;
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException {
         new DeploySampleTokenScore().sendTransaction();
     }
 }
