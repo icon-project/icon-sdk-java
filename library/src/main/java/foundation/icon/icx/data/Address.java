@@ -19,7 +19,6 @@ package foundation.icon.icx.data;
 
 import foundation.icon.icx.crypto.IconKeys;
 
-import java.security.InvalidParameterException;
 import java.util.Arrays;
 
 public class Address {
@@ -29,8 +28,12 @@ public class Address {
 
     public Address(String address) {
         AddressPrefix prefix = IconKeys.getAddressHexPrefix(address);
-        if (prefix == null || !IconKeys.isValidAddress(address))
-            throw new InvalidParameterException("Invalid address");
+        if (prefix == null) {
+            throw new IllegalArgumentException("Invalid address prefix");
+        } else if (!IconKeys.isValidAddress(address)) {
+            throw new IllegalArgumentException("Invalid address");
+        }
+
         this.prefix = prefix;
         this.body = IconKeys.getHexAddress(address);
     }

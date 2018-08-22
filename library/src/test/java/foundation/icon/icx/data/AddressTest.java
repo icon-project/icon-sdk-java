@@ -20,13 +20,9 @@ package foundation.icon.icx.data;
 import foundation.icon.icx.crypto.IconKeys;
 import org.junit.jupiter.api.Test;
 
-import java.security.InvalidParameterException;
-
 import static foundation.icon.icx.data.Address.AddressPrefix.CONTRACT;
 import static foundation.icon.icx.data.Address.AddressPrefix.EOA;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AddressTest {
     private String eoa = "hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
@@ -51,22 +47,22 @@ public class AddressTest {
     @Test
     void testInvalidCreate() {
         String noPrefix = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd31";
-        assertThrows(InvalidParameterException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new Address(noPrefix);
         });
 
         String missCharacter = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd3";
-        assertThrows(InvalidParameterException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new Address(missCharacter);
         });
 
         String notHex = "4873b94352c8c1f3b2f09aaeccea31ce9e90bd3g";
-        assertThrows(InvalidParameterException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new Address(notHex);
         });
 
         String words = "helloworldhelloworldhelloworldhelloworld";
-        assertThrows(InvalidParameterException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new Address(words);
         });
     }
