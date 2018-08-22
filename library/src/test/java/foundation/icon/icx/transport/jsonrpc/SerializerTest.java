@@ -20,7 +20,6 @@ package foundation.icon.icx.transport.jsonrpc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

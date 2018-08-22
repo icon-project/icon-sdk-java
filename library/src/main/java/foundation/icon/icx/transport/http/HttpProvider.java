@@ -25,7 +25,7 @@ import foundation.icon.icx.Provider;
 import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
+import foundation.icon.icx.transport.jsonrpc.RpcItemSerializer;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;

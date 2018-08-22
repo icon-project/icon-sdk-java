@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import foundation.icon.icx.Call;
 import foundation.icon.icx.Callback;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
+import foundation.icon.icx.transport.jsonrpc.RpcItemDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Response;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcError;

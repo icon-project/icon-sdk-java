@@ -19,7 +19,6 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.transport.jsonrpc.Deserializers.RpcItemDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
