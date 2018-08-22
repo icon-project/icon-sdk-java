@@ -36,14 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 class SignedTransactionTest {
-    private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(RpcItem.class, new Serializers.RpcItemSerializer(true));
-        mapper.registerModule(module);
     }
 
     @Test
@@ -178,11 +173,12 @@ class SignedTransactionTest {
     }
 
     @Test
-    void testEscapeString() throws JsonProcessingException {
-        String temp = "\\.{}[]\"\b한글";
-        RpcItem escapeValue = new RpcValue(temp);
-        String json = mapper.writeValueAsString(escapeValue);
-        assertEquals("\\\\\\.\\{\\}\\[\\]\"\b한글", json);
+    void testEscapeString() {
+        String text = "\\.{}[]\"\b한글";
+
+        String escapedText = SignedTransaction.TransactionSerializer.escape(text);
+
+        assertEquals("\\\\\\.\\{\\}\\[\\]\"\b한글", escapedText);
     }
 
 

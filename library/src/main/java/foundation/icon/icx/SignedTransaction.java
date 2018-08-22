@@ -17,24 +17,16 @@
 
 package foundation.icon.icx;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
-import foundation.icon.icx.transport.jsonrpc.Serializers.RpcItemSerializer;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Base64;
+import java.util.TreeSet;
 
 /**
  * SignedTransaction serializes transaction messages and
@@ -60,7 +52,7 @@ public class SignedTransaction {
 
         RpcObject.Builder builder = new RpcObject.Builder();
         for (String key : properties.keySet()) {
-            builder.put(key, getSortedItem(properties.getItem(key)));
+            builder.put(key, properties.getItem(key));
         }
 
         String signature = Base64.getEncoder().encodeToString(getSignature(properties));
@@ -69,51 +61,30 @@ public class SignedTransaction {
     }
 
     RpcObject getTransactionProperties() {
-        return new Builder(Builder.Sort.KEY)
-                .put("version", getRpcItemFromTransaction(transaction.getVersion()))
-                .put("from", getRpcItemFromTransaction(transaction.getFrom().toString()))
-                .put("to", getRpcItemFromTransaction(transaction.getTo().toString()))
-                .put("value", getRpcItemFromTransaction(transaction.getValue()))
-                .put("stepLimit", getRpcItemFromTransaction(transaction.getStepLimit()))
-                .put("timestamp", getRpcItemFromTransaction(transaction.getTimestamp()))
-                .put("nid", getRpcItemFromTransaction(transaction.getNid()))
-                .put("nonce", getRpcItemFromTransaction(transaction.getNonce()))
-                .put("dataType", getRpcItemFromTransaction(transaction.getDataType()))
-                .put("data", getRpcItemFromTransaction(transaction.getData()))
-                .build();
+        Builder builder = new Builder();
+        putTransactionPropertyToBuilder(builder, "version", transaction.getVersion());
+        putTransactionPropertyToBuilder(builder, "from", transaction.getFrom().toString());
+        putTransactionPropertyToBuilder(builder, "to", transaction.getTo().toString());
+        putTransactionPropertyToBuilder(builder, "value", transaction.getValue());
+        putTransactionPropertyToBuilder(builder, "stepLimit", transaction.getStepLimit());
+        putTransactionPropertyToBuilder(builder, "timestamp", transaction.getTimestamp());
+        putTransactionPropertyToBuilder(builder, "nid", transaction.getNid());
+        putTransactionPropertyToBuilder(builder, "nonce", transaction.getNonce());
+        putTransactionPropertyToBuilder(builder, "dataType", transaction.getDataType());
+        putTransactionPropertyToBuilder(builder, "data", transaction.getData());
+        return builder.build();
     }
 
-    RpcItem getRpcItemFromTransaction(BigInteger value) {
-        return value != null ? new RpcValue(value) : null;
+    void putTransactionPropertyToBuilder(Builder builder, String key, BigInteger value) {
+        if (value != null) builder.put(key, new RpcValue(value));
     }
 
-    RpcItem getRpcItemFromTransaction(String value) {
-        return value != null ? new RpcValue(value) : null;
+    void putTransactionPropertyToBuilder(Builder builder, String key, String value) {
+        if (value != null) builder.put(key, new RpcValue(value));
     }
 
-    RpcItem getRpcItemFromTransaction(RpcItem item) {
-        return getSortedItem(item);
-    }
-
-    RpcItem getSortedItem(RpcItem item) {
-        if (item instanceof RpcObject) {
-            RpcObject.Builder builder = new RpcObject.Builder(RpcObject.Builder.Sort.KEY);
-            RpcObject rpcObject = item.asObject();
-            for (String key : rpcObject.keySet()) {
-                builder.put(key, getSortedItem(rpcObject.getItem(key)));
-            }
-            return builder.build();
-        } else if (item instanceof RpcArray) {
-            RpcArray.Builder builder = new RpcArray.Builder();
-            RpcArray rpcObject = item.asArray();
-            for (RpcItem childItem : rpcObject) {
-                builder.add(getSortedItem(childItem));
-            }
-            return builder.build();
-        } else if (item instanceof RpcValue) {
-            return new RpcValue(item.asValue());
-        }
-        return item;
+    void putTransactionPropertyToBuilder(Builder builder, String key, RpcItem item) {
+        if (item != null) builder.put(key, item);
     }
 
     /**
@@ -139,36 +110,73 @@ public class SignedTransaction {
      *
      * @return Serialized property
      */
-    // TODO make own serializer
     String serialize(RpcObject properties) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
-        module.addSerializer(RpcItem.class, new RpcItemSerializer(true));
-        mapper.registerModule(module);
-
-        String jsonString = null;
-        try {
-            SerializePrinter printer = new SerializePrinter();
-            ObjectWriter writer = mapper.writer(printer);
-            jsonString = writer.writeValueAsString(properties);
-        } catch (JsonProcessingException ignored) {
-        }
-        if (jsonString == null || jsonString.length() < 2) return "";
-        return "icx_sendTransaction." +
-                jsonString.substring(1, jsonString.length() - 1);
+        return TransactionSerializer.serialize(properties);
     }
 
-    private static class SerializePrinter extends MinimalPrettyPrinter {
+    /**
+     * Transaction Serializer for generating a signature with transaction properties.
+     */
+    public static class TransactionSerializer {
 
-        @Override
-        public void writeObjectFieldValueSeparator(JsonGenerator jg) throws IOException {
-            jg.writeRaw('.');
+        /**
+         * Serializes properties as string
+         * @param properties transaction properties
+         * @return serialized string of properties
+         */
+        public static String serialize(RpcObject properties) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("icx_sendTransaction.");
+            serializeObjectItems(builder, properties);
+            return builder.toString();
         }
 
-        @Override
-        public void writeObjectEntrySeparator(JsonGenerator jg) throws IOException, JsonGenerationException {
-            jg.writeRaw('.');
+        static void serialize(StringBuilder builder, RpcItem item) {
+            if (item instanceof RpcObject) {
+                builder.append("{");
+                serializeObjectItems(builder, item.asObject());
+                builder.append("}");
+            } else if (item instanceof RpcArray) {
+                builder.append("[");
+                serializeArrayItems(builder, item.asArray());
+                builder.append("]");
+            } else {
+                if (item == null) {
+                    builder.append("\0");
+                } else {
+                    builder.append(escape(item.asString()));
+                }
+            }
+        }
+
+        private static void serializeObjectItems(StringBuilder builder, RpcObject object) {
+            boolean firstItem = true;
+            // Sorts keys before serializing object
+            TreeSet<String> keys = new TreeSet<>(object.keySet());
+            for (String key : keys) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    builder.append(".");
+                }
+                serialize(builder.append(key).append("."), object.getItem(key));
+            }
+        }
+
+        private static void serializeArrayItems(StringBuilder builder, RpcArray array) {
+            boolean firstItem = true;
+            for (RpcItem child : array) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    builder.append(".");
+                }
+                serialize(builder, child);
+            }
+        }
+
+        static String escape(String string) {
+            return string.replaceAll("([\\\\.{}\\[\\]])", "\\\\$1");
         }
     }
 
