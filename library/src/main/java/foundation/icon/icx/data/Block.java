@@ -33,75 +33,55 @@ public class Block {
         this.properties = properties;
     }
 
-    public String getPrevBlockHash() {
-        return getSafeProperty("prev_block_hash").asString();
+    public Bytes getPrevBlockHash() {
+        RpcItem item = properties.getItem("prev_block_hash");
+        return item != null ? item.asBytes() : null;
     }
 
-    public String getMerkleTreeRootHash() {
-        return getSafeProperty("merkle_tree_root_hash").asString();
+    public Bytes getMerkleTreeRootHash() {
+        RpcItem item = properties.getItem("merkle_tree_root_hash");
+        return item != null ? item.asBytes() : null;
     }
 
     public BigInteger getTimestamp() {
-        return getSafeProperty("time_stamp").asInteger();
+        RpcItem item = properties.getItem("time_stamp");
+        return item != null ? item.asInteger() : null;
     }
 
     public List<ConfirmedTransaction> getTransactions() {
-        RpcArray array = properties.getItem("confirmed_transaction_list").asArray();
+        RpcItem item = properties.getItem("confirmed_transaction_list");
         List<ConfirmedTransaction> transactions = new ArrayList<>();
-        if (array != null) {
-            for (int i = 0; i < array.size(); i++) {
-                transactions.add(new ConfirmedTransaction((RpcObject) array.get(i)));
+        if (item != null) {
+            for (RpcItem tx : item.asArray()) {
+                transactions.add(new ConfirmedTransaction(tx.asObject()));
             }
         }
         return transactions;
     }
 
     public Bytes getBlockHash() {
-        return getSafeProperty("block_hash").asBytes();
+        RpcItem item = properties.getItem("block_hash");
+        return item != null ? item.asBytes() : null;
     }
 
     public String getPeerId() {
-        return getSafeProperty("peer_id").asString();
+        RpcItem item = properties.getItem("peer_id");
+        return item != null ? item.asString() : null;
     }
 
     public BigInteger getVersion() {
-        return getSafeProperty("version").asInteger();
+        RpcItem item = properties.getItem("version");
+        return item != null ? item.asInteger() : null;
     }
 
     public BigInteger getHeight() {
-        return getSafeProperty("height").asInteger();
+        RpcItem item = properties.getItem("height");
+        return item != null ? item.asInteger() : null;
     }
 
     public String getSignature() {
-        return getSafeProperty("signature").asString();
-    }
-
-
-    RpcItem getSafeProperty(String key) {
-        RpcItem item = properties.getItem(key);
-        if (item != null) return item.asValue();
-        return new RpcItem() {
-
-            @Override
-            public String asString() {
-                return null;
-            }
-
-            @Override
-            public BigInteger asInteger() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public RpcArray asArray() {
-                return null;
-            }
-        };
+        RpcItem item = properties.getItem("signature");
+        return item != null ? item.asString() : null;
     }
 
 }

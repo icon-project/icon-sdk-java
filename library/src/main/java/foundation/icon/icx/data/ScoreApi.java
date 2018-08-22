@@ -34,25 +34,27 @@ public class ScoreApi {
     }
 
     public String getType() {
-        return getSafeProperty("type").asString();
+        RpcItem item = properties.getItem("type");
+        return item != null ? item.asString() : null;
     }
 
     public String getName() {
-        return getSafeProperty("name").asString();
+        RpcItem item = properties.getItem("name");
+        return item != null ? item.asString() : null;
     }
 
     public List<Param> getInputs() {
-        return getParams(getSafeProperty("inputs").asArray());
+        return getParams(properties.getItem("inputs"));
     }
 
     public List<Param> getOutputs() {
-        return getParams(getSafeProperty("outputs").asArray());
+        return getParams(properties.getItem("outputs"));
     }
 
-    List<Param> getParams(RpcArray array) {
+    List<Param> getParams(RpcItem item) {
         List<Param> params = new ArrayList<>();
-        if (array != null) {
-            for (RpcItem rpcItem : array) {
+        if (item != null) {
+            for (RpcItem rpcItem : item.asArray()) {
                 RpcObject object = (RpcObject) rpcItem;
 
                 String name = object.getItem("name").asString();
@@ -64,34 +66,8 @@ public class ScoreApi {
     }
 
     public String getReadonly() {
-        return getSafeProperty("readonly").asString();
-    }
-
-    RpcItem getSafeProperty(String key) {
-        RpcItem item = properties.getItem(key);
-        if (item != null) return item.asValue();
-        return new RpcItem() {
-
-            @Override
-            public String asString() {
-                return null;
-            }
-
-            @Override
-            public BigInteger asInteger() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public RpcArray asArray() {
-                return null;
-            }
-        };
+        RpcItem item = properties.getItem("readonly");
+        return item != null ? item.asString() : null;
     }
 
     public class Param {

@@ -33,47 +33,56 @@ public class ConfirmedTransaction implements Transaction {
 
     @Override
     public BigInteger getVersion() {
-        return getSafeProperty("version").asInteger();
+        RpcItem item = properties.getItem("version");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public Address getFrom() {
-        return getSafeProperty("from").asAddress();
+        RpcItem item = properties.getItem("from");
+        return item != null ? item.asAddress() : null;
     }
 
     @Override
     public Address getTo() {
-        return getSafeProperty("to").asAddress();
+        RpcItem item = properties.getItem("to");
+        return item != null ? item.asAddress() : null;
     }
 
     @Override
     public BigInteger getValue() {
-        return getSafeProperty("value").asInteger();
+        RpcItem item = properties.getItem("value");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public BigInteger getStepLimit() {
-        return getSafeProperty("stepLimit").asInteger();
+        RpcItem item = properties.getItem("stepLimit");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public BigInteger getTimestamp() {
-        return getSafeProperty("timestamp").asInteger();
+        RpcItem item = properties.getItem("timestamp");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public BigInteger getNid() {
-        return getSafeProperty("nid").asInteger();
+        RpcItem item = properties.getItem("nid");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public BigInteger getNonce() {
-        return getSafeProperty("nonce").asInteger();
+        RpcItem item = properties.getItem("nonce");
+        return item != null ? item.asInteger() : null;
     }
 
     @Override
     public String getDataType() {
-        return getSafeProperty("dataType").asString();
+        RpcItem item = properties.getItem("dataType");
+        return item != null ? item.asString() : null;
     }
 
     @Override
@@ -82,45 +91,28 @@ public class ConfirmedTransaction implements Transaction {
     }
 
     public Bytes getTxHash() {
-        return getSafeProperty("txHash").asBytes();
+        RpcItem item = properties.getItem("txHash");
+        return item != null ? item.asBytes() : null;
     }
 
     public BigInteger getTxIndex() {
-        return getSafeProperty("txIndex").asInteger();
+        RpcItem item = properties.getItem("txIndex");
+        return item != null ? item.asInteger() : null;
     }
 
     public BigInteger getBlockHeight() {
-        return getSafeProperty("blockHeight").asInteger();
+        RpcItem item = properties.getItem("blockHeight");
+        return item != null ? item.asInteger() : null;
     }
 
     public Bytes getBlockHash() {
-        return getSafeProperty("blockHash").asBytes();
+        RpcItem item = properties.getItem("blockHash");
+        return item != null ? item.asBytes() : null;
     }
 
     public String getSignature() {
-        return getSafeProperty("signature").asString();
-    }
-
-    RpcItem getSafeProperty(String key) {
-        RpcItem item = properties.getItem(key);
-        if (item != null) return item.asValue();
-        return new RpcItem() {
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public String asString() {
-                return null;
-            }
-
-            @Override
-            public BigInteger asInteger() {
-                return null;
-            }
-        };
+        RpcItem item = properties.getItem("signature");
+        return item != null ? item.asString() : null;
     }
 
 }

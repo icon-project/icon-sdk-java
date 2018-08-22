@@ -143,7 +143,7 @@ public class RpcValue implements RpcItem {
      * @return the value as boolean
      */
     @Override
-    public boolean asBoolean() {
+    public Boolean asBoolean() {
         switch (value) {
             case "0x0":
                 return false;

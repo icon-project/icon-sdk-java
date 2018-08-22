@@ -53,7 +53,7 @@ public interface RpcItem {
         return asValue().asByteArray();
     }
 
-    default boolean asBoolean() {
+    default Boolean asBoolean() {
         return asValue().asBoolean();
     }
 
@@ -68,6 +68,59 @@ public interface RpcItem {
     class RpcValueException extends IllegalArgumentException {
         RpcValueException(String message) {
             super(message);
+        }
+    }
+
+    class EmptyItem implements RpcItem {
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public RpcObject asObject() {
+            return null;
+        }
+
+        @Override
+        public RpcArray asArray() {
+            return null;
+        }
+
+        @Override
+        public RpcValue asValue() {
+            return null;
+        }
+
+        @Override
+        public String asString() {
+            return null;
+        }
+
+        @Override
+        public BigInteger asInteger() {
+            return null;
+        }
+
+        @Override
+        public byte[] asByteArray() {
+            return null;
+        }
+
+        @Override
+        public Boolean asBoolean() {
+            return null;
+        }
+
+        @Override
+        public Address asAddress() {
+            return null;
+        }
+
+        @Override
+        public Bytes asBytes() {
+            return null;
         }
     }
 }

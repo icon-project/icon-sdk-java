@@ -32,13 +32,13 @@ public class EventLog {
     }
 
     public String getScoreAddress() {
-        RpcValue value = (RpcValue) properties.getItem("scoreAddress");
-        return value != null ? value.asString() : null;
+        RpcItem item = properties.getItem("scoreAddress");
+        return item != null ? item.asString() : null;
     }
 
     public List<RpcItem> getIndexed() {
-        RpcArray field = (RpcArray) properties.getItem("indexed");
-        return field != null ? field.asArray().asList() : null;
+        RpcItem item = properties.getItem("indexed");
+        return item != null ? item.asArray().asList() : null;
     }
 
     public List<RpcItem> getData() {

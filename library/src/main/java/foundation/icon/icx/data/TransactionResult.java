@@ -34,81 +34,64 @@ public class TransactionResult {
     }
 
     public BigInteger getStatus() {
-        return getSafeProperty("status").asInteger();
+        RpcItem item = properties.getItem("status");
+        return item != null ? item.asInteger() : null;
     }
 
     public String getTo() {
-        return getSafeProperty("to").asString();
+        RpcItem item = properties.getItem("to");
+        return item != null ? item.asString() : null;
     }
 
     public Bytes getTxHash() {
-        return getSafeProperty("txHash").asBytes();
+        RpcItem item = properties.getItem("txHash");
+        return item != null ? item.asBytes() : null;
     }
 
     public BigInteger getBlockHeight() {
-        return getSafeProperty("blockHeight").asInteger();
+        RpcItem item = properties.getItem("blockHeight");
+        return item != null ? item.asInteger() : null;
     }
 
     public Bytes getBlockHash() {
-        return getSafeProperty("blockHash").asBytes();
+        RpcItem item = properties.getItem("blockHash");
+        return item != null ? item.asBytes() : null;
     }
 
     public BigInteger getCumulativeStepUsed() {
-        return getSafeProperty("cumulativeStepUsed").asInteger();
+        RpcItem item = properties.getItem("cumulativeStepUsed");
+        return item != null ? item.asInteger() : null;
     }
 
     public BigInteger getStepUsed() {
-        return getSafeProperty("stepUsed").asInteger();
+        RpcItem item = properties.getItem("stepUsed");
+        return item != null ? item.asInteger() : null;
     }
 
     public BigInteger getStepPrice() {
-        return getSafeProperty("stepPrice").asInteger();
+        RpcItem item = properties.getItem("stepPrice");
+        return item != null ? item.asInteger() : null;
     }
 
     public String getScoreAddress() {
-        return getSafeProperty("scoreAddress").asString();
+        RpcItem item = properties.getItem("scoreAddress");
+        return item != null ? item.asString() : null;
     }
 
     public String getLogsBloom() {
-        return getSafeProperty("logsBloom").asString();
+        RpcItem item = properties.getItem("logsBloom");
+        return item != null ? item.asString() : null;
     }
 
     public List<EventLog> getEventLogs() {
-        RpcArray array = getSafeProperty("eventLogs").asArray();
+        RpcItem item = properties.getItem("eventLogs");
         List<EventLog> eventLogs = new ArrayList<>();
-        if (array != null) {
-            for (RpcItem rpcItem : array) {
+        if (item != null) {
+            for (RpcItem rpcItem : item.asArray()) {
                 eventLogs.add(new EventLog(rpcItem.asObject()));
             }
         }
         return eventLogs;
-    }
-
-    RpcItem getSafeProperty(String key) {
-        RpcItem item = properties.getItem(key);
-        if (item != null) return item.asValue();
-        return new RpcItem() {
-
-            @Override
-            public String asString() {
-                return null;
-            }
-
-            @Override
-            public BigInteger asInteger() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public RpcArray asArray() {
-                return null;
-            }
-        };
     }
 
 }
