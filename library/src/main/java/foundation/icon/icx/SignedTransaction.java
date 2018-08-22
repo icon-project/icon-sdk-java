@@ -147,7 +147,7 @@ public class SignedTransaction {
                 builder.append("]");
             } else {
                 if (item == null) {
-                    builder.append("\0");
+                    builder.append("\\0");
                 } else {
                     builder.append(escape(item.asString()));
                 }
