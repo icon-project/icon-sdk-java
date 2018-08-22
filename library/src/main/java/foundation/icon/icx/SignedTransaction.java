@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -63,8 +64,8 @@ public class SignedTransaction {
     RpcObject getTransactionProperties() {
         Builder builder = new Builder();
         putTransactionPropertyToBuilder(builder, "version", transaction.getVersion());
-        putTransactionPropertyToBuilder(builder, "from", transaction.getFrom().toString());
-        putTransactionPropertyToBuilder(builder, "to", transaction.getTo().toString());
+        putTransactionPropertyToBuilder(builder, "from", transaction.getFrom());
+        putTransactionPropertyToBuilder(builder, "to", transaction.getTo());
         putTransactionPropertyToBuilder(builder, "value", transaction.getValue());
         putTransactionPropertyToBuilder(builder, "stepLimit", transaction.getStepLimit());
         putTransactionPropertyToBuilder(builder, "timestamp", transaction.getTimestamp());
@@ -80,6 +81,10 @@ public class SignedTransaction {
     }
 
     void putTransactionPropertyToBuilder(Builder builder, String key, String value) {
+        if (value != null) builder.put(key, new RpcValue(value));
+    }
+
+    void putTransactionPropertyToBuilder(Builder builder, String key, Address value) {
         if (value != null) builder.put(key, new RpcValue(value));
     }
 

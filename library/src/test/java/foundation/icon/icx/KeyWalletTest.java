@@ -24,6 +24,7 @@ import foundation.icon.icx.data.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.web3j.crypto.CipherException;
+import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,6 +107,26 @@ public class KeyWalletTest {
 
         assertThrows(InputMismatchException.class, () -> {
             KeyWallet.load(PASSWORD, file);
+        });
+    }
+
+    @Test
+    void testSignMessage() {
+        String message = "0xefc935bb4a944ccf02b4ff4a601f5bb47d60b55e21aa9683aaf17bf1d79129ae";
+        String expected = "0x7e224bd64f2fa18a340acda4f7e567f87d9c8e65e523759d00034453b92be2d55ab206c41bc60f831055ae2f49ab40431a209a87f09a965492a84ab1f0b885c001";
+
+        KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        byte[] sign = wallet.signMessage(Numeric.hexStringToByteArray(message));
+
+        assertEquals(expected, Numeric.toHexString(sign));
+    }
+
+    @Test
+    void testSignMessageNullException() {
+        KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        byte[] message = null;
+        assertThrows(IllegalArgumentException.class, () -> {
+            wallet.signMessage(message);
         });
     }
 

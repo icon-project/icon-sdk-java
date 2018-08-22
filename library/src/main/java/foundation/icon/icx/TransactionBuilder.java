@@ -50,8 +50,10 @@ public final class TransactionBuilder {
     private TransactionBuilder() {
     }
 
-    public Transaction build() {
-        return new SendingTransaction(this);
+    static <T> void checkArgument(T object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     /**
@@ -159,6 +161,17 @@ public final class TransactionBuilder {
 
     }
 
+    public Transaction build() {
+        checkArgument(from, "from not found");
+        checkArgument(to, "to not found");
+        checkArgument(version, "version not found");
+        checkArgument(timestamp, "timestamp not found");
+        checkArgument(nid, "nid not found");
+        checkArgument(stepLimit, "stepLimit not found");
+
+        return new SendingTransaction(this);
+    }
+
     /**
      * A Builder for the calling SCORE transaction.
      */
@@ -187,34 +200,8 @@ public final class TransactionBuilder {
 
         public Transaction build() {
             txBuilder.data = dataBuilder.build();
-            return txBuilder.build();
-        }
-    }
+            checkArgument(((RpcObject) txBuilder.data).getItem("method"), "method not found");
 
-    /**
-     * A Builder for the deploy transaction.
-     */
-    public static final class DeployBuilder {
-
-        private TransactionBuilder txBuilder;
-        private RpcObject.Builder dataBuilder;
-
-        private DeployBuilder(TransactionBuilder txBuilder, String contentType, byte[] content) {
-            this.txBuilder = txBuilder;
-            this.txBuilder.dataType = "deploy";
-
-            dataBuilder = new RpcObject.Builder()
-                    .put("contentType", new RpcValue(contentType))
-                    .put("content", new RpcValue(content));
-        }
-
-        public DeployBuilder params(RpcObject params) {
-            dataBuilder.put("params", params);
-            return this;
-        }
-
-        public Transaction build() {
-            txBuilder.data = dataBuilder.build();
             return txBuilder.build();
         }
     }
@@ -310,6 +297,37 @@ public final class TransactionBuilder {
         @Override
         public RpcItem getData() {
             return data;
+        }
+    }
+
+    /**
+     * A Builder for the deploy transaction.
+     */
+    public static final class DeployBuilder {
+
+        private TransactionBuilder txBuilder;
+        private RpcObject.Builder dataBuilder;
+
+        private DeployBuilder(TransactionBuilder txBuilder, String contentType, byte[] content) {
+            this.txBuilder = txBuilder;
+            this.txBuilder.dataType = "deploy";
+
+            dataBuilder = new RpcObject.Builder()
+                    .put("contentType", new RpcValue(contentType))
+                    .put("content", new RpcValue(content));
+        }
+
+        public DeployBuilder params(RpcObject params) {
+            dataBuilder.put("params", params);
+            return this;
+        }
+
+        public Transaction build() {
+            txBuilder.data = dataBuilder.build();
+            checkArgument(((RpcObject) txBuilder.data).getItem("contentType"), "contentType not found");
+            checkArgument(((RpcObject) txBuilder.data).getItem("content"), "content not found");
+
+            return txBuilder.build();
         }
     }
 

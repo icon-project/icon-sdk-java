@@ -23,6 +23,8 @@ import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
+import static foundation.icon.icx.TransactionBuilder.checkArgument;
+
 /**
  * IcxCall contains parameters for querying request.
  *
@@ -96,6 +98,8 @@ public final class IcxCall<O> {
          * @return IcxCall
          */
         public IcxCall<RpcItem> build() {
+            checkArgument(to, "to not found");
+            checkArgument(method, "method not found");
             return buildWith(RpcItem.class);
         }
 
@@ -111,13 +115,17 @@ public final class IcxCall<O> {
                     .put("params", params)
                     .build();
 
-            RpcObject properties = new RpcObject.Builder()
-                    .put("from", new RpcValue(from))
+            RpcObject.Builder propertiesBuilder = new RpcObject.Builder()
                     .put("to", new RpcValue(to))
                     .put("data", data)
-                    .put("dataType", new RpcValue("call"))
-                    .build();
-            return new IcxCall<>(properties, responseType);
+                    .put("dataType", new RpcValue("call"));
+
+            // optional
+            if (from != null) {
+                propertiesBuilder.put("from", new RpcValue(from));
+            }
+
+            return new IcxCall<>(propertiesBuilder.build(), responseType);
         }
     }
 

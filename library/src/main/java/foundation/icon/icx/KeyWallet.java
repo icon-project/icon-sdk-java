@@ -34,6 +34,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import static foundation.icon.icx.TransactionBuilder.checkArgument;
+
 /**
  * An implementation of Wallet which uses of the key pair.
  */
@@ -59,6 +61,8 @@ public class KeyWallet implements Wallet {
      */
     @Override
     public byte[] signMessage(byte[] hash) {
+        checkArgument(hash, "hash not found");
+        checkArgument(ecKeyPair, "ecKeyPair not found");
         return signMessage(hash, ecKeyPair);
     }
 
