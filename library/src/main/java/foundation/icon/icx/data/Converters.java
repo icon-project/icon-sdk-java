@@ -21,8 +21,7 @@ import foundation.icon.icx.transport.jsonrpc.*;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public final class Converters {
@@ -41,7 +40,6 @@ public final class Converters {
         public RpcItem convertFrom(RpcItem object) {
             return object;
         }
-
     };
 
     public static final RpcConverter<BigInteger> BIG_INTEGER
@@ -168,5 +166,55 @@ public final class Converters {
                 return type.isAssignableFrom(typeFor) ? (RpcConverter<T>) converter : null;
             }
         };
+    }
+
+    public static <T> Object fromRpcItem(T item, Class<?> type) {
+        if (item == null) return null;
+
+        if (item.getClass().isAssignableFrom(RpcArray.class)) {
+            return fromRpcArray((RpcArray) item, type);
+        }
+
+        if (item.getClass().isAssignableFrom(RpcObject.class)) {
+            return fromRpcObject((RpcObject) item, type);
+        }
+
+        return fromRpcValue((RpcValue) item, type);
+    }
+
+    static <T> List<T> fromRpcArray(RpcArray array, Class<T> type) {
+        List result = new ArrayList<T>();
+        for (RpcItem item : array) {
+            Object v = fromRpcItem(item, type);
+            if (v != null) result.add(fromRpcItem(item, type));
+        }
+        return result;
+    }
+
+    static <T> Map<String, T> fromRpcObject(RpcObject object, Class<T> type) {
+        Map result = new HashMap();
+        Set<String> keys = object.keySet();
+        for (String key : keys) {
+            Object v = fromRpcItem(object.getItem(key), type);
+            if (v != null) result.put(key, v);
+        }
+        return result;
+    }
+
+    static <T> Object fromRpcValue(RpcValue value, Class<T> type) {
+        if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class) ) {
+            return value.asBoolean();
+        } else if (type.isAssignableFrom(String.class)) {
+            return value.asString();
+        } else if (type.isAssignableFrom(BigInteger.class)) {
+            return value.asInteger();
+        } else if (type.isAssignableFrom(byte[].class)) {
+            return value.asByteArray();
+        } else if (type.isAssignableFrom(Bytes.class)) {
+            return value.asBytes();
+        } else if (type.isAssignableFrom(Address.class)) {
+            return value.asAddress();
+        }
+        return null;
     }
 }
