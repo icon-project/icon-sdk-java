@@ -13,10 +13,10 @@ public class CallSyncAsync {
     private IconService iconService;
 
     public CallSyncAsync() {
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(loggning)
+                .addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
     }
