@@ -47,5 +47,4 @@ public class ScoreQuery {
     public static void main(String[] args) throws IOException {
         new ScoreQuery().query();
     }
-
 }

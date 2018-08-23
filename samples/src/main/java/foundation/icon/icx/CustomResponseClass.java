@@ -12,18 +12,18 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import java.io.IOException;
 import java.math.BigInteger;
 
-public class CustomReponseClass {
+public class CustomResponseClass {
 
     public final String URL = "http://localhost:9000/api/v3";
     private final Address scoreAddress = new Address("cx0000000000000000000000000000000000000001");
 
     private IconService iconService;
 
-    public CustomReponseClass() {
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+    public CustomResponseClass() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(loggning)
+                .addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
     }
@@ -102,6 +102,6 @@ public class CustomReponseClass {
     }
 
     public static void main(String[] args) throws IOException {
-        new CustomReponseClass().getStepCosts();
+        new CustomResponseClass().getStepCosts();
     }
 }

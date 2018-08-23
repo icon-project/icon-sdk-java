@@ -23,10 +23,10 @@ public class SendTokenTransaction {
     private Wallet wallet;
 
     public SendTokenTransaction() {
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(loggning)
+                .addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
         wallet = KeyWallet.load(PRIVATE_KEY_STRING);
@@ -41,7 +41,6 @@ public class SendTokenTransaction {
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
         String methodName = "transfer";
-
 
         RpcObject params = new RpcObject.Builder()
                 .put("_to", new RpcValue(toAddress))
@@ -66,5 +65,4 @@ public class SendTokenTransaction {
     public static void main(String[] args) throws IOException {
         new SendTokenTransaction().sendTransaction();
     }
-
 }

@@ -30,7 +30,7 @@ public class CallSyncAsync {
         iconService.getLastBlock().execute(new Callback<Block>() {
             @Override
             public void onSuccess(Block block) {
-                System.out.println("aysnc call block hash:" + block.getBlockHash());
+                System.out.println("async call block hash:" + block.getBlockHash());
             }
 
             @Override
