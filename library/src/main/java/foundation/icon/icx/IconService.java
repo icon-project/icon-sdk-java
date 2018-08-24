@@ -214,6 +214,12 @@ public class IconService {
             }
         }
 
+        if (type.isAnnotationPresent(AnnotationConverter.class)) {
+            if (type.getAnnotation(AnnotationConverter.class).use()) {
+                return new AnnotatedConverterFactory().create(type);
+            }
+        }
+
         throw new IllegalArgumentException("Could not locate response converter for:'" + type + "'");
     }
 
