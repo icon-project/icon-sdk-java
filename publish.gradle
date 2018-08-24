@@ -73,7 +73,7 @@ def setExtraProperty(String key) {
     }
 
     if (project.hasProperty(key))
-        project.ext.set(key, bintrayUser)
+        project.ext.set(key, project.property(key))
     else if (properties.getProperty(key) == null)
         project.ext.set(key, System.getenv(key))
     else
@@ -84,6 +84,8 @@ def setExtraProperty(String key) {
 task bintrayKeySetting {
     setExtraProperty('bintrayUser')
     setExtraProperty('bintrayKey')
+    setExtraProperty('mavenCentralUser')
+    setExtraProperty('mavenCentralPassword')
 }
 
 bintray {
@@ -102,6 +104,13 @@ bintray {
             //Optional configuration for GPG signing
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
+            }
+            //Optional configuration for Maven Central sync of the version
+            mavenCentralSync {
+                sync = project.ext.mavenCentralSync //[Default: true] Determines whether to sync the version to Maven Central.
+                user = mavenCentralUser //OSS user token: mandatory
+                password = mavenCentralPassword //OSS user password: mandatory
+                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
             }
         }
     }
