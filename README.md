@@ -275,7 +275,7 @@ Person memberPerson = iconService.query(call).execute();
 
 ## Version
 
-0.9.2 beta
+0.9.3 beta
 
 ## Download
 
@@ -285,7 +285,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
   <groupId>foundation.icon</groupId>
   <artifactId>icon-sdk</artifactId>
-  <version>0.9.2</version>
+  <version>0.9.3</version>
   <type>pom</type>
 </dependency>
 ```
@@ -293,7 +293,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 or Gradle:
 
 ```groovy
-implementation 'foundation.icon:icon-sdk:0.9.2'
+implementation 'foundation.icon:icon-sdk:0.9.3'
 ```
 
 ## License
