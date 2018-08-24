@@ -48,7 +48,8 @@ public class IconService {
         addConverterFactory(Converters.newFactory(BigInteger.class, Converters.BIG_INTEGER));
         addConverterFactory(Converters.newFactory(Boolean.class, Converters.BOOLEAN));
         addConverterFactory(Converters.newFactory(String.class, Converters.STRING));
-        addConverterFactory(Converters.newFactory(byte[].class, Converters.BYTES));
+        addConverterFactory(Converters.newFactory(Bytes.class, Converters.BYTES));
+        addConverterFactory(Converters.newFactory(byte[].class, Converters.BYTE_ARRAY));
         addConverterFactory(Converters.newFactory(Block.class, Converters.BLOCK));
         addConverterFactory(Converters.newFactory(
                 ConfirmedTransaction.class, Converters.CONFIRMED_TRANSACTION));

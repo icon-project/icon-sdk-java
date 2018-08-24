@@ -40,6 +40,10 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
+test {
+    useJUnitPlatform()
+}
+
 apply from: '../publish.gradle'
 
 
