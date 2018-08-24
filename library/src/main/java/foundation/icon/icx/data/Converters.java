@@ -86,7 +86,21 @@ public final class Converters {
         }
     };
 
-    public static final RpcConverter<byte[]> BYTES
+    public static final RpcConverter<Bytes> BYTES
+            = new RpcConverter<Bytes>() {
+
+        @Override
+        public Bytes convertTo(RpcItem object) {
+            return object.asBytes();
+        }
+
+        @Override
+        public RpcItem convertFrom(Bytes object) {
+            return RpcItemCreator.create(object);
+        }
+    };
+
+    public static final RpcConverter<byte[]> BYTE_ARRAY
             = new RpcConverter<byte[]>() {
 
         @Override
