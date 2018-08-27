@@ -21,14 +21,28 @@ import org.web3j.utils.Numeric;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+/**
+ * A wrapper class of byte array
+ */
 public class Bytes {
     private byte[] data;
 
+    /**
+     * Creates an instance using hex string
+     *
+     * @param hexString hex string of bytes
+     */
     public Bytes(String hexString) {
-        if (!isValidHex(hexString)) throw new IllegalArgumentException("The value is not hex string.");
+        if (!isValidHex(hexString))
+            throw new IllegalArgumentException("The value is not hex string.");
         this.data = Numeric.hexStringToByteArray(hexString);
     }
 
+    /**
+     * Creates an instance using byte array
+     *
+     * @param data byte array to wrap
+     */
     public Bytes(byte[] data) {
         this.data = data;
     }
@@ -37,19 +51,40 @@ public class Bytes {
         this.data = value.toByteArray();
     }
 
-
+    /**
+     * Gets the data as a byte array
+     *
+     * @return byte array
+     */
     public byte[] toByteArray() {
         return data;
     }
 
+    /**
+     * Gets the data as a byte array given size
+     *
+     * @return byte array given size
+     */
     public byte[] toByteArray(int size) {
         return Numeric.toBytesPadded(new BigInteger(data), size);
     }
 
+    /**
+     * Gets the data as a hex string
+     *
+     * @param withPrefix whether 0x prefix included
+     * @return hex string
+     */
     public String toHexString(boolean withPrefix) {
         return toHexString(withPrefix, data.length);
     }
 
+    /**
+     * Gets the data as a hex string given size
+     *
+     * @param withPrefix whether 0x prefix included
+     * @return hex string given size
+     */
     public String toHexString(boolean withPrefix, int size) {
         String result = Numeric.toHexStringNoPrefix(data);
         int length = result.length();

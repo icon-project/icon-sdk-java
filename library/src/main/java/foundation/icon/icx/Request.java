@@ -17,27 +17,25 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Address;
+import java.io.IOException;
 
 /**
- * Wallet class signs the message(a transaction message to send)
- * using own key-pair
+ * Request class executes the request that has been prepared
  */
-public interface Wallet {
+public interface Request<T> {
 
     /**
-     * Gets the address corresponding the key of the wallet
+     * Executes synchronously
      *
-     * @return address
+     * @return Response
+     * @throws IOException an exception if there exist errors
      */
-    Address getAddress();
+    T execute() throws IOException;
 
     /**
-     * Signs the data to generate a signature
+     * Executes asynchronously
      *
-     * @param data to sign
-     * @return signature
+     * @param callback the callback is invoked when the execution is completed
      */
-    byte[] sign(byte[] data);
-
+    void execute(Callback<T> callback);
 }

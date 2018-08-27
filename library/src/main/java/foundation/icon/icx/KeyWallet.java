@@ -22,6 +22,7 @@ import foundation.icon.icx.crypto.KeyStoreUtils;
 import foundation.icon.icx.crypto.Keystore;
 import foundation.icon.icx.crypto.KeystoreFile;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
@@ -57,26 +58,37 @@ public class KeyWallet implements Wallet {
     }
 
     /**
-     * @see Wallet#signMessage(byte[])
+     * Loads a key wallet from the private key
+     *
+     * @param privateKey the private key to load
+     * @return KeyWallet
+     */
+    public static KeyWallet load(Bytes privateKey) {
+        Credentials credentials = Credentials.create(privateKey.toString());
+        return new KeyWallet(credentials.getEcKeyPair());
+    }
+
+    /**
+     * @see Wallet#sign(byte[])
      */
     @Override
-    public byte[] signMessage(byte[] hash) {
-        checkArgument(hash, "hash not found");
+    public byte[] sign(byte[] data) {
+        checkArgument(data, "hash not found");
         checkArgument(ecKeyPair, "ecKeyPair not found");
-        return signMessage(hash, ecKeyPair);
+        return sign(data, ecKeyPair);
     }
 
     ECKeyPair getEcKeyPair() {
         return ecKeyPair;
     }
 
-    private byte[] signMessage(byte[] bHash, ECKeyPair ecKeyPair) {
-        Sign.SignatureData data = Sign.signMessage(bHash, ecKeyPair, false);
+    private byte[] sign(byte[] data, ECKeyPair ecKeyPair) {
+        Sign.SignatureData signatureData = Sign.signMessage(data, ecKeyPair, false);
 
-        ByteBuffer buffer = ByteBuffer.allocate(data.getR().length + data.getS().length + 1);
-        buffer.put(data.getR());
-        buffer.put(data.getS());
-        buffer.put((byte) (data.getV() - 27));
+        ByteBuffer buffer = ByteBuffer.allocate(signatureData.getR().length + signatureData.getS().length + 1);
+        buffer.put(signatureData.getR());
+        buffer.put(signatureData.getS());
+        buffer.put((byte) (signatureData.getV() - 27));
         return buffer.array();
     }
 
@@ -92,14 +104,12 @@ public class KeyWallet implements Wallet {
     }
 
     /**
-     * Loads a key wallet from the private key
+     * Gets the private key
      *
-     * @param privateKey the private key to load
-     * @return KeyWallet
+     * @return private key
      */
-    public static KeyWallet load(String privateKey) {
-        Credentials credentials = Credentials.create(privateKey);
-        return new KeyWallet(credentials.getEcKeyPair());
+    public Bytes getPrivateKey() {
+        return new Bytes(ecKeyPair.getPrivateKey());
     }
 
     /**
@@ -124,7 +134,7 @@ public class KeyWallet implements Wallet {
      */
     public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
             CipherException, IOException {
-        KeystoreFile keystoreFile = Keystore.createLight(password, wallet.getEcKeyPair());
+        KeystoreFile keystoreFile = Keystore.create(password, wallet.getEcKeyPair(), 1 << 14, 1);
         return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
     }
 

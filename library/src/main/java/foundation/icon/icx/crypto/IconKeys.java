@@ -53,11 +53,14 @@ public class IconKeys {
     public static boolean isValidAddress(String input) {
         String cleanInput = cleanHexPrefix(input);
         try {
-            cleanInput.matches("^[0-9a-fA-F]{40}$");
+            return cleanInput.matches("^[0-9a-f]{40}$") && cleanInput.length() == ADDRESS_LENGTH_IN_HEX;
         } catch (NumberFormatException e) {
             return false;
         }
-        return cleanInput.length() == ADDRESS_LENGTH_IN_HEX;
+    }
+
+    public static boolean isContractAddress(Address address) {
+        return address.getPrefix() == Address.AddressPrefix.CONTRACT;
     }
 
     public static String cleanHexPrefix(String input) {

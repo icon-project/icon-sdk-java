@@ -57,6 +57,8 @@ All queries are requested by a `Request` object.
 
 Its requests are executed as **Synchronized** or **Asynchronized**.
 
+Once the request has been executed, the request can not be executed again.
+
 ```java
 Request<Block> request = iconService.getBlock(height);
 
@@ -75,7 +77,7 @@ request.execute(new Callback<Block>(){
 try {
     Block block = request.execute();
     ...
-} catch (IOException e) {
+} catch (Exception e) {
     ...
 }
 ```
@@ -112,7 +114,7 @@ Request<TransactionResult> request = iconService.getTransactionResult(new Bytes(
 
 
 // Calls a SCORE API just for reading
-IcxCall<BigInteger> call = new IcxCall.Builder()
+Call<BigInteger> call = new Call.Builder()
     .from(wallet.getAddress())
     .to(scoreAddress)
     .method("balanceOf")
@@ -144,7 +146,7 @@ Wallet wallet = KeyWallet.load("password", file);
 
 // Stores the keystore on the file path.
 File dir = new File("./");
-KeyStoreWallet.store(wallet, "password", dir); // throw exception if an error exists.
+KeyWallet.store(wallet, "password", dir); // throw exception if an error exists.
 ```
 
 **Creating transactions**
@@ -262,14 +264,14 @@ class Person {
 
 ...
     
-IcxCall<Person> call = new IcxCall.Builder()
+Call<Person> call = new Call.Builder()
                 .from(fromAddress)
                 .to(scoreAddress)
                 .method("searchMember")
                 .params(person) // the input parameter is an instance of Person type
                 .buildWith(Person.class); // build with the response type 'Person'
 
-Person memberPerson = iconService.query(call).execute();
+Person memberPerson = iconService.call(call).execute();
 ```
 
 
@@ -286,7 +288,6 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
   <groupId>foundation.icon</groupId>
   <artifactId>icon-sdk</artifactId>
   <version>0.9.3</version>
-  <type>pom</type>
 </dependency>
 ```
 

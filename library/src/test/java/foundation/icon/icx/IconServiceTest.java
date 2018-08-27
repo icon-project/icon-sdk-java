@@ -17,7 +17,7 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.IcxCall.Builder;
+import foundation.icon.icx.Call.Builder;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.NetworkId;
@@ -42,7 +42,7 @@ class IconServiceTest {
     void testIconServiceInit() {
         IconService iconService = new IconService(new Provider() {
             @Override
-            public <O> Call<O> request(Request request, RpcConverter<O> converter) {
+            public <O> Request<O> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter) {
                 return null;
             }
 
@@ -206,7 +206,7 @@ class IconServiceTest {
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
-        IcxCall<PersonResponse> icxCall = new Builder()
+        Call<PersonResponse> call = new Builder()
                 .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
                 .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
@@ -214,7 +214,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         @SuppressWarnings("unused")
-        Call<PersonResponse> query = iconService.query(icxCall);
+        Request<PersonResponse> query = iconService.call(call);
 
         verify(provider).request(
                 argThat(request -> {
@@ -244,7 +244,7 @@ class IconServiceTest {
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))
                 .build();
-        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
@@ -284,7 +284,7 @@ class IconServiceTest {
                 .params(params)
                 .build();
 
-        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
@@ -310,7 +310,7 @@ class IconServiceTest {
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
-        IcxCall<PersonResponse> icxCall = new Builder()
+        Call<PersonResponse> call = new Builder()
                 .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
                 .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
@@ -318,12 +318,12 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            iconService.query(icxCall);
+            iconService.call(call);
         });
     }
 
     @SuppressWarnings("unchecked")
-    private boolean isRequestMatches(Request request, String method, Map<String, RpcValue> params) {
+    private boolean isRequestMatches(foundation.icon.icx.transport.jsonrpc.Request request, String method, Map<String, RpcValue> params) {
 
         if (!request.getMethod().equals(method)) return false;
         if (request.getParams() == null && params == null) return true;

@@ -29,14 +29,14 @@ public class CustomRequestParam {
         Param params = new Param();
         params._owner = address;
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        Call<RpcItem> call = new Call.Builder()
                 .from(address)
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
                 .build();
 
-        RpcItem result = iconService.query(call).execute();
+        RpcItem result = iconService.call(call).execute();
         System.out.println("balance:"+result);
     }
 

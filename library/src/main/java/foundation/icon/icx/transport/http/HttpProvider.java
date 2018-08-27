@@ -20,9 +20,8 @@ package foundation.icon.icx.transport.http;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.Call;
+import foundation.icon.icx.Request;
 import foundation.icon.icx.Provider;
-import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcItemSerializer;
@@ -51,10 +50,10 @@ public class HttpProvider implements Provider {
     }
 
     /**
-     * @see Provider#request(Request, RpcConverter)
+     * @see Provider#request(foundation.icon.icx.transport.jsonrpc.Request, RpcConverter)
      */
     @Override
-    public <O> Call<O> request(final Request request, RpcConverter<O> converter) {
+    public <O> Request<O> request(final foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter) {
 
         // Makes the request body
         RequestBody body = new RequestBody() {

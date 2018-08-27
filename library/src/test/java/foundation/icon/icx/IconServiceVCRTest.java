@@ -53,7 +53,7 @@ public class IconServiceVCRTest {
                 .addInterceptor(loggning)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
-        wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
     }
 
     @Test
@@ -126,24 +126,24 @@ public class IconServiceVCRTest {
     }
 
     @Test
-    void testIcxCall() throws IOException {
+    void testCall() throws IOException {
         RpcObject params = new RpcObject.Builder()
                 .put("_owner", new RpcValue(wallet.getAddress()))
                 .build();
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        Call<RpcItem> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
                 .build();
 
-        RpcItem result = iconService.query(call).execute();
+        RpcItem result = iconService.call(call).execute();
         assertEquals(new BigInteger("10000000000000000000000"), result.asInteger());
     }
 
     @Test
-    void testIcxCallWithClassParam() throws IOException {
+    void testCallWithClassParam() throws IOException {
         TokenBalance params = new TokenBalance();
         params._owner = wallet.getAddress().toString();
 
@@ -169,14 +169,14 @@ public class IconServiceVCRTest {
             }
         });
 
-        IcxCall<BalanceResponse> call = new IcxCall.Builder()
+        Call<BalanceResponse> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
                 .params(params)
                 .buildWith(BalanceResponse.class);
 
-        BalanceResponse result = iconService.query(call).execute();
+        BalanceResponse result = iconService.call(call).execute();
         assertEquals(new BigInteger("10000000000000000000000"), result.balance);
     }
 
