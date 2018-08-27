@@ -10,14 +10,14 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 
-public class ScoreQuery {
+public class GetTokenBalance {
 
     public final String URL = "http://localhost:9000/api/v3";
     private final Address scoreAddress = new Address("cx2e6032c7598b882da4b156ed9334108a5b87f2dc");
 
     private IconService iconService;
 
-    public ScoreQuery() {
+    public GetTokenBalance() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -45,6 +45,6 @@ public class ScoreQuery {
     }
 
     public static void main(String[] args) throws IOException {
-        new ScoreQuery().query();
+        new GetTokenBalance().query();
     }
 }
