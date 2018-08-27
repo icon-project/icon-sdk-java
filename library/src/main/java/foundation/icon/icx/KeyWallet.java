@@ -134,7 +134,7 @@ public class KeyWallet implements Wallet {
      */
     public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
             CipherException, IOException {
-        KeystoreFile keystoreFile = Keystore.createLight(password, wallet.getEcKeyPair());
+        KeystoreFile keystoreFile = Keystore.create(password, wallet.getEcKeyPair(), 1 << 14, 1);
         return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
     }
 
