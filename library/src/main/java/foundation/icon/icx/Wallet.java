@@ -33,11 +33,11 @@ public interface Wallet {
     Address getAddress();
 
     /**
-     * Signs the message to generate a signature
+     * Signs the data to generate a signature
      *
-     * @param message the message to sign
+     * @param data to sign
      * @return signature
      */
-    byte[] signMessage(byte[] message);
+    byte[] sign(byte[] data);
 
 }

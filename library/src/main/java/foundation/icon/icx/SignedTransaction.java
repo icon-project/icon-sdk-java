@@ -98,16 +98,16 @@ public class SignedTransaction {
      * @return signature
      */
     byte[] getSignature(RpcObject properties) {
-        return wallet.signMessage(generateMessage(properties));
+        return wallet.sign(sha256(serialize(properties)));
     }
 
     /**
-     * Generates the message has of the transaction
+     * Generates the hash of data
      *
-     * @return message hash
+     * @return hash
      */
-    byte[] generateMessage(RpcObject properties) {
-        return new SHA3.Digest256().digest(serialize(properties).getBytes());
+    byte[] sha256(String data) {
+        return new SHA3.Digest256().digest(data.getBytes());
     }
 
     /**

@@ -57,26 +57,26 @@ public class KeyWallet implements Wallet {
     }
 
     /**
-     * @see Wallet#signMessage(byte[])
+     * @see Wallet#sign(byte[])
      */
     @Override
-    public byte[] signMessage(byte[] hash) {
-        checkArgument(hash, "hash not found");
+    public byte[] sign(byte[] data) {
+        checkArgument(data, "hash not found");
         checkArgument(ecKeyPair, "ecKeyPair not found");
-        return signMessage(hash, ecKeyPair);
+        return sign(data, ecKeyPair);
     }
 
     ECKeyPair getEcKeyPair() {
         return ecKeyPair;
     }
 
-    private byte[] signMessage(byte[] bHash, ECKeyPair ecKeyPair) {
-        Sign.SignatureData data = Sign.signMessage(bHash, ecKeyPair, false);
+    private byte[] sign(byte[] data, ECKeyPair ecKeyPair) {
+        Sign.SignatureData signatureData = Sign.signMessage(data, ecKeyPair, false);
 
-        ByteBuffer buffer = ByteBuffer.allocate(data.getR().length + data.getS().length + 1);
-        buffer.put(data.getR());
-        buffer.put(data.getS());
-        buffer.put((byte) (data.getV() - 27));
+        ByteBuffer buffer = ByteBuffer.allocate(signatureData.getR().length + signatureData.getS().length + 1);
+        buffer.put(signatureData.getR());
+        buffer.put(signatureData.getS());
+        buffer.put((byte) (signatureData.getV() - 27));
         return buffer.array();
     }
 

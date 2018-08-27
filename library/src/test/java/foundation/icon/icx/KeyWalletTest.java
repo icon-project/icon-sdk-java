@@ -116,7 +116,7 @@ public class KeyWalletTest {
         String expected = "0x7e224bd64f2fa18a340acda4f7e567f87d9c8e65e523759d00034453b92be2d55ab206c41bc60f831055ae2f49ab40431a209a87f09a965492a84ab1f0b885c001";
 
         KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
-        byte[] sign = wallet.signMessage(Numeric.hexStringToByteArray(message));
+        byte[] sign = wallet.sign(Numeric.hexStringToByteArray(message));
 
         assertEquals(expected, Numeric.toHexString(sign));
     }
@@ -126,7 +126,7 @@ public class KeyWalletTest {
         KeyWallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
         byte[] message = null;
         assertThrows(IllegalArgumentException.class, () -> {
-            wallet.signMessage(message);
+            wallet.sign(message);
         });
     }
 
