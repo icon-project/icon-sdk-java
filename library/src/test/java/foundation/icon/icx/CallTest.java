@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-class IcxCallTest {
+class CallTest {
     @Test
-    void testIcxCallBuilder() {
+    void testCallBuilder() {
         Address from = new Address("hx0000000000000000000000000000000000000000");
         Address to = new Address("cx1111111111111111111111111111111111111111");
         String method = "myMethod";
@@ -34,14 +34,14 @@ class IcxCallTest {
         person.name = "gold bug";
         person.age = new BigInteger("20");
 
-        IcxCall<PersonResponse> icxCall = new IcxCall.Builder()
+        Call<PersonResponse> call = new Call.Builder()
                 .from(from)
                 .to(to)
                 .method(method)
                 .params(person)
                 .buildWith(PersonResponse.class);
 
-        RpcObject properties = icxCall.getProperties();
+        RpcObject properties = call.getProperties();
         RpcObject data = properties.getItem("data").asObject();
         RpcObject dataParams = data.getItem("params").asObject();
 
@@ -50,7 +50,7 @@ class IcxCallTest {
         Assertions.assertEquals(method, data.getItem("method").asString());
         Assertions.assertEquals(person.name, dataParams.getItem("name").asString());
         Assertions.assertEquals(person.age, dataParams.getItem("age").asInteger());
-        Assertions.assertEquals(PersonResponse.class, icxCall.responseType());
+        Assertions.assertEquals(PersonResponse.class, call.responseType());
     }
 
 

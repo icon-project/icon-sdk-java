@@ -29,7 +29,7 @@ public class CustomRequestParam {
         Param params = new Param();
         params._owner = address;
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        Call<RpcItem> call = new Call.Builder()
                 .from(address)
                 .to(scoreAddress)
                 .method("balanceOf")

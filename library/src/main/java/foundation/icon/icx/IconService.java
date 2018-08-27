@@ -179,13 +179,13 @@ public class IconService {
     /**
      * Calls a SCORE API just for reading
      *
-     * @param icxCall instance of IcxCall
+     * @param call instance of Call
      * @return the Request object can execute a request
      */
-    public <O> Request<O> call(IcxCall<O> icxCall) {
+    public <O> Request<O> call(Call<O> call) {
         long requestId = System.currentTimeMillis();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_call", icxCall.getProperties());
-        return provider.request(request, findConverter(icxCall.responseType()));
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_call", call.getProperties());
+        return provider.request(request, findConverter(call.responseType()));
     }
 
     /**

@@ -17,7 +17,7 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.IcxCall.Builder;
+import foundation.icon.icx.Call.Builder;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.NetworkId;
@@ -206,7 +206,7 @@ class IconServiceTest {
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
-        IcxCall<PersonResponse> icxCall = new Builder()
+        Call<PersonResponse> call = new Builder()
                 .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
                 .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
@@ -214,7 +214,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         @SuppressWarnings("unused")
-        Request<PersonResponse> query = iconService.call(icxCall);
+        Request<PersonResponse> query = iconService.call(call);
 
         verify(provider).request(
                 argThat(request -> {
@@ -310,7 +310,7 @@ class IconServiceTest {
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
-        IcxCall<PersonResponse> icxCall = new Builder()
+        Call<PersonResponse> call = new Builder()
                 .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
                 .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
                 .method("addUser")
@@ -318,7 +318,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            iconService.call(icxCall);
+            iconService.call(call);
         });
     }
 

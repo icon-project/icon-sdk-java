@@ -62,7 +62,7 @@ public class CustomResponseClass {
             }
         });
 
-        IcxCall<StepCost> call = new IcxCall.Builder()
+        Call<StepCost> call = new Call.Builder()
                 .to(scoreAddress)
                 .method("getStepCosts")
                 .buildWith(StepCost.class);

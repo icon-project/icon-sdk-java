@@ -33,7 +33,7 @@ public class ScoreQuery {
                 .put("_owner", new RpcValue(fromAddress))
                 .build();
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        Call<RpcItem> call = new Call.Builder()
                 .from(fromAddress)
                 .to(scoreAddress)
                 .method("balanceOf")

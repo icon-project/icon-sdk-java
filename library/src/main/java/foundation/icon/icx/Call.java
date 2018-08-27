@@ -26,16 +26,16 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import static foundation.icon.icx.TransactionBuilder.checkArgument;
 
 /**
- * IcxCall contains parameters for querying request.
+ * Call contains parameters for querying request.
  *
  * @param <O> Response type
  */
-public final class IcxCall<O> {
+public final class Call<O> {
 
     private RpcObject properties;
     private Class<O> responseType;
 
-    private IcxCall(RpcObject properties, Class<O> responseType) {
+    private Call(RpcObject properties, Class<O> responseType) {
         this.properties = properties;
         this.responseType = responseType;
     }
@@ -50,7 +50,7 @@ public final class IcxCall<O> {
     }
 
     /**
-     * Builder for creating immutable object of IcxCall.<br>
+     * Builder for creating immutable object of Call.<br>
      * It has following properties<br>
      * - {@link #from(Address)} the request account<br>
      * - {@link #to(Address)} the SCORE address to call<br>
@@ -95,9 +95,9 @@ public final class IcxCall<O> {
         /**
          * Builds with RpcItem. that means the return type is RpcItem
          *
-         * @return IcxCall
+         * @return Call
          */
-        public IcxCall<RpcItem> build() {
+        public Call<RpcItem> build() {
             checkArgument(to, "to not found");
             checkArgument(method, "method not found");
             return buildWith(RpcItem.class);
@@ -107,9 +107,9 @@ public final class IcxCall<O> {
          * Builds with User defined class. an object of the class would be returned
          *
          * @param responseType Response type
-         * @return IcxCall
+         * @return Call
          */
-        public <O> IcxCall<O> buildWith(Class<O> responseType) {
+        public <O> Call<O> buildWith(Class<O> responseType) {
             RpcObject data = new RpcObject.Builder()
                     .put("method", new RpcValue(method))
                     .put("params", params)
@@ -125,7 +125,7 @@ public final class IcxCall<O> {
                 propertiesBuilder.put("from", new RpcValue(from));
             }
 
-            return new IcxCall<>(propertiesBuilder.build(), responseType);
+            return new Call<>(propertiesBuilder.build(), responseType);
         }
     }
 

@@ -126,12 +126,12 @@ public class IconServiceVCRTest {
     }
 
     @Test
-    void testIcxCall() throws IOException {
+    void testCall() throws IOException {
         RpcObject params = new RpcObject.Builder()
                 .put("_owner", new RpcValue(wallet.getAddress()))
                 .build();
 
-        IcxCall<RpcItem> call = new IcxCall.Builder()
+        Call<RpcItem> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
@@ -143,7 +143,7 @@ public class IconServiceVCRTest {
     }
 
     @Test
-    void testIcxCallWithClassParam() throws IOException {
+    void testCallWithClassParam() throws IOException {
         TokenBalance params = new TokenBalance();
         params._owner = wallet.getAddress().toString();
 
@@ -169,7 +169,7 @@ public class IconServiceVCRTest {
             }
         });
 
-        IcxCall<BalanceResponse> call = new IcxCall.Builder()
+        Call<BalanceResponse> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .method("balanceOf")
