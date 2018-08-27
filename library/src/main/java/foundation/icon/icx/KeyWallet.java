@@ -103,6 +103,11 @@ public class KeyWallet implements Wallet {
         return new KeyWallet(ecKeyPair);
     }
 
+    /**
+     * Gets the private key
+     *
+     * @return private key
+     */
     public Bytes getPrivateKey() {
         return new Bytes(ecKeyPair.getPrivateKey());
     }

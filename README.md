@@ -77,7 +77,7 @@ request.execute(new Callback<Block>(){
 try {
     Block block = request.execute();
     ...
-} catch (IOException e) {
+} catch (Exception e) {
     ...
 }
 ```
