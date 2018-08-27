@@ -60,6 +60,10 @@ public class IconKeys {
         return cleanInput.length() == ADDRESS_LENGTH_IN_HEX;
     }
 
+    public static boolean isContractAddress(Address address) {
+        return address.getPrefix() == Address.AddressPrefix.CONTRACT;
+    }
+
     public static String cleanHexPrefix(String input) {
         if (containsHexPrefix(input)) {
             return input.substring(2);

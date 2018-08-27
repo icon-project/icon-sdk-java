@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.jsonrpc.*;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
@@ -136,6 +137,8 @@ public class IconService {
      */
     @SuppressWarnings("unchecked")
     public Request<List<ScoreApi>> getScoreApi(Address scoreAddress) {
+        if (!IconKeys.isContractAddress(scoreAddress))
+            throw new IllegalArgumentException("Only the contract address can be called.");
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))

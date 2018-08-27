@@ -17,6 +17,7 @@
 
 package foundation.icon.icx;
 
+import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
@@ -73,6 +74,8 @@ public final class Call<O> {
         }
 
         public Builder to(Address to) {
+            if (!IconKeys.isContractAddress(to))
+                throw new IllegalArgumentException("Only the contract address can be called.");
             this.to = to;
             return this;
         }

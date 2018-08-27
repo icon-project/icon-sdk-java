@@ -34,6 +34,7 @@ public class AddressTest {
         assertEquals(eoa, address.toString());
         assertEquals(EOA, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
+        assertFalse(IconKeys.isContractAddress(address));
     }
 
     @Test
@@ -42,6 +43,7 @@ public class AddressTest {
         assertEquals(contract, address.toString());
         assertEquals(CONTRACT, address.getPrefix());
         assertTrue(IconKeys.isValidAddress(address));
+        assertTrue(IconKeys.isContractAddress(address));
     }
 
     @Test
