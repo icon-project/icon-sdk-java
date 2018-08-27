@@ -30,7 +30,7 @@ public class DeploySampleTokenScore {
                 .addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
-        wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
     }
 
     public void sendTransaction() throws IOException {

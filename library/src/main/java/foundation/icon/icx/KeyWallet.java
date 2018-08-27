@@ -22,6 +22,7 @@ import foundation.icon.icx.crypto.KeyStoreUtils;
 import foundation.icon.icx.crypto.Keystore;
 import foundation.icon.icx.crypto.KeystoreFile;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
@@ -54,6 +55,17 @@ public class KeyWallet implements Wallet {
     @Override
     public Address getAddress() {
         return IconKeys.getAddress(ecKeyPair);
+    }
+
+    /**
+     * Loads a key wallet from the private key
+     *
+     * @param privateKey the private key to load
+     * @return KeyWallet
+     */
+    public static KeyWallet load(Bytes privateKey) {
+        Credentials credentials = Credentials.create(privateKey.toString());
+        return new KeyWallet(credentials.getEcKeyPair());
     }
 
     /**
@@ -91,15 +103,8 @@ public class KeyWallet implements Wallet {
         return new KeyWallet(ecKeyPair);
     }
 
-    /**
-     * Loads a key wallet from the private key
-     *
-     * @param privateKey the private key to load
-     * @return KeyWallet
-     */
-    public static KeyWallet load(String privateKey) {
-        Credentials credentials = Credentials.create(privateKey);
-        return new KeyWallet(credentials.getEcKeyPair());
+    public Bytes getPrivateKey() {
+        return new Bytes(ecKeyPair.getPrivateKey());
     }
 
     /**

@@ -18,6 +18,7 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -27,13 +28,16 @@ import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
+import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 class SignedTransactionTest {
 
+    private Wallet wallet;
+
     @BeforeEach
     void setUp() {
+        wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
     }
 
     @Test
@@ -70,7 +74,7 @@ class SignedTransactionTest {
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))
                 .build();
-        Wallet wallet = mock(Wallet.class);
+
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         RpcObject properties = signedTransaction.getTransactionProperties();
         String serialize = signedTransaction.serialize(properties);
@@ -101,7 +105,6 @@ class SignedTransactionTest {
                 .build();
 
 
-        Wallet wallet = mock(Wallet.class);
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         RpcObject properties = signedTransaction.getTransactionProperties();
         String serialize = signedTransaction.serialize(properties);
@@ -135,7 +138,6 @@ class SignedTransactionTest {
                 .build();
 
 
-        Wallet wallet = mock(Wallet.class);
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         RpcObject properties = signedTransaction.getTransactionProperties();
         String serialize = signedTransaction.serialize(properties);
@@ -159,7 +161,6 @@ class SignedTransactionTest {
                 .build();
 
 
-        Wallet wallet = mock(Wallet.class);
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         RpcObject properties = signedTransaction.getTransactionProperties();
         String serialize = signedTransaction.serialize(properties);

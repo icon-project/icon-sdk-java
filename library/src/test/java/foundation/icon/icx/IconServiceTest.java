@@ -244,7 +244,7 @@ class IconServiceTest {
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))
                 .build();
-        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
@@ -284,7 +284,7 @@ class IconServiceTest {
                 .params(params)
                 .build();
 
-        Wallet wallet = KeyWallet.load(PRIVATE_KEY_STRING);
+        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
