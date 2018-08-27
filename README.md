@@ -121,6 +121,22 @@ Call<BigInteger> call = new Call.Builder()
     .params(params)
     .buildWith(BigInteger.class);
 Request<BigInteger> request = iconService.call(call);
+
+// Calls without response type                                                     
+Call<RpcItem> call = new Call.Builder()
+    .from(wallet.getAddress())
+    .to(scoreAddress)
+    .method("balanceOf")
+    .params(params)
+    .build();
+Request<RpcItem> request = iconService.call(call);
+try {
+    RpcItem rpcItem = request.execute();
+    BigInteger balance = rpcItem.asInteger();
+    ...
+} catch (Exception e) {
+    ...
+}                                                     
 ```
 
 
@@ -196,6 +212,8 @@ Transaction transaction = TransactionBuilder.of(networkId)
 `SignedTransaction` object signs a transaction using the wallet.
 
 And the request is executed as **Synchronized** or **Asynchronized** like a querying request.
+
+Once the request has been executed, the request can not be executed again.
 
 ```java
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
@@ -275,9 +293,15 @@ Person memberPerson = iconService.call(call).execute();
 ```
 
 
+## Reference
+
+- [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
+
+
 ## Version
 
 0.9.3 beta
+
 
 ## Download
 
@@ -296,6 +320,7 @@ or Gradle:
 ```groovy
 implementation 'foundation.icon:icon-sdk:0.9.3'
 ```
+
 
 ## License
 
