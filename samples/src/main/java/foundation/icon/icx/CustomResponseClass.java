@@ -67,7 +67,7 @@ public class CustomResponseClass {
                 .method("getStepCosts")
                 .buildWith(StepCost.class);
 
-        StepCost costs = iconService.query(call).execute();
+        StepCost costs = iconService.call(call).execute();
         System.out.println("step costs:"+costs);
     }
 

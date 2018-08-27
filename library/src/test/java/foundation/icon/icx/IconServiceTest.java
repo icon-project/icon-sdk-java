@@ -214,7 +214,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         @SuppressWarnings("unused")
-        Request<PersonResponse> query = iconService.query(icxCall);
+        Request<PersonResponse> query = iconService.call(icxCall);
 
         verify(provider).request(
                 argThat(request -> {
@@ -318,7 +318,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            iconService.query(icxCall);
+            iconService.call(icxCall);
         });
     }
 

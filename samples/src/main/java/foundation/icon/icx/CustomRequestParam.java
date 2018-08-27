@@ -36,7 +36,7 @@ public class CustomRequestParam {
                 .params(params)
                 .build();
 
-        RpcItem result = iconService.query(call).execute();
+        RpcItem result = iconService.call(call).execute();
         System.out.println("balance:"+result);
     }
 

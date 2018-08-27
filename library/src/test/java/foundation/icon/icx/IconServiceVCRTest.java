@@ -138,7 +138,7 @@ public class IconServiceVCRTest {
                 .params(params)
                 .build();
 
-        RpcItem result = iconService.query(call).execute();
+        RpcItem result = iconService.call(call).execute();
         assertEquals(new BigInteger("10000000000000000000000"), result.asInteger());
     }
 
@@ -176,7 +176,7 @@ public class IconServiceVCRTest {
                 .params(params)
                 .buildWith(BalanceResponse.class);
 
-        BalanceResponse result = iconService.query(call).execute();
+        BalanceResponse result = iconService.call(call).execute();
         assertEquals(new BigInteger("10000000000000000000000"), result.balance);
     }
 

@@ -182,7 +182,7 @@ public class IconService {
      * @param icxCall instance of IcxCall
      * @return the Request object can execute a request
      */
-    public <O> Request<O> query(IcxCall<O> icxCall) {
+    public <O> Request<O> call(IcxCall<O> icxCall) {
         long requestId = System.currentTimeMillis();
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_call", icxCall.getProperties());
         return provider.request(request, findConverter(icxCall.responseType()));
