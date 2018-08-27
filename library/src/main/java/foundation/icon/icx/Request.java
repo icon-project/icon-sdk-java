@@ -20,9 +20,9 @@ package foundation.icon.icx;
 import java.io.IOException;
 
 /**
- * Call class executes the request that has been prepared
+ * Request class executes the request that has been prepared
  */
-public interface Call<T> {
+public interface Request<T> {
 
     /**
      * Executes synchronously

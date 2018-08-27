@@ -17,7 +17,6 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.transport.jsonrpc.Request;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 
 /**
@@ -31,7 +30,7 @@ public interface Provider {
      * @param request   A request to send
      * @param converter converter converter for the responseType
      * @param <O>       returning type
-     * @return a Call object to execute
+     * @return a Request object to execute
      */
-    <O> Call<O> request(Request request, RpcConverter<O> converter);
+    <O> Request<O> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter);
 }

@@ -42,7 +42,7 @@ class IconServiceTest {
     void testIconServiceInit() {
         IconService iconService = new IconService(new Provider() {
             @Override
-            public <O> Call<O> request(Request request, RpcConverter<O> converter) {
+            public <O> Request<O> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter) {
                 return null;
             }
 
@@ -214,7 +214,7 @@ class IconServiceTest {
                 .buildWith(PersonResponse.class);
 
         @SuppressWarnings("unused")
-        Call<PersonResponse> query = iconService.query(icxCall);
+        Request<PersonResponse> query = iconService.query(icxCall);
 
         verify(provider).request(
                 argThat(request -> {
@@ -323,7 +323,7 @@ class IconServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean isRequestMatches(Request request, String method, Map<String, RpcValue> params) {
+    private boolean isRequestMatches(foundation.icon.icx.transport.jsonrpc.Request request, String method, Map<String, RpcValue> params) {
 
         if (!request.getMethod().equals(method)) return false;
         if (request.getParams() == null && params == null) return true;

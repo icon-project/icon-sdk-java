@@ -20,7 +20,7 @@ package foundation.icon.icx.transport.http;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import foundation.icon.icx.Call;
+import foundation.icon.icx.Request;
 import foundation.icon.icx.Callback;
 import foundation.icon.icx.transport.jsonrpc.RpcItemDeserializer;
 import foundation.icon.icx.transport.jsonrpc.Response;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *
  * @param <T> the data type of the response
  */
-public class HttpCall<T> implements Call<T> {
+public class HttpCall<T> implements Request<T> {
 
     private final okhttp3.Call httpCall;
     private final RpcConverter<T> converter;
