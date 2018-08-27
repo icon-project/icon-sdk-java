@@ -67,6 +67,11 @@ public class AddressTest {
         assertThrows(IllegalArgumentException.class, () -> {
             new Address(words);
         });
+
+        String upperAddress = "hx" + noPrefix.toUpperCase();
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Address(upperAddress);
+        });
     }
 
 
