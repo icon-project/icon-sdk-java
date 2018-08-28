@@ -37,18 +37,18 @@ public class SignedTransaction {
 
     private Transaction transaction;
     private Wallet wallet;
+    private RpcObject properties;
 
     public SignedTransaction(Transaction transaction, Wallet wallet) {
         this.transaction = transaction;
         this.wallet = wallet;
+        createProperties();
     }
 
     /**
-     * Gets the parameters including signature
-     *
-     * @return parameters
+     * Create the parameters including signature
      */
-    public RpcObject getProperties() {
+    private void createProperties() {
         RpcObject properties = getTransactionProperties();
 
         RpcObject.Builder builder = new RpcObject.Builder();
@@ -58,7 +58,16 @@ public class SignedTransaction {
 
         String signature = Base64.getEncoder().encodeToString(getSignature(properties));
         builder.put("signature", new RpcValue(signature));
-        return builder.build();
+        this.properties = builder.build();
+    }
+
+    /**
+     * Gets the parameters including signature
+     *
+     * @return parameters
+     */
+    public RpcObject getProperties() {
+        return properties;
     }
 
     RpcObject getTransactionProperties() {
