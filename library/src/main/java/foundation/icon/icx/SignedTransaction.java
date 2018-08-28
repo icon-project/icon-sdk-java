@@ -71,13 +71,18 @@ public class SignedTransaction {
     }
 
     RpcObject getTransactionProperties() {
+        BigInteger timestamp = transaction.getTimestamp();
+        if (timestamp == null) {
+            timestamp = new BigInteger(Long.toString(System.currentTimeMillis() * 1000L));
+        }
+
         Builder builder = new Builder();
         putTransactionPropertyToBuilder(builder, "version", transaction.getVersion());
         putTransactionPropertyToBuilder(builder, "from", transaction.getFrom());
         putTransactionPropertyToBuilder(builder, "to", transaction.getTo());
         putTransactionPropertyToBuilder(builder, "value", transaction.getValue());
         putTransactionPropertyToBuilder(builder, "stepLimit", transaction.getStepLimit());
-        putTransactionPropertyToBuilder(builder, "timestamp", transaction.getTimestamp());
+        putTransactionPropertyToBuilder(builder, "timestamp", timestamp);
         putTransactionPropertyToBuilder(builder, "nid", transaction.getNid());
         putTransactionPropertyToBuilder(builder, "nonce", transaction.getNonce());
         putTransactionPropertyToBuilder(builder, "dataType", transaction.getDataType());
@@ -135,6 +140,7 @@ public class SignedTransaction {
 
         /**
          * Serializes properties as string
+         *
          * @param properties transaction properties
          * @return serialized string of properties
          */
