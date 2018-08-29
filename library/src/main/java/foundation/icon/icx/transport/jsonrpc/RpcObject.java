@@ -19,6 +19,8 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import java.util.*;
 
+import static foundation.icon.icx.data.Converters.fromRpcItem;
+
 /**
  * A read-only data class of RpcObject
  */
@@ -42,6 +44,19 @@ public class RpcObject implements RpcItem {
         return "RpcObject(" +
                 "items=" + items +
                 ')';
+    }
+
+    public String toString(Map<String, Class<?>> fieldType) {
+        StringBuilder builder = new StringBuilder();
+        Set<String> keys = fieldType.keySet();
+        for (String key : keys) {
+            builder.append(key);
+            builder.append("=");
+            Object o = fromRpcItem(getItem(key), fieldType.get(key));
+            builder.append(o);
+            builder.append(",");
+        }
+        return builder.toString();
     }
 
     @Override

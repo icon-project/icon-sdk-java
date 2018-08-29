@@ -16,21 +16,34 @@
 
 package foundation.icon.icx.data;
 
-import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Block {
 
     private RpcObject properties;
+    private Map<String, Class<?>> types;
 
     Block(RpcObject properties) {
         this.properties = properties;
+
+        types = new HashMap<>();
+        types.put("prev_block_hash", Bytes.class);
+        types.put("merkle_tree_root_hash", Bytes.class);
+        types.put("time_stamp", BigInteger.class);
+        types.put("confirmed_transaction_list", RpcItem.class);
+        types.put("block_hash", Bytes.class);
+        types.put("peer_id", String.class);
+        types.put("version", String.class);
+        types.put("height", BigInteger.class);
+        types.put("signature", String.class);
     }
 
     public Bytes getPrevBlockHash() {
@@ -84,4 +97,11 @@ public class Block {
         return item != null ? item.asString() : null;
     }
 
+    @Override
+    public String toString() {
+        String text = (types == null) ? properties.toString() : properties.toString(types);
+        return "Block{" +
+                "properties=" + text +
+                '}';
+    }
 }

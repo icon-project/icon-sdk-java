@@ -154,9 +154,7 @@ public class RpcValue implements RpcItem {
 
     @Override
     public String toString() {
-        return "RpcValue(" +
-                "value=" + value +
-                ')';
+        return value;
     }
 
 }
