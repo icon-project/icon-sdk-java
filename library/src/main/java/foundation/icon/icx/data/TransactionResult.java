@@ -45,6 +45,7 @@ public class TransactionResult {
         types.put("stepPrice", BigInteger.class);
         types.put("scoreAddress", BigInteger.class);
         types.put("eventLogs", RpcItem.class);
+        types.put("failure", RpcItem.class);
     }
 
     public BigInteger getStatus() {
@@ -106,6 +107,11 @@ public class TransactionResult {
             }
         }
         return eventLogs;
+    }
+
+    public RpcObject getFailure() {
+        RpcItem item = properties.getItem("getFailure");
+        return item != null ? item.asObject() : null;
     }
 
     @Override
