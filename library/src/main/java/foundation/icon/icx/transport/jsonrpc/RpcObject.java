@@ -44,7 +44,7 @@ public class RpcObject implements RpcItem {
         return "RpcObject(" +
                 "items=" + items +
                 ')';
-    }
+}
 
     public String toString(Map<String, Class<?>> fieldType) {
         StringBuilder builder = new StringBuilder();
@@ -56,6 +56,7 @@ public class RpcObject implements RpcItem {
             builder.append(o);
             builder.append(",");
         }
+        builder.deleteCharAt(builder.lastIndexOf(","));
         return builder.toString();
     }
 

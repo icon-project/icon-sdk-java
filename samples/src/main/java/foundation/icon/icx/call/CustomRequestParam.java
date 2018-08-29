@@ -14,55 +14,55 @@
  * limitations under the License.
  */
 
-package foundation.icon.icx;
+package foundation.icon.icx.call;
 
+import foundation.icon.icx.Call;
+import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 
-public class SendIcxCall {
+public class CustomRequestParam {
 
     public final String URL = "http://localhost:9000/api/v3";
-    private final Address scoreAddress = new Address("cx0000000000000000000000000000000000000001");
+    private final Address scoreAddress = new Address("cxca23d7fd434fd37d5cd01c7183adf7658375a6db");
 
     private IconService iconService;
 
-    public SendIcxCall() {
+    public CustomRequestParam() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        this.iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, URL));
     }
 
-    public static void main(String[] args) throws IOException {
-        new SendIcxCall().getStepCosts();
-    }
+    public void getBalance() throws IOException {
+        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
+        Param params = new Param();
+        params._owner = address;
 
-    public void getStepCosts() throws IOException {
         Call<RpcItem> call = new Call.Builder()
+                .from(address)
                 .to(scoreAddress)
-                .method("getStepCosts")
+                .method("balanceOf")
+                .params(params)
                 .build();
 
         RpcItem result = iconService.call(call).execute();
-        RpcObject object = result.asObject();
+        System.out.println("balance:"+result);
+    }
 
-        System.out.println("default:"+object.getItem("default").asInteger());
-        System.out.println("contractCall:"+object.getItem("contractCall").asInteger());
-        System.out.println("contractUpdate:"+object.getItem("contractUpdate").asInteger());
-        System.out.println("contractDestruct:"+object.getItem("contractDestruct").asInteger());
-        System.out.println("contractCreate:"+object.getItem("contractCreate").asInteger());
-        System.out.println("contractSet:"+object.getItem("contractSet").asInteger());
-        System.out.println("set:"+object.getItem("set").asInteger());
-        System.out.println("replace:"+object.getItem("replace").asInteger());
-        System.out.println("input:"+object.getItem("input").asInteger());
-        System.out.println("eventLog:"+object.getItem("eventLog").asInteger());
+    class Param {
+        public Address _owner;
+    }
+
+    public static void main(String[] args) throws IOException {
+        new CustomRequestParam().getBalance();
     }
 }

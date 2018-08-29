@@ -7,12 +7,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 
-public class CallSyncAsync {
+public class ExcuteSyncAsync {
 
     public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public CallSyncAsync() {
+    public ExcuteSyncAsync() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -42,7 +42,7 @@ public class CallSyncAsync {
     }
 
     public static void main(String[] args) throws IOException {
-        CallSyncAsync call = new CallSyncAsync();
+        ExcuteSyncAsync call = new ExcuteSyncAsync();
         call.sync();
         call.async();
     }
