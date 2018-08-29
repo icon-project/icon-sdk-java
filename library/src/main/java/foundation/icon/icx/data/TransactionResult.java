@@ -21,31 +21,14 @@ import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class TransactionResult {
 
     private RpcObject properties;
-    private Map<String, Class<?>> types;
-
     TransactionResult(RpcObject properties) {
         this.properties = properties;
-
-        types = new HashMap<>();
-        types.put("status", BigInteger.class);
-        types.put("to", String.class);
-        types.put("txHash", Bytes.class);
-        types.put("blockHeight", BigInteger.class);
-        types.put("blockHash", Bytes.class);
-        types.put("cumulativeStepUsed", BigInteger.class);
-        types.put("stepUsed", BigInteger.class);
-        types.put("stepPrice", BigInteger.class);
-        types.put("scoreAddress", BigInteger.class);
-        types.put("eventLogs", RpcItem.class);
-        types.put("failure", RpcItem.class);
     }
 
     public BigInteger getStatus() {
@@ -116,11 +99,8 @@ public class TransactionResult {
 
     @Override
     public String toString() {
-        String text = (types == null) ? properties.toString() : properties.toString(types);
         return "TransactionResult{" +
-                "properties=" + text +
+                "properties=" + properties +
                 '}';
     }
-
-
 }

@@ -20,26 +20,15 @@ import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class ScoreApi {
 
     private RpcObject properties;
-    private Map<String, Class<?>> types;
 
     ScoreApi(RpcObject properties) {
         this.properties = properties;
-
-        types = new HashMap<>();
-        types.put("type", String.class);
-        types.put("name", String.class);
-        types.put("inputs", RpcItem.class);
-        types.put("outputs", RpcItem.class);
-        types.put("readonly", String.class);
-
     }
 
     public String getType() {
@@ -81,9 +70,8 @@ public class ScoreApi {
 
     @Override
     public String toString() {
-        String text = (types == null) ? properties.toString() : properties.toString(types);
         return "ScoreApi{" +
-                "properties=" + text +
+                "properties=" + properties +
                 '}';
     }
 
