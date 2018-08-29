@@ -37,18 +37,18 @@ public class SignedTransaction {
 
     private Transaction transaction;
     private Wallet wallet;
+    private RpcObject properties;
 
     public SignedTransaction(Transaction transaction, Wallet wallet) {
         this.transaction = transaction;
         this.wallet = wallet;
+        createProperties();
     }
 
     /**
-     * Gets the parameters including signature
-     *
-     * @return parameters
+     * Create the parameters including signature
      */
-    public RpcObject getProperties() {
+    private void createProperties() {
         RpcObject properties = getTransactionProperties();
 
         RpcObject.Builder builder = new RpcObject.Builder();
@@ -58,17 +58,31 @@ public class SignedTransaction {
 
         String signature = Base64.getEncoder().encodeToString(getSignature(properties));
         builder.put("signature", new RpcValue(signature));
-        return builder.build();
+        this.properties = builder.build();
+    }
+
+    /**
+     * Gets the parameters including signature
+     *
+     * @return parameters
+     */
+    public RpcObject getProperties() {
+        return properties;
     }
 
     RpcObject getTransactionProperties() {
+        BigInteger timestamp = transaction.getTimestamp();
+        if (timestamp == null) {
+            timestamp = new BigInteger(Long.toString(System.currentTimeMillis() * 1000L));
+        }
+
         Builder builder = new Builder();
         putTransactionPropertyToBuilder(builder, "version", transaction.getVersion());
         putTransactionPropertyToBuilder(builder, "from", transaction.getFrom());
         putTransactionPropertyToBuilder(builder, "to", transaction.getTo());
         putTransactionPropertyToBuilder(builder, "value", transaction.getValue());
         putTransactionPropertyToBuilder(builder, "stepLimit", transaction.getStepLimit());
-        putTransactionPropertyToBuilder(builder, "timestamp", transaction.getTimestamp());
+        putTransactionPropertyToBuilder(builder, "timestamp", timestamp);
         putTransactionPropertyToBuilder(builder, "nid", transaction.getNid());
         putTransactionPropertyToBuilder(builder, "nonce", transaction.getNonce());
         putTransactionPropertyToBuilder(builder, "dataType", transaction.getDataType());
@@ -126,6 +140,7 @@ public class SignedTransaction {
 
         /**
          * Serializes properties as string
+         *
          * @param properties transaction properties
          * @return serialized string of properties
          */

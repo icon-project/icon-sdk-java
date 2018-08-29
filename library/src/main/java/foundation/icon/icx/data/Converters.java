@@ -196,7 +196,8 @@ public final class Converters {
         return fromRpcValue((RpcValue) item, type);
     }
 
-    static <T> List<T> fromRpcArray(RpcArray array, Class<T> type) {
+    static <T> Object fromRpcArray(RpcArray array, Class<T> type) {
+        if (type.isAssignableFrom(RpcArray.class)) return array;
         List result = new ArrayList<T>();
         for (RpcItem item : array) {
             Object v = fromRpcItem(item, type);
@@ -205,7 +206,8 @@ public final class Converters {
         return result;
     }
 
-    static <T> Map<String, T> fromRpcObject(RpcObject object, Class<T> type) {
+    static <T> Object fromRpcObject(RpcObject object, Class<T> type) {
+        if (type.isAssignableFrom(RpcObject.class)) return object;
         Map result = new HashMap();
         Set<String> keys = object.keySet();
         for (String key : keys) {
@@ -228,6 +230,8 @@ public final class Converters {
             return value.asBytes();
         } else if (type.isAssignableFrom(Address.class)) {
             return value.asAddress();
+        } else if (type.isAssignableFrom(RpcItem.class)) {
+            return value;
         }
         return null;
     }

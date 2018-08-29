@@ -42,7 +42,7 @@ public final class TransactionBuilder {
     private BigInteger value;
     private BigInteger stepLimit;
     private BigInteger timestamp;
-    private BigInteger nid;
+    private BigInteger nid = NetworkId.MAIN.getValue();
     private BigInteger nonce;
     private String dataType;
     private RpcItem data;
@@ -165,8 +165,6 @@ public final class TransactionBuilder {
         checkArgument(from, "from not found");
         checkArgument(to, "to not found");
         checkArgument(version, "version not found");
-        checkArgument(timestamp, "timestamp not found");
-        checkArgument(nid, "nid not found");
         checkArgument(stepLimit, "stepLimit not found");
 
         return new SendingTransaction(this);
