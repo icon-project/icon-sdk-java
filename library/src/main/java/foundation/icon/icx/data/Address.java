@@ -18,6 +18,7 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.crypto.IconKeys;
+import org.web3j.utils.Numeric;
 
 import java.util.Arrays;
 
@@ -35,12 +36,21 @@ public class Address {
         }
 
         this.prefix = prefix;
-        this.body = IconKeys.getHexAddress(address);
+        this.body = getAddressBody(address);
     }
 
     public Address(AddressPrefix prefix, byte[] body) {
+        if (!IconKeys.isValidAddressBody(body)) {
+            throw new IllegalArgumentException("Invalid address");
+        }
+
         this.prefix = prefix;
         this.body = body;
+    }
+
+    private byte[] getAddressBody(String address) {
+        String cleanInput = IconKeys.cleanHexPrefix(address);
+        return Numeric.hexStringToByteArray(cleanInput);
     }
 
     public AddressPrefix getPrefix() {
@@ -49,7 +59,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return getPrefix().getValue() + IconKeys.getHexAddress(body);
+        return getPrefix().getValue() + Numeric.toHexStringNoPrefix(body);
     }
 
 

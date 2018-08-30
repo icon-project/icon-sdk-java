@@ -59,6 +59,11 @@ public class IconKeys {
         }
     }
 
+    public static boolean isValidAddressBody(byte[] body) {
+        return body.length == 20 &&
+                IconKeys.isValidAddress(Numeric.toHexStringNoPrefix(body));
+    }
+
     public static boolean isContractAddress(Address address) {
         return address.getPrefix() == Address.AddressPrefix.CONTRACT;
     }
@@ -77,15 +82,6 @@ public class IconKeys {
 
     public static Address.AddressPrefix getAddressHexPrefix(String input) {
         return Address.AddressPrefix.fromString(input.substring(0, 2));
-    }
-
-    public static byte[] getHexAddress(String input) {
-        String cleanInput = cleanHexPrefix(input);
-        return Numeric.hexStringToByteArray(cleanInput);
-    }
-
-    public static String getHexAddress(byte[] input) {
-        return Numeric.toHexStringNoPrefix(input);
     }
 
 }
