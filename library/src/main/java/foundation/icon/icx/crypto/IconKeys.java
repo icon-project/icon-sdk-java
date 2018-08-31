@@ -33,6 +33,10 @@ public class IconKeys {
         return new Address(Address.AddressPrefix.EOA, getAddressHash(ecKeyPair.getPublicKey()));
     }
 
+    public static Address getAddress(Bytes publicKey) {
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray()));
+    }
+
     public static byte[] getAddressHash(BigInteger publicKey) {
         return getAddressHash(new Bytes(publicKey).toByteArray(PUBLIC_KEY_SIZE));
     }
