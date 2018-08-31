@@ -46,7 +46,7 @@ public class IconServiceVCRTest {
 
     @BeforeEach
     void setUp() {
-        scoreAddress = new Address("cxca23d7fd434fd37d5cd01c7183adf7658375a6db");
+        scoreAddress = new Address("cxcc7ef86cdae93a89b6c08206a7962bcb9abb7bf4");
         HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
         loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -110,19 +110,21 @@ public class IconServiceVCRTest {
 
     @Test
     void testSendIcxTransaction() throws IOException {
+        long timestmap = System.currentTimeMillis() * 1000L;
         Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
         Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .value(new BigInteger("de0b6b3a7640000", 16))
                 .stepLimit(new BigInteger("12345", 16))
-                .timestamp(new BigInteger("572ce0daf9ee0", 16))
+                .timestamp(new BigInteger("574b2996ad388", 16))
+//                .timestamp(new BigInteger(Long.toString(timestmap)))
                 .nonce(new BigInteger("1"))
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0xefc935bb4a944ccf02b4ff4a601f5bb47d60b55e21aa9683aaf17bf1d79129ae", hash.toString());
+        assertEquals("0xac705c771806cd0a04df9025993febdce1c1d8006d8043b01ed9adc86a395d08", hash.toString());
     }
 
     @Test
@@ -139,7 +141,7 @@ public class IconServiceVCRTest {
                 .build();
 
         RpcItem result = iconService.call(call).execute();
-        assertEquals(new BigInteger("10000000000000000000000"), result.asInteger());
+        assertEquals(new BigInteger("99999999991999999999997740000"), result.asInteger());
     }
 
     @Test
@@ -177,7 +179,7 @@ public class IconServiceVCRTest {
                 .buildWith(BalanceResponse.class);
 
         BalanceResponse result = iconService.call(call).execute();
-        assertEquals(new BigInteger("10000000000000000000000"), result.balance);
+        assertEquals(new BigInteger("99999999991999999999997740000"), result.balance);
     }
 
     @Test
@@ -193,7 +195,8 @@ public class IconServiceVCRTest {
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .stepLimit(new BigInteger("75000"))
-                .timestamp(new BigInteger("572ce08a6c978", 16))
+                .timestamp(new BigInteger("574b2964095a8", 16))
+//                .timestamp(new BigInteger(Long.toString(timestmap)))
                 .nonce(new BigInteger("1"))
                 .call("transfer")
                 .params(params)
@@ -201,7 +204,7 @@ public class IconServiceVCRTest {
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x78bb0b6a9eca9b67bc782a03918a951b0dde875eae5a531902a3fefb6ae819b5", hash.toString());
+        assertEquals("0x38cb29ff07ceeed59bf07274e326325c04ed1e6e8dca877dcff193c2de535263", hash.toString());
     }
 
     @Test
@@ -222,7 +225,8 @@ public class IconServiceVCRTest {
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .stepLimit(new BigInteger("e01348", 16))
-                .timestamp(new BigInteger("572cdf81a0fe8", 16))
+                .timestamp(new BigInteger("574b28ed4ca00", 16))
+//                .timestamp(new BigInteger(Long.toString(timestmap)))
                 .nonce(new BigInteger("1"))
                 .deploy("application/zip", Numeric.hexStringToByteArray(content))
                 .params(params)
@@ -230,7 +234,7 @@ public class IconServiceVCRTest {
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x4a0b10b28c455eceeff4d8940c30995b741947f7856bbb1b95763510c750fa94", hash.toString());
+        assertEquals("0x3a47d71f2e54b63120a00ad7c2e7b86fa037aa1962f122c92e9e0593ce4e18f6", hash.toString());
     }
 
     @Test
@@ -243,14 +247,15 @@ public class IconServiceVCRTest {
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .stepLimit(new BigInteger("75000"))
-                .timestamp(new BigInteger("572cdff3b6510", 16))
+                .timestamp(new BigInteger("574b28aee6810", 16))
+//                .timestamp(new BigInteger(Long.toString(timestmap)))
                 .nonce(new BigInteger("1"))
                 .message("Hello World")
                 .build();
 
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
-        assertEquals("0x40a74b203a30c49a28245fe22f3f04005f0b391b367debd03b1f5d4583498089", hash.toString());
+        assertEquals("0xe436d4afac5a73cef8b1f88eadc66e6a1b39ef38f409ddea52ddfaea5e36b94e", hash.toString());
     }
 
     class TokenBalance {
