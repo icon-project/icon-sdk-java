@@ -1,4 +1,5 @@
 rootProject.name = 'icon-sdk'
 include 'library'
 include 'samples'
+include 'quickStart'
 
