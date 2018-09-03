@@ -65,8 +65,8 @@ public class DeployTokenExample {
         // Enter information about tokens to deploy
         BigInteger initialSupply = new BigInteger("100000000000");
         BigInteger decimals = new BigInteger("18");
-        String tokenName = "ICON";
-        String tokenSymbol = "ICX";
+        String tokenName = "StandardToken";
+        String tokenSymbol = "ST";
 
         try {
             // Create request object to send transaction.
@@ -92,7 +92,7 @@ public class DeployTokenExample {
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
         BigInteger networkId = new BigInteger("3");
         // Maximum step allowance that can be used by the transaction
-        BigInteger stepLimit = new BigInteger("20000000");
+        BigInteger stepLimit = new BigInteger("2013265920");
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // Default address to deploy score.
@@ -151,6 +151,7 @@ public class DeployTokenExample {
                 e.printStackTrace();
             }
         }
+        timer.cancel();
         System.out.println("######### end #########");
     }
 

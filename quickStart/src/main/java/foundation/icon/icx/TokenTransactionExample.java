@@ -26,9 +26,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -108,8 +105,8 @@ public class TokenTransactionExample {
 
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
         BigInteger networkId = new BigInteger("3");
-        // Recommended step limit to transfer token: 20000
-        BigInteger stepLimit = new BigInteger("20000");
+        // Recommended step limit to transfer token: 1200000
+        BigInteger stepLimit = new BigInteger("1200000");
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // 'transfer' as a methodName means to transfer token
@@ -166,6 +163,7 @@ public class TokenTransactionExample {
                 e.printStackTrace();
             }
         }
+        timer.cancel();
         System.out.println("######### end #########");
     }
 

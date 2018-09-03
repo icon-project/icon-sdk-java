@@ -23,9 +23,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -89,7 +86,7 @@ public class IcxTransactionExample {
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
         BigInteger networkId = new BigInteger("3");
         // Recommended step limit to transfer icx: 10000
-        BigInteger stepLimit = new BigInteger("10000");
+        BigInteger stepLimit = new BigInteger("1000000");
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
 
@@ -137,6 +134,7 @@ public class IcxTransactionExample {
             }
 
         }
+        timer.cancel();
         System.out.println("######### end #########");
     }
 
