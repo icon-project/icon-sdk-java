@@ -8,7 +8,7 @@ In this project, the examples are implemented as below.
 | ------------- | ----------- |
 | WalletExample | An example of creating and loading a keywallet. |
 | IcxTransactionExample | An example of transferring ICX and confirming the result. |
-| TokenTransactionExample | An example of transferring Irc token and confirming the result. | |
+| TokenTransactionExample | An example of transferring IRC token and confirming the result. |
 | DeployTokenExample | An example of deploying token. |
 | SyncBlockExample | An example of checking block confirmation and printing the ICX and token transfer information. |
 
@@ -50,12 +50,6 @@ http://ip_address:9000/api/v3
 ```
 
 Default port is 9000 and the value can be changed according to the setting.
-
-URLs for Main-net and Test-net are set as follows.
-
-- Main-net : wallet.icon.foundation/api/v3
-
-- Test-net : testwallet.icon.foundation/api/v3
 
 
 
@@ -158,10 +152,10 @@ Generate transaction using the values above.
 ```java
 // networkId 1:mainnet, 2:testnet, 3~:private id
 BigInteger networkId = new BigInteger("3"); // input node’s networkld
-// Recommended icx transfer step limit : 10000
-BigInteger stepLimit = new BigInteger("10000");
-// Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
+// Recommended icx transfer step limit : 1000000
+BigInteger stepLimit = new BigInteger("1000000");
 
+// Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
 
@@ -180,7 +174,7 @@ Generate SignedTransaction to add signature of the transaction.
 ```java
 // Create signature of the transaction
 SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad );
+							new SignedTransaction(transaction, keyStoreLoad);
 // Read params to transfer to nodes
 System.out.println(signedTransaction.getProperties());
 ```
@@ -281,8 +275,8 @@ Generate Transaction with the given parameters above. You have to add receiving 
 ```java
 // networkId 1:mainnet, 2:testnet, 3~:private id
 BigInteger networkId = new BigInteger("3"); // Enter networkId of the node.
-// Recommended Step limit to send transaction : 10000
-BigInteger stepLimit = new BigInteger("20000");
+// Recommended Step limit to send transaction for token transfer : 1200000
+BigInteger stepLimit = new BigInteger("1200000");
 // Timestamp is used to prevent the identical transactions. Only current time is required (Default:US)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
@@ -313,7 +307,7 @@ Generate SignedTransaction to add signature to your transaction.
 ```java
 // Generate transaction signature.
 SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad );
+							new SignedTransaction(transaction, keyStoreLoad);
 // Read params to send to nodes.
 System.out.println(signedTransaction.getProperties());
 ```
@@ -414,15 +408,15 @@ Enter the basic information of the token you want to deploy.
 ```java
 BigInteger initialSupply = new BigInteger("100000000000");
 BigInteger decimals = new BigInteger("18");
-String tokenName = "ICON";
-String tokenSymbol = "ICX";
+String tokenName = "StandardToken";
+String tokenSymbol = "ST";
 ```
 
 Generate transaction with the given values above.
 
 ```java
 BigInteger networkId = new BigInteger("3"); //3: networkId of loopchain is using 3.
-BigInteger stepLimit = new BigInteger("14685000");
+BigInteger stepLimit = new BigInteger("2013265920"); //Max step limit for sending transaction
 long timestamp = System.currentTimeMillis() * 1000L; //timestamp declaration
 // Use cx0 to deploy SCORE.
 Address scoreInstall = new Address(CommonData.SCORE_INSTALL_ADDRESS);
@@ -617,8 +611,8 @@ System.out.println("tokenName:"+tokenName);
 System.out.println("tokenSymbol:"+tokenSymbol);
 
 // Output
-tokenName:ICON
-tokenSymbol:ICX
+tokenName:StandardToken	
+tokenSymbol:ST
 
 ```
 
