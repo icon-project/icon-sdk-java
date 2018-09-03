@@ -33,6 +33,10 @@ public class IconKeys {
         return new Address(Address.AddressPrefix.EOA, getAddressHash(ecKeyPair.getPublicKey()));
     }
 
+    public static Address getAddress(Bytes publicKey) {
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray()));
+    }
+
     public static byte[] getAddressHash(BigInteger publicKey) {
         return getAddressHash(new Bytes(publicKey).toByteArray(PUBLIC_KEY_SIZE));
     }
@@ -59,6 +63,11 @@ public class IconKeys {
         }
     }
 
+    public static boolean isValidAddressBody(byte[] body) {
+        return body.length == 20 &&
+                IconKeys.isValidAddress(Numeric.toHexStringNoPrefix(body));
+    }
+
     public static boolean isContractAddress(Address address) {
         return address.getPrefix() == Address.AddressPrefix.CONTRACT;
     }
@@ -77,15 +86,6 @@ public class IconKeys {
 
     public static Address.AddressPrefix getAddressHexPrefix(String input) {
         return Address.AddressPrefix.fromString(input.substring(0, 2));
-    }
-
-    public static byte[] getHexAddress(String input) {
-        String cleanInput = cleanHexPrefix(input);
-        return Numeric.hexStringToByteArray(cleanInput);
-    }
-
-    public static String getHexAddress(byte[] input) {
-        return Numeric.toHexStringNoPrefix(input);
     }
 
 }

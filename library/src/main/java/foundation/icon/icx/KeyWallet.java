@@ -43,18 +43,12 @@ import static foundation.icon.icx.TransactionBuilder.checkArgument;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class KeyWallet implements Wallet {
 
-    private ECKeyPair ecKeyPair;
+    private Bytes privateKey;
+    private Bytes publicKey;
 
-    KeyWallet(ECKeyPair ecKeyPair) {
-        this.ecKeyPair = ecKeyPair;
-    }
-
-    /**
-     * @see Wallet#getAddress()
-     */
-    @Override
-    public Address getAddress() {
-        return IconKeys.getAddress(ecKeyPair);
+    private KeyWallet(Bytes privateKey, Bytes publicKey) {
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
     }
 
     /**
@@ -65,31 +59,8 @@ public class KeyWallet implements Wallet {
      */
     public static KeyWallet load(Bytes privateKey) {
         Credentials credentials = Credentials.create(privateKey.toString());
-        return new KeyWallet(credentials.getEcKeyPair());
-    }
-
-    /**
-     * @see Wallet#sign(byte[])
-     */
-    @Override
-    public byte[] sign(byte[] data) {
-        checkArgument(data, "hash not found");
-        checkArgument(ecKeyPair, "ecKeyPair not found");
-        return sign(data, ecKeyPair);
-    }
-
-    ECKeyPair getEcKeyPair() {
-        return ecKeyPair;
-    }
-
-    private byte[] sign(byte[] data, ECKeyPair ecKeyPair) {
-        Sign.SignatureData signatureData = Sign.signMessage(data, ecKeyPair, false);
-
-        ByteBuffer buffer = ByteBuffer.allocate(signatureData.getR().length + signatureData.getS().length + 1);
-        buffer.put(signatureData.getR());
-        buffer.put(signatureData.getS());
-        buffer.put((byte) (signatureData.getV() - 27));
-        return buffer.array();
+        Bytes publicKey = new Bytes(credentials.getEcKeyPair().getPublicKey());
+        return new KeyWallet(privateKey, publicKey);
     }
 
     /**
@@ -100,16 +71,9 @@ public class KeyWallet implements Wallet {
     public static KeyWallet create() throws
             InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         ECKeyPair ecKeyPair = IconKeys.createEcKeyPair();
-        return new KeyWallet(ecKeyPair);
-    }
-
-    /**
-     * Gets the private key
-     *
-     * @return private key
-     */
-    public Bytes getPrivateKey() {
-        return new Bytes(ecKeyPair.getPrivateKey());
+        Bytes privateKey = new Bytes(ecKeyPair.getPrivateKey());
+        Bytes pubicKey = new Bytes(ecKeyPair.getPublicKey());
+        return new KeyWallet(privateKey, pubicKey);
     }
 
     /**
@@ -121,7 +85,9 @@ public class KeyWallet implements Wallet {
      */
     public static KeyWallet load(String password, File file) throws IOException, CipherException {
         Credentials credentials = KeyStoreUtils.loadCredentials(password, file);
-        return new KeyWallet(credentials.getEcKeyPair());
+        Bytes privateKey = new Bytes(credentials.getEcKeyPair().getPrivateKey());
+        Bytes pubicKey = new Bytes(credentials.getEcKeyPair().getPublicKey());
+        return new KeyWallet(privateKey, pubicKey);
     }
 
     /**
@@ -134,8 +100,42 @@ public class KeyWallet implements Wallet {
      */
     public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
             CipherException, IOException {
-        KeystoreFile keystoreFile = Keystore.create(password, wallet.getEcKeyPair(), 1 << 14, 1);
+        ECKeyPair ecKeyPair = ECKeyPair.create(wallet.getPrivateKey().toByteArray());
+        KeystoreFile keystoreFile = Keystore.create(password, ecKeyPair, 1 << 14, 1);
         return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
+    }
+
+    /**
+     * @see Wallet#getAddress()
+     */
+    @Override
+    public Address getAddress() {
+        return IconKeys.getAddress(publicKey);
+    }
+
+    /**
+     * @see Wallet#sign(byte[])
+     */
+    @Override
+    public byte[] sign(byte[] data) {
+        checkArgument(data, "hash not found");
+        ECKeyPair ecKeyPair = ECKeyPair.create(privateKey.toByteArray());
+        Sign.SignatureData signatureData = Sign.signMessage(data, ecKeyPair, false);
+
+        ByteBuffer buffer = ByteBuffer.allocate(signatureData.getR().length + signatureData.getS().length + 1);
+        buffer.put(signatureData.getR());
+        buffer.put(signatureData.getS());
+        buffer.put((byte) (signatureData.getV() - 27));
+        return buffer.array();
+    }
+
+    /**
+     * Gets the private key
+     *
+     * @return private key
+     */
+    public Bytes getPrivateKey() {
+        return privateKey;
     }
 
 }
