@@ -93,7 +93,7 @@ public class TransactionResult {
     }
 
     public RpcObject getFailure() {
-        RpcItem item = properties.getItem("getFailure");
+        RpcItem item = properties.getItem("failure");
         return item != null ? item.asObject() : null;
     }
 
