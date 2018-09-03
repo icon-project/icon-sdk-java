@@ -19,22 +19,14 @@ package foundation.icon.icx.data;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class EventLog {
     private RpcObject properties;
-    private Map<String, Class<?>> types;
 
     EventLog(RpcObject properties) {
         this.properties = properties;
-
-        types = new HashMap<>();
-        types.put("scoreAddress", String.class);
-        types.put("indexed", RpcItem.class);
-        types.put("data", RpcItem.class);
     }
 
     public String getScoreAddress() {
@@ -54,9 +46,8 @@ public class EventLog {
 
     @Override
     public String toString() {
-        String text = (types == null) ? properties.toString() : properties.toString(types);
         return "EventLog{" +
-                "properties=" + text +
+                "properties=" + properties +
                 '}';
     }
 }

@@ -21,34 +21,14 @@ import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class ConfirmedTransaction implements Transaction {
 
     private RpcObject properties;
-    private Map<String, Class<?>> types;
 
     ConfirmedTransaction(RpcObject properties) {
         this.properties = properties;
-
-        types = new HashMap<>();
-        types.put("version", BigInteger.class);
-        types.put("from", Address.class);
-        types.put("to", Address.class);
-        types.put("value", BigInteger.class);
-        types.put("stepLimit", BigInteger.class);
-        types.put("timestamp", BigInteger.class);
-        types.put("nid", BigInteger.class);
-        types.put("nonce", BigInteger.class);
-        types.put("dataType", String.class);
-        types.put("data", RpcItem.class);
-        types.put("txHash", Bytes.class);
-        types.put("txIndex", BigInteger.class);
-        types.put("blockHeight", BigInteger.class);
-        types.put("blockHash", Bytes.class);
-        types.put("signature", String.class);
     }
 
     @Override
@@ -84,7 +64,17 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getTimestamp() {
         RpcItem item = properties.getItem("timestamp");
-        return item != null ? item.asInteger() : null;
+
+        BigInteger timestamp = null;
+        if (item != null) {
+            try {
+                timestamp = item.asInteger();
+            } catch (RpcItem.RpcValueException e) {
+                timestamp = new BigInteger(item.asString());
+            }
+        }
+
+        return timestamp;
     }
 
     @Override
@@ -96,7 +86,17 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getNonce() {
         RpcItem item = properties.getItem("nonce");
-        return item != null ? item.asInteger() : null;
+
+        BigInteger nonce = null;
+        if (item != null) {
+            try {
+                nonce = item.asInteger();
+            } catch (RpcItem.RpcValueException e) {
+                nonce = new BigInteger(item.asString());
+            }
+        }
+
+        return nonce;
     }
 
     @Override
@@ -137,9 +137,8 @@ public class ConfirmedTransaction implements Transaction {
 
     @Override
     public String toString() {
-        String text = (types == null) ? properties.toString() : properties.toString(types);
         return "ConfirmedTransaction{" +
-                "properties=" + text +
+                "properties=" + properties +
                 '}';
     }
 }

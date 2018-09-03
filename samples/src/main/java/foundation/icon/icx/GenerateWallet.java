@@ -38,6 +38,23 @@ public class GenerateWallet {
                 "testkeys").toFile();
     }
 
+    public KeyWallet create() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        return KeyWallet.create();
+    }
+
+    public KeyWallet loadPrivateKey() {
+        return KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
+    }
+
+    public String storeKeyStore(KeyWallet wallet) throws CipherException, IOException {
+        return KeyWallet.store(wallet, PASSWORD, tempDir);
+    }
+
+    public KeyWallet loadKeyStore(String fileName) throws IOException, CipherException {
+        File file = new File(tempDir, fileName);
+        return KeyWallet.load(PASSWORD, file);
+    }
+
     public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, IOException, CipherException {
         GenerateWallet sample = new GenerateWallet();
 
@@ -55,23 +72,6 @@ public class GenerateWallet {
         wallet = sample.loadKeyStore(fileName);
         System.out.println("address:"+wallet.getAddress());
         System.out.println("privateKey:"+wallet.getPrivateKey().toHexString(false));
-    }
-
-    public KeyWallet create() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        return KeyWallet.create();
-    }
-
-    public KeyWallet loadPrivateKey() {
-        return KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
-    }
-
-    public String storeKeyStore(KeyWallet wallet) throws CipherException, IOException {
-        return KeyWallet.store(wallet, PASSWORD, tempDir);
-    }
-
-    public KeyWallet loadKeyStore(String fileName) throws IOException, CipherException {
-        File file = new File(tempDir, fileName);
-        return KeyWallet.load(PASSWORD, file);
     }
 
 }
