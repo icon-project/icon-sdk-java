@@ -64,7 +64,17 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getTimestamp() {
         RpcItem item = properties.getItem("timestamp");
-        return item != null ? item.asInteger() : null;
+
+        BigInteger timestamp = null;
+        if (item != null) {
+            try {
+                timestamp = item.asInteger();
+            } catch (RpcItem.RpcValueException e) {
+                timestamp = new BigInteger(item.asString());
+            }
+        }
+
+        return timestamp;
     }
 
     @Override
@@ -76,7 +86,17 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getNonce() {
         RpcItem item = properties.getItem("nonce");
-        return item != null ? item.asInteger() : null;
+
+        BigInteger nonce = null;
+        if (item != null) {
+            try {
+                nonce = item.asInteger();
+            } catch (RpcItem.RpcValueException e) {
+                nonce = new BigInteger(item.asString());
+            }
+        }
+
+        return nonce;
     }
 
     @Override
