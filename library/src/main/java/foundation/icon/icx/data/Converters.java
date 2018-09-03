@@ -218,7 +218,7 @@ public final class Converters {
     }
 
     static <T> Object fromRpcValue(RpcValue value, Class<T> type) {
-        if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class) ) {
+        if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class)) {
             return value.asBoolean();
         } else if (type.isAssignableFrom(String.class)) {
             return value.asString();

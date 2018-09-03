@@ -31,12 +31,15 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+import static foundation.icon.icx.data.Converters.BLOCK;
+import static foundation.icon.icx.data.Converters.RPC_ITEM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
 public class IconServiceVCRTest {
 
     public final String URL = "http://localhost:9000/api/v3";
+    public final String TEST_V2_URL = "http://localhost:9000/api/v2";
     public final String PRIVATE_KEY_STRING =
             "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
 
@@ -256,6 +259,37 @@ public class IconServiceVCRTest {
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         assertEquals("0xe436d4afac5a73cef8b1f88eadc66e6a1b39ef38f409ddea52ddfaea5e36b94e", hash.toString());
+    }
+
+    @Test
+    void testV2() throws IOException {
+        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
+        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(loggning)
+                .build();
+        HttpProvider provider = new HttpProvider(httpClient, TEST_V2_URL);
+
+        long requestId = System.currentTimeMillis();
+        // 20584, 13129
+        BigInteger height = new BigInteger("13129");
+        RpcObject params = new RpcObject.Builder()
+                .put("height", new RpcValue(height.toString()))
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_getBlockByHeight", params);
+        RpcItem result = provider.request(request, RPC_ITEM).execute();
+
+        Block block = BLOCK.convertTo(result.asObject().getItem("block").asObject());
+        List<ConfirmedTransaction> txs = block.getTransactions();
+        for (ConfirmedTransaction tx : txs) {
+            System.out.println("address" + tx.getTo());
+            assertEquals(new Bytes("0xcaee8edbc906756ec452c40c14a6b329ce7a87465aebe11eb6d47c94f0a582e5"), tx.getTxHash());
+            assertEquals(new BigInteger("1529913831086000"), tx.getTimestamp());
+            assertEquals(new BigInteger("10000000000000000"), tx.getFee());
+            assertEquals(new BigInteger("10000000000000000000"), tx.getValue());
+            assertEquals("bf85fac2d0b507a2db9ce9526e6d91476f16a2d269f51636f9c4b2d512017faf", tx.getTo().toString());
+        }
+
     }
 
     class TokenBalance {

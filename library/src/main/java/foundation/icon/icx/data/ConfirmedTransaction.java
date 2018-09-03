@@ -19,6 +19,8 @@ package foundation.icon.icx.data;
 import foundation.icon.icx.Transaction;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
@@ -34,7 +36,7 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getVersion() {
         RpcItem item = properties.getItem("version");
-        return item != null ? item.asInteger() : null;
+        return item != null ? item.asInteger() : new BigInteger("2");
     }
 
     @Override
@@ -49,10 +51,18 @@ public class ConfirmedTransaction implements Transaction {
         return item != null ? item.asAddress() : null;
     }
 
+    public BigInteger getFee() {
+        RpcItem item = properties.getItem("fee");
+        return item != null ? convertHex(item.asValue()) : null;
+    }
+
     @Override
     public BigInteger getValue() {
         RpcItem item = properties.getItem("value");
-        return item != null ? item.asInteger() : null;
+        if (item == null) {
+            return null;
+        }
+        return getVersion().intValue() < 3 ? convertHex(item.asValue()) : item.asInteger();
     }
 
     @Override
@@ -64,17 +74,10 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getTimestamp() {
         RpcItem item = properties.getItem("timestamp");
-
-        BigInteger timestamp = null;
-        if (item != null) {
-            try {
-                timestamp = item.asInteger();
-            } catch (RpcItem.RpcValueException e) {
-                timestamp = new BigInteger(item.asString());
-            }
+        if (item == null) {
+            return null;
         }
-
-        return timestamp;
+        return getVersion().intValue() < 3 ? convertDecimal(item.asValue()) : item.asInteger();
     }
 
     @Override
@@ -86,17 +89,10 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getNonce() {
         RpcItem item = properties.getItem("nonce");
-
-        BigInteger nonce = null;
-        if (item != null) {
-            try {
-                nonce = item.asInteger();
-            } catch (RpcItem.RpcValueException e) {
-                nonce = new BigInteger(item.asString());
-            }
+        if (item == null) {
+            return null;
         }
-
-        return nonce;
+        return getVersion().intValue() < 3 ? convertDecimal(item.asValue()) : item.asInteger();
     }
 
     @Override
@@ -111,7 +107,8 @@ public class ConfirmedTransaction implements Transaction {
     }
 
     public Bytes getTxHash() {
-        RpcItem item = properties.getItem("txHash");
+        String key = getVersion().intValue() < 3 ? "tx_hash" : "txHash";
+        RpcItem item = properties.getItem(key);
         return item != null ? item.asBytes() : null;
     }
 
@@ -140,5 +137,40 @@ public class ConfirmedTransaction implements Transaction {
         return "ConfirmedTransaction{" +
                 "properties=" + properties +
                 '}';
+    }
+
+    private BigInteger convertDecimal(RpcValue value) {
+        // The value of timestamp and nonce in v2 specs is a decimal string.
+        // But there are decimal strings, numbers and 0x included hex strings in v2 blocks.
+        // e.g.) "12345", 12345, "0x12345"
+        //
+        // RpcValue class converts numbers and 0x included hex strings to 0x included hex string
+        // and holds it
+        //
+        // So, stringValue is a decimal string or a 0x included hex string.("12345", "0x12345")
+        // if it has 0x, the method converts it as hex otherwise decimal
+
+        String stringValue = value.asString();
+        if (stringValue.startsWith(Numeric.HEX_PREFIX) ||
+                stringValue.startsWith("-" + Numeric.HEX_PREFIX)) {
+            return convertHex(value);
+        } else {
+            return new BigInteger(stringValue, 10);
+        }
+    }
+
+    private BigInteger convertHex(RpcValue value) {
+        // The value of 'value' and nonce in v2 specs is a decimal string.
+        // But there are hex strings without 0x in v2 blocks.
+        //
+        // This method converts the value as hex no matter it has  0x prefix or not.
+
+        String stringValue = value.asString();
+        String sign = "";
+        if (stringValue.charAt(0) == '-') {
+            sign = stringValue.substring(0, 1);
+            stringValue = stringValue.substring(1);
+        }
+        return new BigInteger(sign + Numeric.cleanHexPrefix(stringValue), 16);
     }
 }
