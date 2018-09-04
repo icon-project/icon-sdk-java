@@ -272,7 +272,7 @@ public class IconServiceVCRTest {
 
         long requestId = System.currentTimeMillis();
         // 20584, 13129
-        BigInteger height = new BigInteger("13129");
+        BigInteger height = new BigInteger("20584");
         RpcObject params = new RpcObject.Builder()
                 .put("height", new RpcValue(height.toString()))
                 .build();
