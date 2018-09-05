@@ -53,10 +53,9 @@ public class Block {
     public List<ConfirmedTransaction> getTransactions() {
         RpcItem item = properties.getItem("confirmed_transaction_list");
         List<ConfirmedTransaction> transactions = new ArrayList<>();
-        if (item != null) {
+        if (item != null && getHeight().intValue() > 0) {
             for (RpcItem tx : item.asArray()) {
-                RpcConverter<ConfirmedTransaction> converter = CONFIRMED_TRANSACTION;
-                transactions.add(converter.convertTo(tx.asObject()));
+                transactions.add(CONFIRMED_TRANSACTION.convertTo(tx.asObject()));
             }
         }
         return transactions;
