@@ -26,6 +26,18 @@ public class Address {
 
     private AddressPrefix prefix;
     private byte[] body;
+    private boolean isMalformed = false;
+    private String malformedAddress;
+
+    public static Address createMalformedAddress(String malformedAddress) {
+        Address address = new Address();
+        address.isMalformed = true;
+        address.malformedAddress = malformedAddress;
+        return address;
+    }
+
+    private Address() {
+    }
 
     public Address(String address) {
         AddressPrefix prefix = IconKeys.getAddressHexPrefix(address);
@@ -59,7 +71,11 @@ public class Address {
 
     @Override
     public String toString() {
-        return getPrefix().getValue() + Numeric.toHexStringNoPrefix(body);
+        if (isMalformed) {
+            return malformedAddress;
+        } else {
+            return getPrefix().getValue() + Numeric.toHexStringNoPrefix(body);
+        }
     }
 
 
@@ -68,7 +84,11 @@ public class Address {
         if (obj == this) return true;
         if (obj instanceof Address) {
             Address other = (Address) obj;
-            return other.prefix == prefix && Arrays.equals(other.body, body);
+            if (isMalformed) {
+                return malformedAddress.equals(other.malformedAddress);
+            } else {
+                return !other.isMalformed && other.prefix == prefix && Arrays.equals(other.body, body);
+            }
         }
         return false;
     }

@@ -624,29 +624,26 @@ tokenSymbol:ST
 
 ### Q&A
 
- 1. What is KeyWallet?
-	- A class that manages EOA's private / public key pair.
-	- Transaction message signing function.
-	- Keystore creation and import / export function.
- 2. What is keyStore file?
-	 - Text / file that is encrypted with a private key.
- 3. Why use HttpLoggingInterceptor?
-	 - To log detailed information of http request / response (option)
- 4. What is stepLimit for?
-	 -  Since transaction fee is required to send transaction, you can set the maximum fee limit. If your actual transaction fee exceeds the stepLimit that you have set, the transaction will fail but still your transaction fee(stepLimit) will be consumed.
+1. What is KeyWallet?
+- A class that manages EOA's private / public key pair.
+- Transaction message signing function.
+- Keystore creation and import / export function.
+2. What is keyStore file?
+- Text / file that is encrypted with a private key.
+3. Why use HttpLoggingInterceptor?
+- To log detailed information of http request / response (option)
+4. What is stepLimit for?
+-  Since transaction fee is required to send transaction, you can set the maximum fee limit. If your actual transaction fee exceeds the stepLimit that you have set, the transaction will fail but still your transaction fee(stepLimit) will be consumed.
+5. What is networId?
+- 1 for mainNet, 2 for testNet, 3 for private network
+6. Why sendTransaction method is named as ‘transfer’, when transferring token?
+- Transfer as a methodName means to transfer token
+- [Refer to IRC2 Specification](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md)
+7. What is httpProvider?
+- Class that supports node and jsonRpc communication.
+8. Is the HttpLoggingInterceptor in SampleCode deleted at all?
+- HttpLoggingInterceptor is not an SDK library, but one of the 'okhttpclient' related libraries. This is not a required library, but an additional one that is used to record the Log in detail. Please add dependency to use it as below.
 
- 5. What is networId?
-	- 1 for mainNet, 2 for testNet, 3 for private network
- 6. Why sendTransaction method is named as ‘transfer’, when transferring token?
- - Transfer as a methodName means to transfer token
- - [Refer to IRC2 Specification](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md)
-
- 7. What is httpProvider?
- - Class that supports node and jsonRpc communication.
-
- 8. Is the HttpLoggingInterceptor in SampleCode deleted at all?
-
-HttpLoggingInterceptor is not an SDK library, but one of the 'okhttpclient' related libraries. This is not a required library, but an additional one that is used to record the Log in detail. Please add dependency to use it as below.
 ```xml
 <dependency>
 	<groupId>com.squareup.okhttp3</groupId>

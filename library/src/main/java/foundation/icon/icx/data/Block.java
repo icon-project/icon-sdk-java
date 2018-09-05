@@ -16,12 +16,15 @@
 
 package foundation.icon.icx.data;
 
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import static foundation.icon.icx.data.Converters.CONFIRMED_TRANSACTION;
 
 
 public class Block {
@@ -50,9 +53,9 @@ public class Block {
     public List<ConfirmedTransaction> getTransactions() {
         RpcItem item = properties.getItem("confirmed_transaction_list");
         List<ConfirmedTransaction> transactions = new ArrayList<>();
-        if (item != null) {
+        if (item != null && getHeight().intValue() > 0) {
             for (RpcItem tx : item.asArray()) {
-                transactions.add(new ConfirmedTransaction(tx.asObject()));
+                transactions.add(CONFIRMED_TRANSACTION.convertTo(tx.asObject()));
             }
         }
         return transactions;
