@@ -33,6 +33,7 @@ import java.util.List;
 
 import static foundation.icon.icx.data.Converters.BLOCK;
 import static foundation.icon.icx.data.Converters.RPC_ITEM;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
@@ -271,25 +272,38 @@ public class IconServiceVCRTest {
         HttpProvider provider = new HttpProvider(httpClient, TEST_V2_URL);
 
         long requestId = System.currentTimeMillis();
-        // 20584, 13129
-        BigInteger height = new BigInteger("20584");
-        RpcObject params = new RpcObject.Builder()
-                .put("height", new RpcValue(height.toString()))
-                .build();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_getBlockByHeight", params);
-        RpcItem result = provider.request(request, RPC_ITEM).execute();
 
-        Block block = BLOCK.convertTo(result.asObject().getItem("block").asObject());
-        List<ConfirmedTransaction> txs = block.getTransactions();
-        for (ConfirmedTransaction tx : txs) {
-            System.out.println("address" + tx.getTo());
-            assertEquals(new Bytes("0xcaee8edbc906756ec452c40c14a6b329ce7a87465aebe11eb6d47c94f0a582e5"), tx.getTxHash());
-            assertEquals(new BigInteger("1529913831086000"), tx.getTimestamp());
-            assertEquals(new BigInteger("10000000000000000"), tx.getFee());
-            assertEquals(new BigInteger("10000000000000000000"), tx.getValue());
-            assertEquals("bf85fac2d0b507a2db9ce9526e6d91476f16a2d269f51636f9c4b2d512017faf", tx.getTo().toString());
+        // address invalid : 20584, 13204, 13129
+        // timestamp long type : 21265
+        // value no prefix : 13331
+        int[] heights = { 20584, 13204, 13129, 21265, 13331};
+
+        for (int h : heights) {
+            BigInteger height = new BigInteger(String.valueOf(h));
+
+            RpcObject params = new RpcObject.Builder()
+                    .put("height", new RpcValue(height.toString()))
+                    .build();
+            foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_getBlockByHeight", params);
+            RpcItem result = provider.request(request, RPC_ITEM).execute();
+
+            Block block = BLOCK.convertTo(result.asObject().getItem("block").asObject());
+            List<ConfirmedTransaction> txs = block.getTransactions();
+            for (ConfirmedTransaction tx : txs) {
+                assertDoesNotThrow(() -> {
+                    System.out.println("addres:" + tx.getTo());
+                    System.out.println("timestamp:" + tx.getTimestamp());
+                    System.out.println("value:" + tx.getValue());
+                    System.out.println("nonce:" + tx.getNonce());
+                });
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     class TokenBalance {

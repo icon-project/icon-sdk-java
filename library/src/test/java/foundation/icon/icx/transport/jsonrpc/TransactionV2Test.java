@@ -55,7 +55,7 @@ public class TransactionV2Test {
     @Test
     void testChangeSpec() {
         RpcObject object = new RpcObject.Builder()
-                .put("timestamp", new RpcValue("1535964734110836"))
+                .put("timestamp", new RpcValue(new BigInteger(String.valueOf(1535964734110836L))))
                 .put("nonce", new RpcValue("8367273"))
                 .put("value", new RpcValue("0x4563918244f40000"))
                 .put("fee", new RpcValue("0x2386f26fc10000"))
@@ -106,16 +106,20 @@ public class TransactionV2Test {
 
         object = new RpcObject.Builder()
                 .put("to", new RpcValue(""))
+                .put("value", new RpcValue("45400a8fd5330000"))
                 .build();
         tx = CONFIRMED_TRANSACTION.convertTo(object);
         assertNull(tx.getTo());
+        assertEquals(new BigInteger("45400a8fd5330000", 16), tx.getValue());
 
 
         object = new RpcObject.Builder()
                 .put("to", new RpcValue("hxa23651905d221dd36b"))
+                .put("timestamp", new RpcValue(Long.toString(1535964734110836L)))
                 .build();
         tx = CONFIRMED_TRANSACTION.convertTo(object);
         assertEquals("hxa23651905d221dd36b", tx.getTo().toString());
+        assertEquals("1535964734110836", tx.getTimestamp().toString());
     }
 
 
