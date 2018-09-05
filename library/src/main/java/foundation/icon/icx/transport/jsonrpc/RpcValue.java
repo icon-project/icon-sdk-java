@@ -38,7 +38,7 @@ public class RpcValue implements RpcItem {
     }
 
     public RpcValue(Address value) {
-            this.value = value.toString();
+        this.value = value.toString();
     }
 
     public RpcValue(String value) {
@@ -103,7 +103,15 @@ public class RpcValue implements RpcItem {
 
     @Override
     public Address asAddress() {
-        return new Address(value);
+        try {
+            return new Address(value);
+        } catch (IllegalArgumentException e) {
+            if (value == null) {
+                return null;
+            } else {
+                return Address.createMalformedAddress(value);
+            }
+        }
     }
 
     @Override
