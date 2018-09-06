@@ -120,7 +120,8 @@ public class TokenTransactionExample {
                 .build();
 
         // Create transaction to transfer token
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(wallet.getAddress())
                 .to(tokenAddress)
                 .stepLimit(stepLimit)

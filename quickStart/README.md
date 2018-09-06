@@ -160,7 +160,8 @@ BigInteger stepLimit = new BigInteger("1000000");
 long timestamp = System.currentTimeMillis() * 1000L;
 
 //Enter transaction information
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+            .nid(networkId)
 			.from(fromAddress)
 			.to(toAddress)
 			.value(value)
@@ -292,7 +293,8 @@ RpcObject params = new RpcObject.Builder()
                 .build();
 
 // Enter transaction information
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(wallet.getAddress())
                 .to(tokenAddress)
                 .stepLimit(stepLimit)
@@ -432,7 +434,8 @@ RpcObject params = new RpcObject.Builder()
     .put("symbol", new RpcValue(tokenSymbol))
     .build();
 
-Transaction transaction = TransactionBuilder.of(networkId) //Enter transaction information.
+Transaction transaction = TransactionBuilder.newBuilder() //Enter transaction information.
+    .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreInstall)
     .stepLimit(stepLimit)

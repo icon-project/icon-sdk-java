@@ -72,7 +72,8 @@ public class DeploySampleToken {
                 .put("symbol", new RpcValue(tokenSymbol))
                 .build();
 
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(fromAddress)
                 .to(toAddress)
                 .stepLimit(stepLimit)

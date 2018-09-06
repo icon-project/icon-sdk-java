@@ -63,6 +63,7 @@ public class Bytes {
     /**
      * Gets the data as a byte array given size
      *
+     * @param size size of byte array
      * @return byte array given size
      */
     public byte[] toByteArray(int size) {
@@ -83,6 +84,7 @@ public class Bytes {
      * Gets the data as a hex string given size
      *
      * @param withPrefix whether 0x prefix included
+     * @param size size of byte array
      * @return hex string given size
      */
     public String toHexString(boolean withPrefix, int size) {

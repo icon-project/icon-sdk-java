@@ -38,7 +38,8 @@ public class SendMessageTransaction {
         BigInteger nonce = new BigInteger("1");
         String message = "Hello World";
 
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(fromAddress)
                 .to(toAddress)
                 .stepLimit(stepLimit)

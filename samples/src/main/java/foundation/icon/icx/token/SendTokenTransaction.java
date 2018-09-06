@@ -64,7 +64,8 @@ public class SendTokenTransaction {
                 .put("_value", new RpcValue(value))
                 .build();
 
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(fromAddress)
                 .to(scoreAddress)
                 .stepLimit(stepLimit)

@@ -18,7 +18,11 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 
@@ -42,4 +46,6 @@ public interface Transaction {
     String getDataType();
 
     RpcItem getData();
+
+
 }
