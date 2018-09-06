@@ -30,41 +30,24 @@ import java.nio.charset.StandardCharsets;
 /**
  * Builder for the transaction to send<br>
  * There are four builder types.<br>
- * IcxBuilder is a basic builder to send ICXs.<br>
+ * Builder is a basic builder to send ICXs.<br>
  * CallBuilder, DeployBuilder, MessageBuilder is an extended builder for each purpose.
- * They can be initiated from IcxBuilder.
+ * They can be initiated from Builder.
+ *
+ * @see <a href="https://github.com/icon-project/icon-rpc-server/blob/develop/docs/icon-json-rpc-v3.md#icx_sendtransaction" target="_blank">ICON JSON-RPC API</a>
  */
 public final class TransactionBuilder {
-
-    private BigInteger version = new BigInteger("3");
-    private Address from;
-    private Address to;
-    private BigInteger value;
-    private BigInteger stepLimit;
-    private BigInteger timestamp;
-    private BigInteger nid = NetworkId.MAIN.getValue();
-    private BigInteger nonce;
-    private String dataType;
-    private RpcItem data;
-
-    private TransactionBuilder() {
-    }
-
-    static <T> void checkArgument(T object, String message) {
-        if (object == null) {
-            throw new IllegalArgumentException(message);
-        }
-    }
 
     /**
      * Creates a builder for the given network ID
      *
      * @param nid network ID
      * @return new builder
+     * @deprecated This method can be replaced by {@link #newBuilder()}
      */
-    public static IcxBuilder of(NetworkId nid) {
-        IcxBuilder icxBuilder = new IcxBuilder(new TransactionBuilder());
-        return icxBuilder.nid(nid.getValue());
+    public static Builder of(NetworkId nid) {
+        Builder builder = newBuilder();
+        return builder.nid(nid.getValue());
     }
 
     /**
@@ -72,55 +55,118 @@ public final class TransactionBuilder {
      *
      * @param nid network ID in BigInteger
      * @return new builder
+     * @deprecated This method can be replaced by {@link #newBuilder()}
      */
-    public static IcxBuilder of(BigInteger nid) {
-        IcxBuilder icxBuilder = new IcxBuilder(new TransactionBuilder());
-        return icxBuilder.nid(nid);
+    public static Builder of(BigInteger nid) {
+        Builder builder = newBuilder();
+        return builder.nid(nid);
+    }
+
+    /**
+     * Creates a builder to make a transaction to send
+     *
+     * @return new builder
+     */
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     /**
      * A Builder for the simple icx sending transaction.
      */
-    public static final class IcxBuilder {
+    public static final class Builder {
 
-        private TransactionBuilder txBuilder;
+        private TransactionData transactionData;
 
-        private IcxBuilder(TransactionBuilder txBuilder) {
-            this.txBuilder = txBuilder;
+        private Builder() {
+            this.transactionData = new TransactionData();
         }
 
-        public IcxBuilder nid(BigInteger nid) {
-            txBuilder.nid = nid;
+        /**
+         * Sets the Network ID
+         *
+         * @param nid Network ID ("0x1" for Mainnet, "0x2" for Testnet, etc)
+         * @return self
+         */
+        public Builder nid(BigInteger nid) {
+            transactionData.nid = nid;
             return this;
         }
 
-        public IcxBuilder from(Address from) {
-            txBuilder.from = from;
+        /**
+         * Sets the Network ID
+         *
+         * @param nid Network ID ("0x1" for Mainnet, "0x2" for Testnet, etc)
+         * @return self
+         */
+        public Builder nid(NetworkId nid) {
+            transactionData.nid = nid.getValue();
             return this;
         }
 
-        public IcxBuilder to(Address to) {
-            txBuilder.to = to;
+        /**
+         * Sets the sender address
+         *
+         * @param from EOA address that created the transaction
+         * @return self
+         */
+        public Builder from(Address from) {
+            transactionData.from = from;
             return this;
         }
 
-        public IcxBuilder value(BigInteger value) {
-            txBuilder.value = value;
+        /**
+         * Sets the receiver address
+         *
+         * @param to EOA address to receive coins, or SCORE address to execute the transaction.
+         * @return self
+         */
+        public Builder to(Address to) {
+            transactionData.to = to;
             return this;
         }
 
-        public IcxBuilder stepLimit(BigInteger stepLimit) {
-            txBuilder.stepLimit = stepLimit;
+        /**
+         * Sets the value to send ICXs
+         *
+         * @param value Amount of ICX coins in loop to transfer. (1 icx = 1 ^ 18 loop)
+         * @return self
+         */
+        public Builder value(BigInteger value) {
+            transactionData.value = value;
             return this;
         }
 
-        public IcxBuilder timestamp(BigInteger timestamp) {
-            txBuilder.timestamp = timestamp;
+        /**
+         * Sets the Maximum step
+         *
+         * @param stepLimit Maximum step allowance that can be used by the transaction.
+         * @return self
+         */
+        public Builder stepLimit(BigInteger stepLimit) {
+            transactionData.stepLimit = stepLimit;
             return this;
         }
 
-        public IcxBuilder nonce(BigInteger nonce) {
-            txBuilder.nonce = nonce;
+        /**
+         * Sets the timestamp
+         *
+         * @param timestamp Transaction creation time, in microsecond.
+         * @return self
+         */
+        public Builder timestamp(BigInteger timestamp) {
+            transactionData.timestamp = timestamp;
+            return this;
+        }
+
+        /**
+         * Sets the nonce
+         *
+         * @param nonce An arbitrary number used to prevent transaction hash collision.
+         * @return self
+         */
+        public Builder nonce(BigInteger nonce) {
+            transactionData.nonce = nonce;
             return this;
         }
 
@@ -128,10 +174,10 @@ public final class TransactionBuilder {
          * Converts the builder to CallBuilder with the calling method name
          *
          * @param method calling method name
-         * @return CallBuilder
+         * @return {@link CallBuilder}
          */
         public CallBuilder call(String method) {
-            return new CallBuilder(txBuilder, method);
+            return new CallBuilder(transactionData, method);
         }
 
         /**
@@ -139,35 +185,31 @@ public final class TransactionBuilder {
          *
          * @param contentType content type
          * @param content     deploying content
-         * @return DeployBuilder
+         * @return {@link DeployBuilder}
          */
         public DeployBuilder deploy(String contentType, byte[] content) {
-            return new DeployBuilder(txBuilder, contentType, content);
+            return new DeployBuilder(transactionData, contentType, content);
         }
 
         /**
          * Converts the builder to MessageBuilder with the message
          *
          * @param message message
-         * @return MessageBuilder
+         * @return {@link MessageBuilder}
          */
         public MessageBuilder message(String message) {
-            return new MessageBuilder(txBuilder, message);
+            return new MessageBuilder(transactionData, message);
         }
 
+        /**
+         * Make a new transaction using given properties
+         *
+         * @return a transaction to send
+         */
         public Transaction build() {
-            return txBuilder.build();
+            return transactionData.build();
         }
 
-    }
-
-    public Transaction build() {
-        checkArgument(from, "from not found");
-        checkArgument(to, "to not found");
-        checkArgument(version, "version not found");
-        checkArgument(stepLimit, "stepLimit not found");
-
-        return new SendingTransaction(this);
     }
 
     /**
@@ -175,32 +217,49 @@ public final class TransactionBuilder {
      */
     public static final class CallBuilder {
 
-        private TransactionBuilder txBuilder;
+        private TransactionData transactionData;
         private RpcObject.Builder dataBuilder;
 
-        private CallBuilder(TransactionBuilder txBuilder, String method) {
-            this.txBuilder = txBuilder;
-            this.txBuilder.dataType = "call";
+        private CallBuilder(TransactionData transactionData, String method) {
+            this.transactionData = transactionData;
+            this.transactionData.dataType = "call";
 
             dataBuilder = new RpcObject.Builder()
                     .put("method", new RpcValue(method));
         }
 
+        /**
+         * Sets the params
+         *
+         * @param params Function parameters
+         * @return self
+         */
         public CallBuilder params(RpcObject params) {
             dataBuilder.put("params", params);
             return this;
         }
 
+        /**
+         * Sets the params
+         *
+         * @param params Function parameters
+         * @return self
+         */
         public <T> CallBuilder params(T params) {
             dataBuilder.put("params", RpcItemCreator.create(params));
             return this;
         }
 
+        /**
+         * Make a new transaction using given properties
+         *
+         * @return a transaction to send
+         */
         public Transaction build() {
-            txBuilder.data = dataBuilder.build();
-            checkArgument(((RpcObject) txBuilder.data).getItem("method"), "method not found");
+            transactionData.data = dataBuilder.build();
+            checkArgument(((RpcObject) transactionData.data).getItem("method"), "method not found");
 
-            return txBuilder.build();
+            return transactionData.build();
         }
     }
 
@@ -208,18 +267,86 @@ public final class TransactionBuilder {
      * A Builder for the message transaction.
      */
     public static final class MessageBuilder {
-        private TransactionBuilder txBuilder;
+        private TransactionData transactionData;
 
-        private MessageBuilder(TransactionBuilder txBuilder, String message) {
-            this.txBuilder = txBuilder;
-            this.txBuilder.dataType = "message";
-            this.txBuilder.data = new RpcValue(message.getBytes(StandardCharsets.UTF_8));
+        private MessageBuilder(TransactionData transactionData, String message) {
+            this.transactionData = transactionData;
+            this.transactionData.dataType = "message";
+            this.transactionData.data = new RpcValue(message.getBytes(StandardCharsets.UTF_8));
         }
 
+        /**
+         * Make a new transaction using given properties
+         *
+         * @return a transaction to send
+         */
         public Transaction build() {
-            return txBuilder.build();
+            return transactionData.build();
         }
 
+    }
+
+    /**
+     * A Builder for the deploy transaction.
+     */
+    public static final class DeployBuilder {
+
+        private TransactionData transactionData;
+        private RpcObject.Builder dataBuilder;
+
+        private DeployBuilder(TransactionData transactionData, String contentType, byte[] content) {
+            this.transactionData = transactionData;
+            this.transactionData.dataType = "deploy";
+
+            dataBuilder = new RpcObject.Builder()
+                    .put("contentType", new RpcValue(contentType))
+                    .put("content", new RpcValue(content));
+        }
+
+        /**
+         * Sets the params
+         *
+         * @param params Function parameters will be delivered to on_install() or on_update()
+         * @return self
+         */
+        public DeployBuilder params(RpcObject params) {
+            dataBuilder.put("params", params);
+            return this;
+        }
+
+        /**
+         * Make a new transaction using given properties
+         *
+         * @return a transaction to send
+         */
+        public Transaction build() {
+            transactionData.data = dataBuilder.build();
+            checkArgument(((RpcObject) transactionData.data).getItem("contentType"), "contentType not found");
+            checkArgument(((RpcObject) transactionData.data).getItem("content"), "content not found");
+
+            return transactionData.build();
+        }
+    }
+
+    private static class TransactionData {
+        private BigInteger version = new BigInteger("3");
+        private Address from;
+        private Address to;
+        private BigInteger value;
+        private BigInteger stepLimit;
+        private BigInteger timestamp;
+        private BigInteger nid = NetworkId.MAIN.getValue();
+        private BigInteger nonce;
+        private String dataType;
+        private RpcItem data;
+
+        private Transaction build() {
+            checkArgument(from, "from not found");
+            checkArgument(to, "to not found");
+            checkArgument(version, "version not found");
+            checkArgument(stepLimit, "stepLimit not found");
+            return new SendingTransaction(this);
+        }
     }
 
     private static class SendingTransaction implements Transaction {
@@ -234,17 +361,17 @@ public final class TransactionBuilder {
         private String dataType;
         private RpcItem data;
 
-        private SendingTransaction(TransactionBuilder txBuilder) {
-            version = txBuilder.version;
-            from = txBuilder.from;
-            to = txBuilder.to;
-            value = txBuilder.value;
-            stepLimit = txBuilder.stepLimit;
-            timestamp = txBuilder.timestamp;
-            nid = txBuilder.nid;
-            nonce = txBuilder.nonce;
-            dataType = txBuilder.dataType;
-            data = txBuilder.data;
+        private SendingTransaction(TransactionData transactionData) {
+            version = transactionData.version;
+            from = transactionData.from;
+            to = transactionData.to;
+            value = transactionData.value;
+            stepLimit = transactionData.stepLimit;
+            timestamp = transactionData.timestamp;
+            nid = transactionData.nid;
+            nonce = transactionData.nonce;
+            dataType = transactionData.dataType;
+            data = transactionData.data;
         }
 
         @Override
@@ -298,34 +425,9 @@ public final class TransactionBuilder {
         }
     }
 
-    /**
-     * A Builder for the deploy transaction.
-     */
-    public static final class DeployBuilder {
-
-        private TransactionBuilder txBuilder;
-        private RpcObject.Builder dataBuilder;
-
-        private DeployBuilder(TransactionBuilder txBuilder, String contentType, byte[] content) {
-            this.txBuilder = txBuilder;
-            this.txBuilder.dataType = "deploy";
-
-            dataBuilder = new RpcObject.Builder()
-                    .put("contentType", new RpcValue(contentType))
-                    .put("content", new RpcValue(content));
-        }
-
-        public DeployBuilder params(RpcObject params) {
-            dataBuilder.put("params", params);
-            return this;
-        }
-
-        public Transaction build() {
-            txBuilder.data = dataBuilder.build();
-            checkArgument(((RpcObject) txBuilder.data).getItem("contentType"), "contentType not found");
-            checkArgument(((RpcObject) txBuilder.data).getItem("content"), "content not found");
-
-            return txBuilder.build();
+    static <T> void checkArgument(T object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
         }
     }
 

@@ -116,7 +116,8 @@ public class IconServiceVCRTest {
     void testSendIcxTransaction() throws IOException {
         long timestmap = System.currentTimeMillis() * 1000L;
         Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
-        Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(new BigInteger("3"))
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .value(new BigInteger("de0b6b3a7640000", 16))
@@ -195,7 +196,8 @@ public class IconServiceVCRTest {
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
-        Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(new BigInteger("3"))
                 .from(wallet.getAddress())
                 .to(scoreAddress)
                 .stepLimit(new BigInteger("75000"))
@@ -225,7 +227,8 @@ public class IconServiceVCRTest {
                 .put("symbol", new RpcValue("ICX"))
                 .build();
 
-        Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(new BigInteger("3"))
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .stepLimit(new BigInteger("e01348", 16))
@@ -247,7 +250,8 @@ public class IconServiceVCRTest {
         long timestmap = System.currentTimeMillis() * 1000L;
         Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
-        Transaction transaction = TransactionBuilder.of(new BigInteger("3"))
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(new BigInteger("3"))
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .stepLimit(new BigInteger("75000"))

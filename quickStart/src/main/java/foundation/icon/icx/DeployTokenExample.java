@@ -109,7 +109,8 @@ public class DeployTokenExample {
                 .build();
 
         // Create transaction to deploy token
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(wallet.getAddress())
                 .to(scoreInstall)
                 .stepLimit(stepLimit)

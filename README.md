@@ -169,7 +169,8 @@ KeyWallet.store(wallet, "password", dir); // throw exception if an error exists.
 
 ```java
 // sending icx
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
     .value(new BigInteger("150000000"))
@@ -178,7 +179,8 @@ Transaction transaction = TransactionBuilder.of(networkId)
     .build();
 
 // deploy
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
     .stepLimit(new BigInteger("5000000"))
@@ -188,7 +190,8 @@ Transaction transaction = TransactionBuilder.of(networkId)
     .build();
 
 // call
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
     .value(new BigInteger("150000000"))
@@ -199,7 +202,8 @@ Transaction transaction = TransactionBuilder.of(networkId)
     .build();
 
 // message
-Transaction transaction = TransactionBuilder.of(networkId)
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
     .value(BigInteger("150000000"))

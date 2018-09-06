@@ -110,6 +110,7 @@ public final class Call<O> {
          * Builds with User defined class. an object of the class would be returned
          *
          * @param responseType Response type
+         * @param <O> responseType
          * @return Call
          */
         public <O> Call<O> buildWith(Class<O> responseType) {

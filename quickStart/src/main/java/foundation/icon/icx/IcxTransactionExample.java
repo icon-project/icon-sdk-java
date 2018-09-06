@@ -91,7 +91,8 @@ public class IcxTransactionExample {
         long timestamp = System.currentTimeMillis() * 1000L;
 
         // Create transaction to transfer icx
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(wallet.getAddress())
                 .to(toAddress)
                 .value(value)

@@ -236,7 +236,8 @@ class IconServiceTest {
         Address fromAddress = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
         Address toAddress = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(fromAddress)
                 .to(toAddress)
                 .value(new BigInteger("de0b6b3a7640000", 16))
@@ -274,7 +275,8 @@ class IconServiceTest {
                 .put("_value", new RpcValue(new BigInteger("1")))
                 .build();
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(fromAddress)
                 .to(scoreAddress)
                 .stepLimit(new BigInteger("12345", 16))

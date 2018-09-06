@@ -39,7 +39,8 @@ public class SendIcxTransaction {
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
 
-        Transaction transaction = TransactionBuilder.of(networkId)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
                 .from(fromAddress)
                 .to(toAddress)
                 .value(value)

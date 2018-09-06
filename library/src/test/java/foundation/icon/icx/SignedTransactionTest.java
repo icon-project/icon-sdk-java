@@ -66,7 +66,8 @@ class SignedTransactionTest {
         Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
         Address to = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(from)
                 .to(to)
                 .value(new BigInteger("de0b6b3a7640000", 16))
@@ -93,7 +94,8 @@ class SignedTransactionTest {
         Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
         Address to = new Address("cx982aed605b065b50a2a639c1ea5710ef5a0501a9");
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(from)
                 .to(to)
                 .value(BigInteger.ONE)
@@ -127,7 +129,8 @@ class SignedTransactionTest {
         Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
         Address to = new Address("cx0000000000000000000000000000000000000000");
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(from)
                 .to(to)
                 .stepLimit(new BigInteger("e01348", 16))
@@ -151,7 +154,8 @@ class SignedTransactionTest {
         Address from = new Address("hxbe258ceb872e08851f1f59694dac2558708ece11");
         Address to = new Address("hx5bfdb090f43a808005ffc27c25b213145e80b7cd");
 
-        Transaction transaction = TransactionBuilder.of(NetworkId.MAIN)
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
                 .from(from)
                 .to(to)
                 .stepLimit(new BigInteger("e01348", 16))

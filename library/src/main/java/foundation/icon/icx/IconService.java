@@ -183,6 +183,7 @@ public class IconService {
      * Calls a SCORE API just for reading
      *
      * @param call instance of Call
+     * @param <O> responseType
      * @return the Request object can execute a request
      */
     public <O> Request<O> call(Call<O> call) {
