@@ -33,6 +33,10 @@ public class ConfirmedTransaction implements Transaction {
         this.properties = properties;
     }
 
+    public RpcObject getProperties() {
+        return properties;
+    }
+
     @Override
     public BigInteger getVersion() {
         RpcItem item = properties.getItem("version");

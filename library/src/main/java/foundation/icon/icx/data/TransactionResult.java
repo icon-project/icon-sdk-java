@@ -34,6 +34,10 @@ public class TransactionResult {
         this.properties = properties;
     }
 
+    public RpcObject getProperties() {
+        return properties;
+    }
+
     /**
      * @return 1 on success, 0 on failure.
      */

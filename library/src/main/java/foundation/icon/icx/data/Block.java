@@ -35,6 +35,10 @@ public class Block {
         this.properties = properties;
     }
 
+    public RpcObject getProperties() {
+        return properties;
+    }
+
     public Bytes getPrevBlockHash() {
         RpcItem item = properties.getItem("prev_block_hash");
         return item != null ? item.asBytes() : null;

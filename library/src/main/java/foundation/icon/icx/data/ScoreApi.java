@@ -31,6 +31,10 @@ public class ScoreApi {
         this.properties = properties;
     }
 
+    public RpcObject getProperties() {
+        return properties;
+    }
+
     public String getType() {
         RpcItem item = properties.getItem("type");
         return item != null ? item.asString() : null;
