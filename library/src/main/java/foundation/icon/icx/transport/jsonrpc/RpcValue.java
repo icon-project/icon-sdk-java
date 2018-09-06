@@ -38,6 +38,7 @@ public class RpcValue implements RpcItem {
     }
 
     public RpcValue(Address value) {
+        if (value.isMalformed()) throw new IllegalArgumentException("Invalid address");
         this.value = value.toString();
     }
 

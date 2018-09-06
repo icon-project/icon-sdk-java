@@ -341,11 +341,18 @@ public final class TransactionBuilder {
         private RpcItem data;
 
         private Transaction build() {
-            checkArgument(from, "from not found");
-            checkArgument(to, "to not found");
+            checkAddress(from, "from not found");
+            checkAddress(to, "to not found");
             checkArgument(version, "version not found");
             checkArgument(stepLimit, "stepLimit not found");
             return new SendingTransaction(this);
+        }
+
+        void checkAddress(Address address, String message) {
+            checkArgument(address, message);
+            if (address.isMalformed()) {
+                throw new IllegalArgumentException("Invalid address");
+            }
         }
     }
 

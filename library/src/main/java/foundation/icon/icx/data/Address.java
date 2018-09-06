@@ -69,6 +69,10 @@ public class Address {
         return prefix;
     }
 
+    public boolean isMalformed() {
+        return isMalformed;
+    }
+
     @Override
     public String toString() {
         if (isMalformed) {
