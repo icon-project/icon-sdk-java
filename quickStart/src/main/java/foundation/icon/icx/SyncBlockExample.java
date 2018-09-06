@@ -138,8 +138,8 @@ public class SyncBlockExample {
 
             // Pring event log
             if (isPrintLog) {
-                List<EventLog> logs = txResult.getEventLogs();
-                for (EventLog log : logs) {
+                List<TransactionResult.EventLog> logs = txResult.getEventLogs();
+                for (TransactionResult.EventLog log : logs) {
                     System.out.println("[EventLogs] scoreAddress:" + log.getScoreAddress() + ",indexed:" + log.getIndexed() + " ,data:" + log.getData());
                 }
             }
