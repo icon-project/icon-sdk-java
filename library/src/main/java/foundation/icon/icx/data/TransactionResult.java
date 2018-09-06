@@ -23,64 +23,108 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @see <a href="https://github.com/icon-project/icon-rpc-server/blob/develop/docs/icon-json-rpc-v3.md#icx_gettransactionresult" target="_blank">ICON JSON-RPC API</a>
+ */
 public class TransactionResult {
 
     private RpcObject properties;
+
     TransactionResult(RpcObject properties) {
         this.properties = properties;
     }
 
+    /**
+     * @return 1 on success, 0 on failure.
+     */
     public BigInteger getStatus() {
         RpcItem item = properties.getItem("status");
         return item != null ? item.asInteger() : null;
     }
 
+    /**
+     * @return Recipient address of the transaction
+     */
     public String getTo() {
         RpcItem item = properties.getItem("to");
         return item != null ? item.asString() : null;
     }
 
+    /**
+     * @return Transaction hash
+     */
     public Bytes getTxHash() {
         RpcItem item = properties.getItem("txHash");
         return item != null ? item.asBytes() : null;
     }
 
+    /**
+     * @return Transaction index in the block
+     */
+    public BigInteger getTxIndex() {
+        RpcItem item = properties.getItem("txIndex");
+        return item != null ? item.asInteger() : null;
+    }
+
+    /**
+     * @return Height of the block that includes the transaction.
+     */
     public BigInteger getBlockHeight() {
         RpcItem item = properties.getItem("blockHeight");
         return item != null ? item.asInteger() : null;
     }
 
+    /**
+     * @return Hash of the block that includes the transation.
+     */
     public Bytes getBlockHash() {
         RpcItem item = properties.getItem("blockHash");
         return item != null ? item.asBytes() : null;
     }
 
+    /**
+     * @return Sum of stepUsed by this transaction and all preceeding transactions in the same block.
+     */
     public BigInteger getCumulativeStepUsed() {
         RpcItem item = properties.getItem("cumulativeStepUsed");
         return item != null ? item.asInteger() : null;
     }
 
+    /**
+     * @return The amount of step used by this transaction.
+     */
     public BigInteger getStepUsed() {
         RpcItem item = properties.getItem("stepUsed");
         return item != null ? item.asInteger() : null;
     }
 
+    /**
+     * @return The step price used by this transaction.
+     */
     public BigInteger getStepPrice() {
         RpcItem item = properties.getItem("stepPrice");
         return item != null ? item.asInteger() : null;
     }
 
+    /**
+     * @return SCORE address if the transaction created a new SCORE.
+     */
     public String getScoreAddress() {
         RpcItem item = properties.getItem("scoreAddress");
         return item != null ? item.asString() : null;
     }
 
+    /**
+     * @return Bloom filter to quickly retrieve related eventlogs.
+     */
     public String getLogsBloom() {
         RpcItem item = properties.getItem("logsBloom");
         return item != null ? item.asString() : null;
     }
 
+    /**
+     * @return List of event logs, which this transaction generated.
+     */
     public List<EventLog> getEventLogs() {
         RpcItem item = properties.getItem("eventLogs");
         List<EventLog> eventLogs = new ArrayList<>();
@@ -92,9 +136,12 @@ public class TransactionResult {
         return eventLogs;
     }
 
-    public RpcObject getFailure() {
+    /**
+     * @return This field exists when status is 0. Contains code(str) and message(str).
+     */
+    public Failure getFailure() {
         RpcItem item = properties.getItem("failure");
-        return item != null ? item.asObject() : null;
+        return item != null ? new Failure(item.asObject()) : null;
     }
 
     @Override
@@ -102,5 +149,60 @@ public class TransactionResult {
         return "TransactionResult{" +
                 "properties=" + properties +
                 '}';
+    }
+
+    public class EventLog {
+        private RpcObject properties;
+
+        EventLog(RpcObject properties) {
+            this.properties = properties;
+        }
+
+        public String getScoreAddress() {
+            RpcItem item = properties.getItem("scoreAddress");
+            return item != null ? item.asString() : null;
+        }
+
+        public List<RpcItem> getIndexed() {
+            RpcItem item = properties.getItem("indexed");
+            return item != null ? item.asArray().asList() : null;
+        }
+
+        public List<RpcItem> getData() {
+            RpcItem field = properties.getItem("data");
+            return field != null ? field.asArray().asList() : null;
+        }
+
+        @Override
+        public String toString() {
+            return "EventLog{" +
+                    "properties=" + properties +
+                    '}';
+        }
+    }
+
+    public static class Failure {
+        private RpcObject properties;
+
+        private Failure(RpcObject properties) {
+            this.properties = properties;
+        }
+
+        public BigInteger getCode() {
+            RpcItem item = properties.getItem("code");
+            return item != null ? item.asInteger() : null;
+        }
+
+        public String getMessage() {
+            RpcItem item = properties.getItem("message");
+            return item != null ? item.asString() : null;
+        }
+
+        @Override
+        public String toString() {
+            return "Failure{" +
+                    "properties=" + properties +
+                    '}';
+        }
     }
 }
