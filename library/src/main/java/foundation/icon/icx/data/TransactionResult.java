@@ -42,8 +42,17 @@ public class TransactionResult {
      * @return 1 on success, 0 on failure.
      */
     public BigInteger getStatus() {
-        RpcItem item = properties.getItem("status");
-        return item != null ? item.asInteger() : null;
+        RpcItem status = properties.getItem("status");
+        if (status != null) {
+            return status.asInteger();
+        } else {
+            // Migrates V2 block data
+            // V2 Block data doesn't have a status field but have a code field
+            // @see <a href="https://github.com/icon-project/icx_JSON_RPC#icx_gettransactionresult" target="_blank">ICON JSON-RPC V2 API</a>
+            RpcItem code = properties.getItem("code");
+            if (code != null) return new BigInteger(code.asInteger().intValue() == 0 ? "1" : "0");
+            else return null;
+        }
     }
 
     /**
@@ -144,8 +153,28 @@ public class TransactionResult {
      * @return This field exists when status is 0. Contains code(str) and message(str).
      */
     public Failure getFailure() {
-        RpcItem item = properties.getItem("failure");
-        return item != null ? new Failure(item.asObject()) : null;
+        RpcItem failure = properties.getItem("failure");
+
+        if (failure == null) {
+            BigInteger status = getStatus();
+            if (status != null && status.intValue() == 0) {
+                // Migrates V2 block data
+                // V2 Block data doesn't have a failure field but have a code field
+                // @see <a href="https://github.com/icon-project/icx_JSON_RPC#icx_gettransactionresult" target="_blank">ICON JSON-RPC V2 API</a>
+                RpcItem code = properties.getItem("code");
+                if (code != null) {
+                    RpcObject.Builder builder = new RpcObject.Builder();
+                    builder.put("code", code);
+
+                    RpcItem message = properties.getItem("message");
+                    if (message != null) {
+                        builder.put("message", message);
+                    }
+                    failure = builder.build();
+                }
+            }
+        }
+        return failure != null ? new Failure(failure.asObject()) : null;
     }
 
     @Override
