@@ -25,7 +25,7 @@ Maven
 	<dependency>
 		<groupId>foundation.icon</groupId>
 		<artifactId>icon-sdk</artifactId>
-		<version>0.9.4</version>
+		<version>[x.y.z]</version>
 	</dependency>
 </dependencies>
 ```
@@ -34,7 +34,7 @@ Gradle
 
 ```gradle
 dependencies {
-	implementation 'foundation.icon:icon-sdk:0.9.4'
+	implementation 'foundation.icon:icon-sdk:[x.y.z]'
 }
 ```
 
