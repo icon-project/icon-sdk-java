@@ -34,7 +34,7 @@ public class IconKeys {
     }
 
     public static Address getAddress(Bytes publicKey) {
-        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray()));
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray(PUBLIC_KEY_SIZE)));
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {
