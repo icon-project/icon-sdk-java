@@ -30,6 +30,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SyncBlockExample {
+    private final int EVENT_FUNCTION_INDEX = 0;
+    private final int EVENT_TRANSFER_FROM_INDEX = 1;
+    private final int EVENT_TRANSFER_TO_INDEX = 2;
+    private final int EVENT_TRANSFER_VALUE_INDEX = 3;
 
     private IconService iconService;
     private Timer timer = new Timer();
@@ -50,7 +54,7 @@ public class SyncBlockExample {
         iconService = new IconService(new HttpProvider(httpClient, CommonData.URL));
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SyncBlockExample example = new SyncBlockExample();
         example.observableBlock();
     }
@@ -68,10 +72,10 @@ public class SyncBlockExample {
                     BigInteger currentHeight = block.getHeight();
                     if (syncedBlockHeight == null || currentHeight.compareTo(syncedBlockHeight) > 0) {
                         System.out.println("######### Sync Block #########");
-                        if (syncedBlockHeight == null) syncedBlockHeight = currentHeight;
+                        if (syncedBlockHeight == null) syncedBlockHeight = currentHeight.subtract(BigInteger.ONE);
 
                         // Print transaction list of block.
-                        for (BigInteger b = syncedBlockHeight; b.compareTo(currentHeight) < 0; b = b.add(BigInteger.ONE)) {
+                        for (BigInteger b = syncedBlockHeight.add(BigInteger.ONE); b.compareTo(currentHeight) < 0; b = b.add(BigInteger.ONE)) {
                             syncBlock(iconService.getBlock(b).execute());
                         }
 
@@ -113,37 +117,44 @@ public class SyncBlockExample {
                         ",from:" + transaction.getFrom() + ",to:" + transaction.getTo() + ",amount:" + transaction.getValue());
             }
 
-            // Print token transaction
-            if (transaction.getDataType() != null && transaction.getDataType().equals("call")) {
-                RpcObject data = transaction.getData().asObject();
-                String methodName = data.getItem("method").asString();
+            // Check event
+            List<TransactionResult.EventLog> logs = txResult.getEventLogs();
+            for (TransactionResult.EventLog log : logs) {
+                System.out.println("##### check Event #####");
 
-                if (methodName != null && methodName.equals("transfer")) {
-                    isPrintLog = true;
+                RpcItem function = log.getIndexed().get(EVENT_FUNCTION_INDEX);
 
-                    // Get value and address from parameter of data field
-                    RpcObject params = data.getItem("params").asObject();
-                    BigInteger value = params.getItem("_value").asInteger();
-                    Address toAddr = params.getItem("_to").asAddress();
+                // Check event for token transfer
+                if (function.asString().equals("Transfer(Address,Address,int,bytes)")) {
+                    Address score = new Address(log.getScoreAddress());
+                    Address from = log.getIndexed().get(EVENT_TRANSFER_FROM_INDEX).asAddress();
+                    Address to = log.getIndexed().get(EVENT_TRANSFER_TO_INDEX).asAddress();
+                    BigInteger value = log.getIndexed().get(EVENT_TRANSFER_VALUE_INDEX).asInteger();
 
                     // Get the name of token
-                    String tokenName = getTokenName(transaction.getTo());
+                    String tokenName = getTokenName(score);
                     // Get the symbol of token
-                    String symbol = getTokenSymbol(transaction.getTo());
+                    String symbol = getTokenSymbol(score);
                     String token = String.format("[%s Token(%s)]", tokenName, symbol);
-                    System.out.println(token + ",tokenAddress:" + transaction.getTo() + ",status:" + txResult.getStatus() +
-                            ",from:" + transaction.getFrom() + ",to:" + toAddr + ",amount:" + value);
-                }
-            }
 
-            // Pring event log
-            if (isPrintLog) {
-                List<TransactionResult.EventLog> logs = txResult.getEventLogs();
-                for (TransactionResult.EventLog log : logs) {
+                    System.out.println(token + ",tokenAddress:" + score + ",status:" + txResult.getStatus() +
+                            ",from:" + from + ",to:" + to + ",amount:" + value);
+                }
+                // Check evnent for icx transfer
+                else if (function.asString().equals("ICXTransfer(Address,Address,int)")) {
+                    Address from = log.getIndexed().get(EVENT_TRANSFER_FROM_INDEX).asAddress();
+                    Address to = log.getIndexed().get(EVENT_TRANSFER_TO_INDEX).asAddress();
+                    BigInteger value = log.getIndexed().get(EVENT_TRANSFER_VALUE_INDEX).asInteger();
+
+                    System.out.println("[Icx] status:" + txResult.getStatus() + ",from:" + from + ",to:" + to + ",amount:" + value);
+                }
+                // event other than those for sending icx and token
+                else {
                     System.out.println("[EventLogs] scoreAddress:" + log.getScoreAddress() + ",indexed:" + log.getIndexed() + " ,data:" + log.getData());
                 }
             }
         }
+        syncedBlockHeight = block.getHeight();
     }
 
     String getTokenName(Address tokenAddress) throws IOException {
