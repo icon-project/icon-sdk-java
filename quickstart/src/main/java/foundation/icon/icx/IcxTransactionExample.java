@@ -18,6 +18,7 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -79,14 +80,15 @@ public class IcxTransactionExample {
         }
     }
 
-    public Request<Bytes> sendTransaction(Wallet wallet, Address toAddress, BigInteger value) {
+    public Request<Bytes> sendTransaction(Wallet wallet, Address toAddress, BigInteger value) throws IOException {
         this.wallet = wallet;
         this.toAddress = toAddress;
 
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
         BigInteger networkId = new BigInteger("3");
-        // Recommended step limit to transfer icx: 10000
-        BigInteger stepLimit = new BigInteger("1000000");
+        // Recommended step limit to transfer icx:
+        // use 'default' step cost in the response of getStepCosts API
+        BigInteger stepLimit = getDefaultStepCost();
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
 
@@ -161,4 +163,15 @@ public class IcxTransactionExample {
         System.out.println(String.format("from:%s, balance:%s", wallet.getAddress(), fromBalance));
         System.out.println(String.format("to:%s, balance:%s", toAddress, toBalance));
     }
+
+    public BigInteger getDefaultStepCost() throws IOException {
+        String methodName = "getStepCosts";
+        Call<RpcItem> call = new Call.Builder()
+                .to(CommonData.GOVERNANCE_ADDRESS)
+                .method(methodName)
+                .build();
+        RpcItem result = iconService.call(call).execute();
+        return result.asObject().getItem("default").asInteger();
+    }
+
 }

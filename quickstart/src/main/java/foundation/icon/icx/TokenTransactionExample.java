@@ -53,6 +53,16 @@ public class TokenTransactionExample {
         printTitle();
     }
 
+    void printTitle() {
+        try {
+            String tokenName = getTokenName(new Address(CommonData.TOKEN_ADDRESS));
+            String tokenSymbol = getTokenSymbol(new Address(CommonData.TOKEN_ADDRESS));
+            System.out.println(String.format("Token:%s(%s)", tokenName, tokenSymbol));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         TokenTransactionExample example = new TokenTransactionExample();
         // Loads a wallet from bytes of the private key
@@ -88,25 +98,16 @@ public class TokenTransactionExample {
         }
     }
 
-    void printTitle() {
-        try {
-            String tokenName = getTokenName(new Address(CommonData.TOKEN_ADDRESS));
-            String tokenSymbol = getTokenSymbol(new Address(CommonData.TOKEN_ADDRESS));
-            System.out.println(String.format("Token:%s(%s)", tokenName, tokenSymbol));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Request<Bytes> sendTransaction(Wallet wallet, Address tokenAddress, Address toAddress, BigInteger value) {
+    public Request<Bytes> sendTransaction(Wallet wallet, Address tokenAddress, Address toAddress, BigInteger value) throws IOException {
         this.tokenAddress = tokenAddress;
         this.wallet = wallet;
         this.toAddress = toAddress;
 
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
         BigInteger networkId = new BigInteger("3");
-        // Recommended step limit to transfer token: 1200000
-        BigInteger stepLimit = new BigInteger("1200000");
+        // Recommended step limit to transfer token:
+        // Use 'default' step cost multiplied by 2 in the response of getStepCosts API
+        BigInteger stepLimit = getDefaultStepCost().multiply(new BigInteger("2"));
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // 'transfer' as a methodName means to transfer token
@@ -229,4 +230,15 @@ public class TokenTransactionExample {
         RpcItem result = iconService.call(call).execute();
         return result.asString();
     }
+
+    public BigInteger getDefaultStepCost() throws IOException {
+        String methodName = "getStepCosts";
+        Call<RpcItem> call = new Call.Builder()
+                .to(CommonData.GOVERNANCE_ADDRESS)
+                .method(methodName)
+                .build();
+        RpcItem result = iconService.call(call).execute();
+        return result.asObject().getItem("default").asInteger();
+    }
+
 }

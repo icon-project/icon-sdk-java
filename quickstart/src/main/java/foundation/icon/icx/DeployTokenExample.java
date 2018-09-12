@@ -16,7 +16,6 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.CommonData;
 import foundation.icon.icx.data.TransactionResult;
@@ -95,8 +94,6 @@ public class DeployTokenExample {
         BigInteger stepLimit = new BigInteger("2013265920");
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
-        // Default address to deploy score.
-        Address scoreInstall = new Address(CommonData.SCORE_INSTALL_ADDRESS);
         // Content's mime-type
         String contentType = "application/zip";
 
@@ -112,7 +109,7 @@ public class DeployTokenExample {
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(wallet.getAddress())
-                .to(scoreInstall)
+                .to(CommonData.SCORE_INSTALL_ADDRESS)
                 .stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .deploy(contentType, content)

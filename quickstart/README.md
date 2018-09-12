@@ -147,13 +147,28 @@ BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
 
 ```
 
+You can get a step cost to transfer icx as follows.
+
+```java
+public BigInteger getDefaultStepCost() throws IOException {
+    String methodName = "getStepCosts";
+    Call<RpcItem> call = new Call.Builder()
+        .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
+        .method(methodName)
+        .build();
+    RpcItem result = iconService.call(call).execute();
+    return result.asObject().getItem("default").asInteger();
+}
+```
+
 Generate transaction using the values above.
 
 ```java
 // networkId 1:mainnet, 2:testnet, 3~:private id
 BigInteger networkId = new BigInteger("3"); // input node’s networkld
-// Recommended icx transfer step limit : 1000000
-BigInteger stepLimit = new BigInteger("1000000");
+// Recommended icx transfer step limit :
+// use 'default' step cost in the response of getStepCosts API
+BigInteger stepLimit = getDefaultStepCost();
 
 // Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
@@ -271,13 +286,28 @@ BigInteger value = IconAmount.of("1", tokenDecimals).toLoop();
 
 ```
 
+You can get a step cost to send token as follows.
+
+```java
+public BigInteger getDefaultStepCost() throws IOException {
+    String methodName = "getStepCosts";
+    Call<RpcItem> call = new Call.Builder()
+        .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
+        .method(methodName)
+        .build();
+    RpcItem result = iconService.call(call).execute();
+    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));
+}
+```
+
 Generate Transaction with the given parameters above. You have to add receiving address and value to ‘RpcObject’ to send token.
 
 ```java
 // networkId 1:mainnet, 2:testnet, 3~:private id
 BigInteger networkId = new BigInteger("3"); // Enter networkId of the node.
-// Recommended Step limit to send transaction for token transfer : 1200000
-BigInteger stepLimit = new BigInteger("1200000");
+// Recommended Step limit to send transaction for token transfer :
+// Use 'default' step cost multiplied by 2 in the response of getStepCosts API
+BigInteger stepLimit = getDefaultStepCost();
 // Timestamp is used to prevent the identical transactions. Only current time is required (Default:US)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
