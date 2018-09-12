@@ -655,6 +655,13 @@ tokenSymbol:ST
 
 
 
+### References
+
+- [Javadoc](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
+- [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md) 
+
+
+
 ### Q&A
 
 1. What is KeyWallet?
