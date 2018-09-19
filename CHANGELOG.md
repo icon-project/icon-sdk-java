@@ -1,5 +1,14 @@
 # Changelog
 
+### Version 0.9.7 - September 19, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
+
+#### API Changes
+  - Adds a method `getIndexed` in ScoreApi.Param
+
+#### Improvements
+  - Sets the step limit as max step limit of the governance in the quickstart sample.
+  - Adds a method that queries SCORE API in the quickstart sample.
+
 ### Version 0.9.6 - September 12, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
 
 #### Changes
