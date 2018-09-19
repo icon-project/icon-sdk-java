@@ -58,10 +58,7 @@ public class ScoreApi {
         if (item != null) {
             for (RpcItem rpcItem : item.asArray()) {
                 RpcObject object = (RpcObject) rpcItem;
-
-                String name = object.getItem("name").asString();
-                String type = object.getItem("type").asString();
-                params.add(new Param(name, type));
+                params.add(new Param(object.getItem("type"), object.getItem("name")));
             }
         }
         return params;
@@ -80,21 +77,28 @@ public class ScoreApi {
     }
 
     public class Param {
-        private String type;
-        private String name;
+        private RpcItem type;
+        private RpcItem name;
 
-        Param(String type, String name) {
+        Param(RpcItem type, RpcItem name) {
             this.type = type;
             this.name = name;
         }
 
         public String getType() {
-            return type;
+            return type != null ? type.asString() : null;
         }
 
         public String getName() {
-            return name;
+            return name != null ? name.asString() : null;
         }
 
+        @Override
+        public String toString() {
+            return "Param{" +
+                    "type=" + type +
+                    ", name=" + name +
+                    '}';
+        }
     }
 }
