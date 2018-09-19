@@ -189,8 +189,7 @@ Generate SignedTransaction to add signature of the transaction.
 
 ```java
 // Create signature of the transaction
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad);
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to transfer to nodes
 System.out.println(signedTransaction.getProperties());
 ```
@@ -338,8 +337,7 @@ Generate SignedTransaction to add signature to your transaction.
 
 ```java
 // Generate transaction signature.
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad);
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to send to nodes.
 System.out.println(signedTransaction.getProperties());
 ```
@@ -480,8 +478,7 @@ Generate SignedTransaction to add signature to the transaction.
 
 ```java
 // Generate signature of the transaction.
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad );
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to send to nodes.
 System.out.println(signedTransaction.getProperties());
 ```
