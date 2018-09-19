@@ -92,7 +92,7 @@ public class DeployTokenExample {
     public Request<Bytes> sendTransaction(Wallet wallet, byte[] content, BigInteger initialSupply,
                                           BigInteger decimals, String tokenName, String tokenSymbol) throws IOException {
 
-        // networkId of node 1:mainnet, 2:testnet, 3~:private id
+        // networkId of node 1:mainnet, 2~:etc
         BigInteger networkId = new BigInteger("2");
         // Maximum step allowance that can be used by the transaction
         BigInteger stepLimit = getMaxStepLimit();

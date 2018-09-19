@@ -178,7 +178,7 @@ public BigInteger getDefaultStepCost() throws IOException {
 Generate transaction using the values above.
 
 ```java
-// networkId 1:mainnet, 2:testnet, 3~:private id
+// networkId of node 1:mainnet, 2~:etc
 BigInteger networkId = new BigInteger("3"); // input node’s networkld
 // Recommended icx transfer step limit :
 // use 'default' step cost in the response of getStepCosts API
@@ -332,8 +332,8 @@ public BigInteger getDefaultStepCost() throws IOException {
 Generate Transaction with the given parameters above. You have to add receiving address and value to ‘RpcObject’ to send token.
 
 ```java
-// networkId 1:mainnet, 2:testnet, 3~:private id
-BigInteger networkId = new BigInteger("3"); // Enter networkId of the node.
+// networkId of node 1:mainnet, 2~:etc
+BigInteger networkId = new BigInteger("3"); // input node’s networkld
 // Recommended Step limit to send transaction for token transfer :
 // Use 'default' step cost multiplied by 2 in the response of getStepCosts API
 BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
@@ -508,7 +508,7 @@ public BigInteger getMaxStepLimit() throws IOException {
 Generate transaction with the given values above.
 
 ```java
-BigInteger networkId = new BigInteger("3"); //3: networkId of loopchain is using 3.
+BigInteger networkId = new BigInteger("3"); // input node’s networkld
 BigInteger stepLimit = getMaxStepLimit(); // Please refer to the above description.
 long timestamp = System.currentTimeMillis() * 1000L; //timestamp declaration
 // Use cx0 to deploy SCORE.
@@ -735,7 +735,7 @@ tokenSymbol:ST
 4. What is stepLimit for?
 -  Since transaction fee is required to send transaction, you can set the maximum fee limit. If your actual transaction fee exceeds the stepLimit that you have set, the transaction will fail but still your transaction fee(stepLimit) will be consumed.
 5. What is networId?
-- 1 for mainNet, 2 for testNet, 3 for private network
+- 1 for mainNet, etc
 6. Why sendTransaction method is named as ‘transfer’, when transferring token?
 - Transfer as a methodName means to transfer token
 - [Refer to IRC2 Specification](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md)

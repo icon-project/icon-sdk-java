@@ -106,7 +106,7 @@ public class TokenTransactionExample {
         this.wallet = wallet;
         this.toAddress = toAddress;
 
-        // networkId of node 1:mainnet, 2:testnet, 3~:private id
+        // networkId of node 1:mainnet, 2~:etc
         BigInteger networkId = new BigInteger("3");
         // Recommended step limit to transfer token:
         // Use 'default' step cost multiplied by 2 in the response of getStepCosts API

@@ -87,7 +87,7 @@ public class IcxTransactionExample {
         this.wallet = wallet;
         this.toAddress = toAddress;
 
-        // networkId of node 1:mainnet, 2:testnet, 3~:private id
+        // networkId of node 1:mainnet, 2~:etc
         BigInteger networkId = new BigInteger("3");
         // Recommended step limit to transfer icx:
         // use 'default' step cost in the response of getStepCosts API

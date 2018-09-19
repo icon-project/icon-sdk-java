@@ -85,7 +85,7 @@ public final class TransactionBuilder {
         /**
          * Sets the Network ID
          *
-         * @param nid Network ID ("0x1" for Mainnet, "0x2" for Testnet, etc)
+         * @param nid Network ID ("0x1" for Mainnet, etc)
          * @return self
          */
         public Builder nid(BigInteger nid) {
@@ -96,7 +96,7 @@ public final class TransactionBuilder {
         /**
          * Sets the Network ID
          *
-         * @param nid Network ID ("0x1" for Mainnet, "0x2" for Testnet, etc)
+         * @param nid Network ID ("0x1" for Mainnet, etc)
          * @return self
          */
         public Builder nid(NetworkId nid) {
