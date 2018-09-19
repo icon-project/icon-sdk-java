@@ -19,6 +19,7 @@ package foundation.icon.icx.data;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class ScoreApi {
         if (item != null) {
             for (RpcItem rpcItem : item.asArray()) {
                 RpcObject object = (RpcObject) rpcItem;
-                params.add(new Param(object.getItem("type"), object.getItem("name")));
+                params.add(new Param(object));
             }
         }
         return params;
@@ -77,27 +78,31 @@ public class ScoreApi {
     }
 
     public class Param {
-        private RpcItem type;
-        private RpcItem name;
+        private RpcObject properties;
 
-        Param(RpcItem type, RpcItem name) {
-            this.type = type;
-            this.name = name;
+        Param(RpcObject properties) {
+            this.properties = properties;
         }
 
         public String getType() {
-            return type != null ? type.asString() : null;
+            RpcItem item = properties.getItem("type");
+            return item != null ? item.asString() : null;
         }
 
         public String getName() {
-            return name != null ? name.asString() : null;
+            RpcItem item = properties.getItem("name");
+            return item != null ? item.asString() : null;
+        }
+
+        public BigInteger getIndexed() {
+            RpcItem item = properties.getItem("indexed");
+            return item != null ? item.asInteger() : null;
         }
 
         @Override
         public String toString() {
             return "Param{" +
-                    "type=" + type +
-                    ", name=" + name +
+                    "properties=" + properties +
                     '}';
         }
     }
