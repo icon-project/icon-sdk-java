@@ -24,8 +24,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class IcxTransactionExample {
 
@@ -165,13 +168,25 @@ public class IcxTransactionExample {
     }
 
     public BigInteger getDefaultStepCost() throws IOException {
+        // APIs that Governance SCORE provides.
+        // "getStepCosts" : a table of the step costs for each actions.
         String methodName = "getStepCosts";
+        // Check input and output parameters of api if you need
+        Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+        ScoreApi api = governanceScoreApiMap.get(methodName);
+        System.out.println("[getStepCosts]\ninputs:" + api.getInputs() + "\noutputs:" + api.getOutputs());
+
         Call<RpcItem> call = new Call.Builder()
                 .to(CommonData.GOVERNANCE_ADDRESS)
                 .method(methodName)
                 .build();
         RpcItem result = iconService.call(call).execute();
         return result.asObject().getItem("default").asInteger();
+    }
+
+    public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+        List<ScoreApi> apis = iconService.getScoreApi(CommonData.GOVERNANCE_ADDRESS).execute();
+        return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
     }
 
 }

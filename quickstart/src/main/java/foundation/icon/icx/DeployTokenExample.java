@@ -18,6 +18,7 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.CommonData;
+import foundation.icon.icx.data.ScoreApi;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -30,8 +31,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class DeployTokenExample {
 
@@ -86,12 +90,12 @@ public class DeployTokenExample {
     }
 
     public Request<Bytes> sendTransaction(Wallet wallet, byte[] content, BigInteger initialSupply,
-                                          BigInteger decimals, String tokenName, String tokenSymbol) {
+                                          BigInteger decimals, String tokenName, String tokenSymbol) throws IOException {
 
         // networkId of node 1:mainnet, 2:testnet, 3~:private id
-        BigInteger networkId = new BigInteger("3");
+        BigInteger networkId = new BigInteger("2");
         // Maximum step allowance that can be used by the transaction
-        BigInteger stepLimit = new BigInteger("2013265920");
+        BigInteger stepLimit = getMaxStepLimit();
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // Content's mime-type
@@ -181,5 +185,31 @@ public class DeployTokenExample {
         DataInputStream inputStream = new DataInputStream(new FileInputStream(file));
         inputStream.readFully(result);
         return result;
+    }
+
+    public BigInteger getMaxStepLimit() throws IOException {
+        // APIs that Governance SCORE provides.
+        // "getMaxStepLimit" : the maximum step limit value that any SCORE execution should be bounded by.
+        String methodName = "getMaxStepLimit";
+        // Check input and output parameters of api if you need
+        Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+        ScoreApi api = governanceScoreApiMap.get(methodName);
+        System.out.println("[getMaxStepLimit]\ninputs:" + api.getInputs() + "\noutputs:" + api.getOutputs());
+
+        RpcObject params = new RpcObject.Builder()
+                .put(api.getInputs().get(0).getName(), new RpcValue("invoke"))
+                .build();
+
+        Call<BigInteger> call = new Call.Builder()
+                .to(CommonData.GOVERNANCE_ADDRESS)
+                .method(methodName)
+                .params(params)
+                .buildWith(BigInteger.class);
+        return iconService.call(call).execute();
+    }
+
+    public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+        List<ScoreApi> apis = iconService.getScoreApi(CommonData.GOVERNANCE_ADDRESS).execute();
+        return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
     }
 }

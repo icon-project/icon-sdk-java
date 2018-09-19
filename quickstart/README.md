@@ -150,8 +150,22 @@ BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
 You can get a step cost to transfer icx as follows.
 
 ```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get step costs.
 public BigInteger getDefaultStepCost() throws IOException {
     String methodName = "getStepCosts";
+
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getStepCosts]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
     Call<RpcItem> call = new Call.Builder()
         .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
         .method(methodName)
@@ -168,7 +182,7 @@ Generate transaction using the values above.
 BigInteger networkId = new BigInteger("3"); // input node’s networkld
 // Recommended icx transfer step limit :
 // use 'default' step cost in the response of getStepCosts API
-BigInteger stepLimit = getDefaultStepCost();
+BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
 
 // Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
@@ -288,14 +302,30 @@ BigInteger value = IconAmount.of("1", tokenDecimals).toLoop();
 You can get a step cost to send token as follows.
 
 ```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get step costs.
 public BigInteger getDefaultStepCost() throws IOException {
     String methodName = "getStepCosts";
+
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getStepCosts]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
     Call<RpcItem> call = new Call.Builder()
         .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
         .method(methodName)
         .build();
     RpcItem result = iconService.call(call).execute();
-    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));
+
+    // For sending token, it is about twice the default value.
+    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));;
 }
 ```
 
@@ -306,7 +336,7 @@ Generate Transaction with the given parameters above. You have to add receiving 
 BigInteger networkId = new BigInteger("3"); // Enter networkId of the node.
 // Recommended Step limit to send transaction for token transfer :
 // Use 'default' step cost multiplied by 2 in the response of getStepCosts API
-BigInteger stepLimit = getDefaultStepCost();
+BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
 // Timestamp is used to prevent the identical transactions. Only current time is required (Default:US)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
@@ -425,7 +455,7 @@ In this example, you will use ‘test.zi’ from the ‘resources’ folder.
 
 *test.zi : SampleToken SCORE Project Zip file.
 
- Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘test.zi’
+Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘test.zi’
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
@@ -442,11 +472,44 @@ String tokenName = "StandardToken";
 String tokenSymbol = "ST";
 ```
 
+You can get the maximum step limit value as follows.
+
+```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get max step cost.
+public BigInteger getMaxStepLimit() throws IOException {
+    // APIs that Governance SCORE provides.
+    // "getMaxStepLimit" : the maximum step limit value that any SCORE execution should be bounded by.
+    String methodName = "getMaxStepLimit";
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getMaxStepLimit]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
+    RpcObject params = new RpcObject.Builder()
+            .put(api.getInputs().get(0).getName(), new RpcValue("invoke"))
+            .build();
+
+    Call<BigInteger> call = new Call.Builder()
+            .to(CommonData.GOVERNANCE_ADDRESS) // cx0000000000000000000000000000000000000001
+            .method(methodName)
+            .params(params)
+            .buildWith(BigInteger.class);
+    return iconService.call(call).execute();
+}
+```
+
 Generate transaction with the given values above.
 
 ```java
 BigInteger networkId = new BigInteger("3"); //3: networkId of loopchain is using 3.
-BigInteger stepLimit = new BigInteger("2013265920"); //Max step limit for sending transaction
+BigInteger stepLimit = getMaxStepLimit(); // Please refer to the above description.
 long timestamp = System.currentTimeMillis() * 1000L; //timestamp declaration
 // Use cx0 to deploy SCORE.
 Address scoreInstall = new Address(CommonData.SCORE_INSTALL_ADDRESS);
