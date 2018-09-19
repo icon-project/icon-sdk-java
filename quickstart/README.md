@@ -150,8 +150,22 @@ BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
 You can get a step cost to transfer icx as follows.
 
 ```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get step costs.
 public BigInteger getDefaultStepCost() throws IOException {
     String methodName = "getStepCosts";
+
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getStepCosts]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
     Call<RpcItem> call = new Call.Builder()
         .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
         .method(methodName)
@@ -164,11 +178,11 @@ public BigInteger getDefaultStepCost() throws IOException {
 Generate transaction using the values above.
 
 ```java
-// networkId 1:mainnet, 2:testnet, 3~:private id
+// networkId of node 1:mainnet, 2~:etc
 BigInteger networkId = new BigInteger("3"); // input node’s networkld
 // Recommended icx transfer step limit :
 // use 'default' step cost in the response of getStepCosts API
-BigInteger stepLimit = getDefaultStepCost();
+BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
 
 // Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
@@ -189,8 +203,7 @@ Generate SignedTransaction to add signature of the transaction.
 
 ```java
 // Create signature of the transaction
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad);
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to transfer to nodes
 System.out.println(signedTransaction.getProperties());
 ```
@@ -289,25 +302,41 @@ BigInteger value = IconAmount.of("1", tokenDecimals).toLoop();
 You can get a step cost to send token as follows.
 
 ```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get step costs.
 public BigInteger getDefaultStepCost() throws IOException {
     String methodName = "getStepCosts";
+
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getStepCosts]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
     Call<RpcItem> call = new Call.Builder()
         .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
         .method(methodName)
         .build();
     RpcItem result = iconService.call(call).execute();
-    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));
+
+    // For sending token, it is about twice the default value.
+    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));;
 }
 ```
 
 Generate Transaction with the given parameters above. You have to add receiving address and value to ‘RpcObject’ to send token.
 
 ```java
-// networkId 1:mainnet, 2:testnet, 3~:private id
-BigInteger networkId = new BigInteger("3"); // Enter networkId of the node.
+// networkId of node 1:mainnet, 2~:etc
+BigInteger networkId = new BigInteger("3"); // input node’s networkld
 // Recommended Step limit to send transaction for token transfer :
 // Use 'default' step cost multiplied by 2 in the response of getStepCosts API
-BigInteger stepLimit = getDefaultStepCost();
+BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
 // Timestamp is used to prevent the identical transactions. Only current time is required (Default:US)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
@@ -338,8 +367,7 @@ Generate SignedTransaction to add signature to your transaction.
 
 ```java
 // Generate transaction signature.
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad);
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to send to nodes.
 System.out.println(signedTransaction.getProperties());
 ```
@@ -427,7 +455,7 @@ In this example, you will use ‘test.zi’ from the ‘resources’ folder.
 
 *test.zi : SampleToken SCORE Project Zip file.
 
- Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘test.zi’
+Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘test.zi’
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
@@ -444,11 +472,44 @@ String tokenName = "StandardToken";
 String tokenSymbol = "ST";
 ```
 
+You can get the maximum step limit value as follows.
+
+```java
+// Get apis that provides Governance SCORE
+public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
+    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
+    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
+    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+}
+
+// You can use "governance score apis" to get max step cost.
+public BigInteger getMaxStepLimit() throws IOException {
+    // APIs that Governance SCORE provides.
+    // "getMaxStepLimit" : the maximum step limit value that any SCORE execution should be bounded by.
+    String methodName = "getMaxStepLimit";
+    // Check input and output parameters of api if you need
+    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
+    ScoreApi api = governanceScoreApiMap.get(methodName);
+    System.out.println("[getMaxStepLimit]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
+
+    RpcObject params = new RpcObject.Builder()
+            .put(api.getInputs().get(0).getName(), new RpcValue("invoke"))
+            .build();
+
+    Call<BigInteger> call = new Call.Builder()
+            .to(CommonData.GOVERNANCE_ADDRESS) // cx0000000000000000000000000000000000000001
+            .method(methodName)
+            .params(params)
+            .buildWith(BigInteger.class);
+    return iconService.call(call).execute();
+}
+```
+
 Generate transaction with the given values above.
 
 ```java
-BigInteger networkId = new BigInteger("3"); //3: networkId of loopchain is using 3.
-BigInteger stepLimit = new BigInteger("2013265920"); //Max step limit for sending transaction
+BigInteger networkId = new BigInteger("3"); // input node’s networkld
+BigInteger stepLimit = getMaxStepLimit(); // Please refer to the above description.
 long timestamp = System.currentTimeMillis() * 1000L; //timestamp declaration
 // Use cx0 to deploy SCORE.
 Address scoreInstall = new Address(CommonData.SCORE_INSTALL_ADDRESS);
@@ -480,8 +541,7 @@ Generate SignedTransaction to add signature to the transaction.
 
 ```java
 // Generate signature of the transaction.
-SignedTransaction signedTransaction =
-							new SignedTransaction(transaction, keyStoreLoad );
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to send to nodes.
 System.out.println(signedTransaction.getProperties());
 ```
@@ -675,7 +735,7 @@ tokenSymbol:ST
 4. What is stepLimit for?
 -  Since transaction fee is required to send transaction, you can set the maximum fee limit. If your actual transaction fee exceeds the stepLimit that you have set, the transaction will fail but still your transaction fee(stepLimit) will be consumed.
 5. What is networId?
-- 1 for mainNet, 2 for testNet, 3 for private network
+- 1 for mainNet, etc
 6. Why sendTransaction method is named as ‘transfer’, when transferring token?
 - Transfer as a methodName means to transfer token
 - [Refer to IRC2 Specification](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md)
