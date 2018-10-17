@@ -22,10 +22,10 @@ import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.*;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -36,6 +36,7 @@ import static foundation.icon.icx.data.Converters.RPC_ITEM;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("ALL")
 @Disabled
 public class IconServiceVCRTest {
 
@@ -235,7 +236,7 @@ public class IconServiceVCRTest {
                 .timestamp(new BigInteger("574b28ed4ca00", 16))
 //                .timestamp(new BigInteger(Long.toString(timestmap)))
                 .nonce(new BigInteger("1"))
-                .deploy("application/zip", Numeric.hexStringToByteArray(content))
+                .deploy("application/zip", Hex.decode(content))
                 .params(params)
                 .build();
 
@@ -280,7 +281,7 @@ public class IconServiceVCRTest {
         // address invalid : 20584, 13204, 13129
         // timestamp long type : 21265
         // value no prefix : 13331
-        int[] heights = { 20584, 13204, 13129, 21265, 13331};
+        int[] heights = {20584, 13204, 13129, 21265, 13331};
 
         for (int h : heights) {
             BigInteger height = new BigInteger(String.valueOf(h));

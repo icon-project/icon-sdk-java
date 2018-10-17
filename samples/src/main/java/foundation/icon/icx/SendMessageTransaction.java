@@ -5,7 +5,6 @@ import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.web3j.utils.Convert;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -33,7 +32,7 @@ public class SendMessageTransaction {
         BigInteger networkId = new BigInteger("3");
         Address fromAddress = wallet.getAddress();
         Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
-        BigInteger stepLimit = new BigInteger("75000");
+        BigInteger stepLimit = new BigInteger("1000000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
         String message = "Hello World";

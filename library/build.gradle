@@ -11,17 +11,20 @@ repositories {
 }
 
 ext {
-    bouncycastleVersion = '1.54'
+    bouncycastleVersion = '1.60'
+    spongycastleVersion = '1.58.0.0'
     jacksonVersion = '2.9.6'
     okhttpVersion = '3.11.0'
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
 
-    mavenCentralSync = true
+    mavenCentralSync = false
 }
 
 dependencies {
+    implementation "com.madgag.spongycastle:core:$spongycastleVersion"
+    implementation "com.madgag.spongycastle:prov:$spongycastleVersion"
     implementation "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"

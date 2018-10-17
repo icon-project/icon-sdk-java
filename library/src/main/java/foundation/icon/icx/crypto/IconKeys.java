@@ -3,34 +3,67 @@ package foundation.icon.icx.crypto;
 
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.utils.Numeric;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
+import java.security.*;
+import java.security.spec.ECGenParameterSpec;
+import java.util.Arrays;
 
-import static org.web3j.crypto.Keys.ADDRESS_LENGTH_IN_HEX;
-import static org.web3j.crypto.Keys.PUBLIC_KEY_SIZE;
 
 /**
  * Implementation from
  * https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/Keys.java
  * Crypto key utilities.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class IconKeys {
 
-    public static ECKeyPair createEcKeyPair() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPair keyPair = Keys.createSecp256k1KeyPair();
-        return ECKeyPair.create(keyPair);
+    public static final int PRIVATE_KEY_SIZE = 32;
+    public static final int PUBLIC_KEY_SIZE = 64;
+
+    public static final int ADDRESS_SIZE = 160;
+    public static final int ADDRESS_LENGTH_IN_HEX = ADDRESS_SIZE >> 2;
+    private static final SecureRandom SECURE_RANDOM;
+    private static int isAndroid = -1;
+
+    static {
+        if (isAndroidRuntime()) {
+            new LinuxSecureRandom();
+            Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+        } else {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        SECURE_RANDOM = new SecureRandom();
     }
 
-    public static Address getAddress(ECKeyPair ecKeyPair) {
-        return new Address(Address.AddressPrefix.EOA, getAddressHash(ecKeyPair.getPublicKey()));
+    private IconKeys() { }
+
+    public static Bytes createPrivateKey() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        String provider = isAndroidRuntime()?"SC":"BC";
+        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("ECDSA", provider);
+        ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
+        keyPairGenerator.initialize(ecGenParameterSpec, secureRandom());
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        if (isAndroidRuntime()) {
+            BigInteger privateKey = ((org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey) keyPair.getPrivate()).getD();
+            return new Bytes(privateKey.toString(16));
+        } else {
+            return new Bytes(((BCECPrivateKey) keyPair.getPrivate()).getD());
+        }
+    }
+
+    public static Bytes getPublicKey(Bytes privateKey) {
+        ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
+        ECPoint pointQ = spec.getG().multiply(new BigInteger(1, privateKey.toByteArray()));
+        byte[] publicKeyBytes = pointQ.getEncoded(false);
+        return new Bytes(Arrays.copyOfRange(publicKeyBytes, 1, publicKeyBytes.length));
     }
 
     public static Address getAddress(Bytes publicKey) {
@@ -65,7 +98,7 @@ public class IconKeys {
 
     public static boolean isValidAddressBody(byte[] body) {
         return body.length == 20 &&
-                IconKeys.isValidAddress(Numeric.toHexStringNoPrefix(body));
+                IconKeys.isValidAddress(Hex.toHexString(body));
     }
 
     public static boolean isContractAddress(Address address) {
@@ -86,6 +119,18 @@ public class IconKeys {
 
     public static Address.AddressPrefix getAddressHexPrefix(String input) {
         return Address.AddressPrefix.fromString(input.substring(0, 2));
+    }
+
+    public static SecureRandom secureRandom() {
+        return SECURE_RANDOM;
+    }
+
+    public static boolean isAndroidRuntime() {
+        if (isAndroid == -1) {
+            final String runtime = System.getProperty("java.runtime.name");
+            isAndroid = (runtime != null && runtime.equals("Android Runtime")) ? 1 : 0;
+        }
+        return isAndroid == 1;
     }
 
 }

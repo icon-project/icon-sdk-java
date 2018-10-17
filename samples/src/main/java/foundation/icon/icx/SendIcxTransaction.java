@@ -35,7 +35,7 @@ public class SendIcxTransaction {
         Address toAddress = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
 
         BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
-        BigInteger stepLimit = new BigInteger("75000");
+        BigInteger stepLimit = new BigInteger("1000000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
 

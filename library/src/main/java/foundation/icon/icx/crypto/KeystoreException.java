@@ -1,20 +1,20 @@
-package org.web3j.crypto;
+package foundation.icon.icx.crypto;
 
 /**
  * Original Code
  * https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/CipherException.java
  */
-public class CipherException extends Exception {
+public class KeystoreException extends Exception {
 
-    public CipherException(String message) {
+    KeystoreException(String message) {
         super(message);
     }
 
-    public CipherException(Throwable cause) {
+    KeystoreException(Throwable cause) {
         super(cause);
     }
 
-    public CipherException(String message, Throwable cause) {
+    KeystoreException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,4 +1,4 @@
-package org.web3j.crypto;
+package foundation.icon.icx.crypto;
 
 
 import java.io.*;
@@ -19,16 +19,6 @@ import java.security.Security;
 public class LinuxSecureRandom extends SecureRandomSpi {
     private static final FileInputStream urandom;
 
-    private static class LinuxSecureRandomProvider extends Provider {
-        public LinuxSecureRandomProvider() {
-            super("LinuxSecureRandom", 1.0,
-                    "A Linux specific random number provider that uses /dev/urandom");
-            put("SecureRandom.LinuxSecureRandom", LinuxSecureRandom.class.getName());
-        }
-    }
-
-//    private static final Logger log = LoggerFactory.getLogger(LinuxSecureRandom.class);
-
     static {
         try {
             File file = new File("/dev/urandom");
@@ -38,19 +28,12 @@ public class LinuxSecureRandom extends SecureRandomSpi {
                 throw new RuntimeException("/dev/urandom not readable?");
             }
             // Now override the default SecureRandom implementation with this one.
-            int position = Security.insertProviderAt(new LinuxSecureRandomProvider(), 1);
+            Security.insertProviderAt(new LinuxSecureRandomProvider(), 1);
 
-            if (position != -1) {
-//                log.info("Secure randomness will be read from {} only.", file);
-            } else {
-//                log.info("Randomness is already secure.");
-            }
         } catch (FileNotFoundException e) {
             // Should never happen.
-//            log.error("/dev/urandom does not appear to exist or is not openable");
             throw new RuntimeException(e);
         } catch (IOException e) {
-//            log.error("/dev/urandom does not appear to be readable");
             throw new RuntimeException(e);
         }
     }
@@ -81,5 +64,13 @@ public class LinuxSecureRandom extends SecureRandomSpi {
         byte[] bits = new byte[i];
         engineNextBytes(bits);
         return bits;
+    }
+
+    private static class LinuxSecureRandomProvider extends Provider {
+        public LinuxSecureRandomProvider() {
+            super("LinuxSecureRandom", 1.0,
+                    "A Linux specific random number provider that uses /dev/urandom");
+            put("SecureRandom.LinuxSecureRandom", LinuxSecureRandom.class.getName());
+        }
     }
 }

@@ -1,8 +1,8 @@
 package foundation.icon.icx;
 
+import foundation.icon.icx.crypto.KeystoreException;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.CommonData;
-import org.web3j.crypto.CipherException;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +18,8 @@ public class WalletExample {
 		System.out.println();
 	}
 
-	public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException,  IOException, CipherException {
-		
+	public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException,  IOException, KeystoreException {
+
 		String dirPath = "./";
 		// File of directory for keystorfile.
 		File destinationDirectory = new File(dirPath);
@@ -46,5 +46,5 @@ public class WalletExample {
 		KeyWallet wallet3 = KeyWallet.load(CommonData.PASSWORD, file);
 		print(wallet3);
 	}
-	
+
 }
