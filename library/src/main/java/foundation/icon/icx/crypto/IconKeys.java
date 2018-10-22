@@ -36,9 +36,15 @@ public class IconKeys {
     static {
         if (isAndroidRuntime()) {
             new LinuxSecureRandom();
-            Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
-        } else {
-            Security.addProvider(new BouncyCastleProvider());
+        }
+
+        Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Provider newProvider = new BouncyCastleProvider();
+        if (provider == null) {
+            Security.addProvider(newProvider);
+        } else if (provider.getVersion() < newProvider.getVersion()) {
+            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+            Security.addProvider(newProvider);
         }
         SECURE_RANDOM = new SecureRandom();
     }
@@ -46,17 +52,11 @@ public class IconKeys {
     private IconKeys() { }
 
     public static Bytes createPrivateKey() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        String provider = isAndroidRuntime()?"SC":"BC";
-        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("ECDSA", provider);
+        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("EC", "BC");
         ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         keyPairGenerator.initialize(ecGenParameterSpec, secureRandom());
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        if (isAndroidRuntime()) {
-            BigInteger privateKey = ((org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey) keyPair.getPrivate()).getD();
-            return new Bytes(privateKey.toString(16));
-        } else {
-            return new Bytes(((BCECPrivateKey) keyPair.getPrivate()).getD());
-        }
+        return new Bytes(((BCECPrivateKey) keyPair.getPrivate()).getD());
     }
 
     public static Bytes getPublicKey(Bytes privateKey) {
