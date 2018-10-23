@@ -22,9 +22,9 @@ import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.NetworkId;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
@@ -136,7 +136,7 @@ class SignedTransactionTest {
                 .stepLimit(new BigInteger("e01348", 16))
                 .timestamp(new BigInteger("5727e42882650", 16))
                 .nonce(new BigInteger("1"))
-                .deploy("application/zip", Numeric.hexStringToByteArray(content))
+                .deploy("application/zip", Hex.decode(content))
                 .params(params)
                 .build();
 

@@ -19,11 +19,10 @@ package foundation.icon.icx.transport.jsonrpc;
 
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
-import static org.web3j.utils.Numeric.HEX_PREFIX;
+import static foundation.icon.icx.data.Bytes.HEX_PREFIX;
 
 
 /**
@@ -47,12 +46,12 @@ public class RpcValue implements RpcItem {
     }
 
     public RpcValue(byte[] value) {
-        this.value = Numeric.toHexString(value);
+        this.value = new Bytes(value).toHexString(true);
     }
 
     public RpcValue(BigInteger value) {
         String sign = (value.signum() == -1) ? "-" : "";
-        this.value = sign + Numeric.encodeQuantity(value.abs());
+        this.value = sign + HEX_PREFIX + value.abs().toString(16);
     }
 
     public RpcValue(boolean value) {
@@ -99,7 +98,7 @@ public class RpcValue implements RpcItem {
                     "The hex value is not bytes format.");
         }
 
-        return Numeric.hexStringToByteArray(value);
+        return new Bytes(value).toByteArray();
     }
 
     @Override
@@ -137,7 +136,7 @@ public class RpcValue implements RpcItem {
                 sign = value.substring(0, 1);
                 value = value.substring(1);
             }
-            String result = sign + Numeric.cleanHexPrefix(value);
+            String result = sign + Bytes.cleanHexPrefix(value);
             return new BigInteger(result, 16);
         } catch (NumberFormatException e) {
             throw new RpcValueException("The value is not hex string.");

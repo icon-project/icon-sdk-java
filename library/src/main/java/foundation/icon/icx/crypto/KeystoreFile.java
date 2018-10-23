@@ -4,21 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import foundation.icon.icx.data.Address;
-
-import java.io.IOException;
 
 /**
  * Original Code
  * https://github.com/web3j/web3j/blob/master/crypto/src/main/java/org/web3j/crypto/WalletFile.java
  * Icon wallet file.
  */
+@SuppressWarnings("WeakerAccess")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KeystoreFile {
     private String address;
@@ -88,26 +81,26 @@ public class KeystoreFile {
         if (!(o instanceof KeystoreFile)) {
             return false;
         }
-        
+
         KeystoreFile that = (KeystoreFile) o;
-        
-        if (getAddress() != null 
+
+        if (getAddress() != null
                 ? !getAddress().equals(that.getAddress())
                 : that.getAddress() != null) {
             return false;
         }
-        if (getCrypto() != null 
+        if (getCrypto() != null
                 ? !getCrypto().equals(that.getCrypto())
                 : that.getCrypto() != null) {
             return false;
-        } 
-        if (getId() != null 
+        }
+        if (getId() != null
                 ? !getId().equals(that.getId())
                 : that.getId() != null) {
             return false;
         }
         return version == that.version;
-    } 
+    }
 
     @Override
     public int hashCode() {
@@ -199,9 +192,9 @@ public class KeystoreFile {
             if (!(o instanceof Crypto)) {
                 return false;
             }
-            
+
             Crypto that = (Crypto) o;
-            
+
             if (getCipher() != null
                     ? !getCipher().equals(that.getCipher())
                     : that.getCipher() != null) {
@@ -229,7 +222,7 @@ public class KeystoreFile {
             }
             return getMac() != null
                     ? getMac().equals(that.getMac()) : that.getMac() == null;
-        }  
+        }
 
         @Override
         public int hashCode() {
@@ -241,7 +234,7 @@ public class KeystoreFile {
             result = 31 * result + (getMac() != null ? getMac().hashCode() : 0);
             return result;
         }
-        
+
     }
 
     public static class CipherParams {
@@ -266,19 +259,19 @@ public class KeystoreFile {
             if (!(o instanceof CipherParams)) {
                 return false;
             }
-            
+
             CipherParams that = (CipherParams) o;
-            
+
             return getIv() != null
                     ? getIv().equals(that.getIv()) : that.getIv() == null;
-        }  
+        }
 
         @Override
         public int hashCode() {
             int result = getIv() != null ? getIv().hashCode() : 0;
             return result;
-        }      
-        
+        }
+
     }
 
     interface KdfParams {
@@ -336,9 +329,9 @@ public class KeystoreFile {
             if (!(o instanceof Aes128CtrKdfParams)) {
                 return false;
             }
-            
+
             Aes128CtrKdfParams that = (Aes128CtrKdfParams) o;
-            
+
             if (dklen != that.dklen) {
                 return false;
             }
@@ -351,7 +344,7 @@ public class KeystoreFile {
                 return false;
             }
             return getSalt() != null
-                ? getSalt().equals(that.getSalt()) : that.getSalt() == null;
+                    ? getSalt().equals(that.getSalt()) : that.getSalt() == null;
         }
 
         @Override
@@ -361,7 +354,7 @@ public class KeystoreFile {
             result = 31 * result + (getPrf() != null ? getPrf().hashCode() : 0);
             result = 31 * result + (getSalt() != null ? getSalt().hashCode() : 0);
             return result;
-        }        
+        }
     }
 
     public static class ScryptKdfParams implements KdfParams {
@@ -422,9 +415,9 @@ public class KeystoreFile {
             if (!(o instanceof ScryptKdfParams)) {
                 return false;
             }
-            
+
             ScryptKdfParams that = (ScryptKdfParams) o;
-            
+
             if (dklen != that.dklen) {
                 return false;
             }
@@ -438,8 +431,8 @@ public class KeystoreFile {
                 return false;
             }
             return getSalt() != null
-                ? getSalt().equals(that.getSalt()) : that.getSalt() == null;
-        }  
+                    ? getSalt().equals(that.getSalt()) : that.getSalt() == null;
+        }
 
         @Override
         public int hashCode() {
@@ -449,32 +442,7 @@ public class KeystoreFile {
             result = 31 * result + r;
             result = 31 * result + (getSalt() != null ? getSalt().hashCode() : 0);
             return result;
-        }     
-    }
-
-    // If we need to work with MyEtherWallet we'll need to use this deserializer, see the
-    // following issue https://github.com/kvhnuke/etherwallet/issues/269
-    static class KdfParamsDeserialiser extends JsonDeserializer<KdfParams> {
-
-        @Override
-        public KdfParams deserialize(
-                JsonParser jsonParser, DeserializationContext deserializationContext)
-                throws IOException {
-
-            ObjectMapper objectMapper = (ObjectMapper) jsonParser.getCodec();
-            ObjectNode root = objectMapper.readTree(jsonParser);
-            KdfParams kdfParams;
-
-            // it would be preferable to detect the class to use based on the kdf parameter in the
-            // container object instance
-            JsonNode n = root.get("n");
-            if (n == null) {
-                kdfParams = objectMapper.convertValue(root, Aes128CtrKdfParams.class);
-            } else {
-                kdfParams = objectMapper.convertValue(root, ScryptKdfParams.class);
-            }
-
-            return kdfParams;
         }
     }
+
 }

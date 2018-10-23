@@ -1,15 +1,13 @@
 package foundation.icon.icx.crypto;
 
 
+import foundation.icon.icx.data.Bytes;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.generators.SCrypt;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Hash;
-import org.web3j.crypto.Keys;
-import org.web3j.utils.Numeric;
+import org.bouncycastle.jcajce.provider.digest.Keccak;
+import org.bouncycastle.util.encoders.Hex;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -17,14 +15,14 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.web3j.crypto.SecureRandomUtils.secureRandom;
+import static foundation.icon.icx.crypto.IconKeys.secureRandom;
 
 
 /**
@@ -70,52 +68,44 @@ public class Keystore {
     static final String AES_128_CTR = "pbkdf2";
     static final String SCRYPT = "scrypt";
 
-    public static KeystoreFile create(String password, ECKeyPair ecKeyPair, int n, int p)
-            throws CipherException {
+    public static KeystoreFile create(String password, Bytes privateKey, int n, int p)
+            throws KeystoreException {
 
         byte[] salt = generateRandomBytes(32);
 
         byte[] derivedKey = generateDerivedScryptKey(
-                password.getBytes(UTF_8), salt, n, R, p, DKLEN);
+                password.getBytes(Charset.forName("UTF-8")), salt, n, R, p, DKLEN);
 
         byte[] encryptKey = Arrays.copyOfRange(derivedKey, 0, 16);
         byte[] iv = generateRandomBytes(16);
 
-        byte[] privateKeyBytes =
-                Numeric.toBytesPadded(ecKeyPair.getPrivateKey(), Keys.PRIVATE_KEY_SIZE);
+
+        byte[] privateKeyBytes = privateKey.toByteArray(IconKeys.PRIVATE_KEY_SIZE);
+
 
         byte[] cipherText = performCipherOperation(
                 Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
 
         byte[] mac = generateMac(derivedKey, cipherText);
 
-        return createWalletFile(ecKeyPair, cipherText, iv, salt, mac, n, p);
+        return createWalletFile(privateKey, cipherText, iv, salt, mac, n, p);
     }
 
-    public static KeystoreFile createStandard(String password, ECKeyPair ecKeyPair)
-            throws CipherException {
-        return create(password, ecKeyPair, N_STANDARD, P_STANDARD);
-    }
-
-    public static KeystoreFile createLight(String password, ECKeyPair ecKeyPair)
-            throws CipherException {
-        return create(password, ecKeyPair, N_LIGHT, P_LIGHT);
-    }
 
     private static KeystoreFile createWalletFile(
-            ECKeyPair ecKeyPair, byte[] cipherText, byte[] iv, byte[] salt, byte[] mac,
+            Bytes privateKey, byte[] cipherText, byte[] iv, byte[] salt, byte[] mac,
             int n, int p) {
 
         KeystoreFile keystoreFile = new KeystoreFile();
-        keystoreFile.setAddress(IconKeys.getAddress(ecKeyPair));
+        keystoreFile.setAddress(IconKeys.getAddress(IconKeys.getPublicKey(privateKey)));
 
         KeystoreFile.Crypto crypto = new KeystoreFile.Crypto();
         crypto.setCipher(CIPHER);
-        crypto.setCiphertext(Numeric.toHexStringNoPrefix(cipherText));
+        crypto.setCiphertext(Hex.toHexString(cipherText));
         keystoreFile.setCrypto(crypto);
 
         KeystoreFile.CipherParams cipherParams = new KeystoreFile.CipherParams();
-        cipherParams.setIv(Numeric.toHexStringNoPrefix(iv));
+        cipherParams.setIv(Hex.toHexString(iv));
         crypto.setCipherparams(cipherParams);
 
         crypto.setKdf(SCRYPT);
@@ -124,10 +114,10 @@ public class Keystore {
         kdfParams.setN(n);
         kdfParams.setP(p);
         kdfParams.setR(R);
-        kdfParams.setSalt(Numeric.toHexStringNoPrefix(salt));
+        kdfParams.setSalt(Hex.toHexString(salt));
         crypto.setKdfparams(kdfParams);
 
-        crypto.setMac(Numeric.toHexStringNoPrefix(mac));
+        crypto.setMac(Hex.toHexString(mac));
         keystoreFile.setCrypto(crypto);
         keystoreFile.setId(UUID.randomUUID().toString());
         keystoreFile.setVersion(CURRENT_VERSION);
@@ -136,15 +126,15 @@ public class Keystore {
     }
 
     private static byte[] generateDerivedScryptKey(
-            byte[] password, byte[] salt, int n, int r, int p, int dkLen) throws CipherException {
+            byte[] password, byte[] salt, int n, int r, int p, int dkLen) {
         return SCrypt.generate(password, salt, n, r, p, dkLen);
     }
 
     private static byte[] generateAes128CtrDerivedKey(
-            byte[] password, byte[] salt, int c, String prf) throws CipherException {
+            byte[] password, byte[] salt, int c, String prf) throws KeystoreException {
 
         if (!prf.equals("hmac-sha256")) {
-            throw new CipherException("Unsupported prf:" + prf);
+            throw new KeystoreException("Unsupported prf:" + prf);
         }
 
         // Java 8 supports this, but you have to convert the password to a character array, see
@@ -156,7 +146,7 @@ public class Keystore {
     }
 
     private static byte[] performCipherOperation(
-            int mode, byte[] iv, byte[] encryptKey, byte[] text) throws CipherException {
+            int mode, byte[] iv, byte[] encryptKey, byte[] text) throws KeystoreException {
 
         try {
             IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
@@ -168,7 +158,7 @@ public class Keystore {
         } catch (NoSuchPaddingException | NoSuchAlgorithmException
                 | InvalidAlgorithmParameterException | InvalidKeyException
                 | BadPaddingException | IllegalBlockSizeException e) {
-            throw new CipherException("Error performing cipher operation", e);
+            throw new KeystoreException("Error performing cipher operation", e);
         }
     }
 
@@ -178,19 +168,21 @@ public class Keystore {
         System.arraycopy(derivedKey, 16, result, 0, 16);
         System.arraycopy(cipherText, 0, result, 16, cipherText.length);
 
-        return Hash.sha3(result);
+        Keccak.DigestKeccak kecc = new Keccak.Digest256();
+        kecc.update(result, 0, result.length);
+        return kecc.digest();
     }
 
-    public static ECKeyPair decrypt(String password, KeystoreFile keystoreFile)
-            throws CipherException {
+    public static Bytes decrypt(String password, KeystoreFile keystoreFile)
+            throws KeystoreException {
 
         validate(keystoreFile);
 
         KeystoreFile.Crypto crypto = keystoreFile.getCrypto();
 
-        byte[] mac = Numeric.hexStringToByteArray(crypto.getMac());
-        byte[] iv = Numeric.hexStringToByteArray(crypto.getCipherparams().getIv());
-        byte[] cipherText = Numeric.hexStringToByteArray(crypto.getCiphertext());
+        byte[] mac = Hex.decode(crypto.getMac());
+        byte[] iv = Hex.decode(crypto.getCipherparams().getIv());
+        byte[] cipherText = Hex.decode(crypto.getCiphertext());
 
         byte[] derivedKey;
 
@@ -202,48 +194,51 @@ public class Keystore {
             int n = scryptKdfParams.getN();
             int p = scryptKdfParams.getP();
             int r = scryptKdfParams.getR();
-            byte[] salt = Numeric.hexStringToByteArray(scryptKdfParams.getSalt());
-            derivedKey = generateDerivedScryptKey(password.getBytes(UTF_8), salt, n, r, p, dklen);
+            byte[] salt = Hex.decode(scryptKdfParams.getSalt());
+            derivedKey = generateDerivedScryptKey(password.getBytes(Charset.forName("UTF-8")), salt, n, r, p, dklen);
         } else if (kdfParams instanceof KeystoreFile.Aes128CtrKdfParams) {
             KeystoreFile.Aes128CtrKdfParams aes128CtrKdfParams =
                     (KeystoreFile.Aes128CtrKdfParams) crypto.getKdfparams();
             int c = aes128CtrKdfParams.getC();
             String prf = aes128CtrKdfParams.getPrf();
-            byte[] salt = Numeric.hexStringToByteArray(aes128CtrKdfParams.getSalt());
+            byte[] salt = Hex.decode(aes128CtrKdfParams.getSalt());
 
-            derivedKey = generateAes128CtrDerivedKey(password.getBytes(UTF_8), salt, c, prf);
+            derivedKey = generateAes128CtrDerivedKey(password.getBytes(Charset.forName("UTF-8")), salt, c, prf);
         } else {
-            throw new CipherException("Unable to deserialize params: " + crypto.getKdf());
+            throw new KeystoreException("Unable to deserialize params: " + crypto.getKdf());
         }
 
         byte[] derivedMac = generateMac(derivedKey, cipherText);
 
         if (!Arrays.equals(derivedMac, mac)) {
-            throw new CipherException("Invalid password provided");
+            throw new KeystoreException("Invalid password provided");
         }
 
         byte[] encryptKey = Arrays.copyOfRange(derivedKey, 0, 16);
         byte[] privateKey = performCipherOperation(Cipher.DECRYPT_MODE, iv, encryptKey, cipherText);
-        return ECKeyPair.create(privateKey);
+        return new Bytes(privateKey);
     }
 
-    static void validate(KeystoreFile keystoreFile) throws CipherException {
+    private static void validate(KeystoreFile keystoreFile) throws KeystoreException {
         KeystoreFile.Crypto crypto = keystoreFile.getCrypto();
 
         if (keystoreFile.getVersion() != CURRENT_VERSION) {
-            throw new CipherException("Keystore version is not supported");
+            throw new KeystoreException("Keystore version is not supported");
         }
 
         if (!crypto.getCipher().equals(CIPHER)) {
-            throw new CipherException("Keystore cipher is not supported");
+            throw new KeystoreException("Keystore cipher is not supported");
         }
 
         if (!crypto.getKdf().equals(AES_128_CTR) && !crypto.getKdf().equals(SCRYPT)) {
-            throw new CipherException("KDF type is not supported");
+            throw new KeystoreException("KDF type is not supported");
         }
+
+        if (keystoreFile.getCoinType() == null || !keystoreFile.getCoinType().equalsIgnoreCase("icx"))
+            throw new KeystoreException("Invalid Keystore file");
     }
 
-    static byte[] generateRandomBytes(int size) {
+    private static byte[] generateRandomBytes(int size) {
         byte[] bytes = new byte[size];
         secureRandom().nextBytes(bytes);
         return bytes;

@@ -20,7 +20,6 @@ import foundation.icon.icx.Transaction;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
@@ -40,7 +39,7 @@ public class ConfirmedTransaction implements Transaction {
     @Override
     public BigInteger getVersion() {
         RpcItem item = properties.getItem("version");
-        return item != null ? item.asInteger() : new BigInteger("2");
+        return item != null ? item.asInteger() : BigInteger.valueOf(2);
     }
 
     @Override
@@ -155,8 +154,8 @@ public class ConfirmedTransaction implements Transaction {
         // if it has 0x, the method converts it as hex otherwise decimal
 
         String stringValue = value.asString();
-        if (stringValue.startsWith(Numeric.HEX_PREFIX) ||
-                stringValue.startsWith("-" + Numeric.HEX_PREFIX)) {
+        if (stringValue.startsWith(Bytes.HEX_PREFIX) ||
+                stringValue.startsWith("-" + Bytes.HEX_PREFIX)) {
             return convertHex(value);
         } else {
             return new BigInteger(stringValue, 10);
@@ -175,6 +174,6 @@ public class ConfirmedTransaction implements Transaction {
             sign = stringValue.substring(0, 1);
             stringValue = stringValue.substring(1);
         }
-        return new BigInteger(sign + Numeric.cleanHexPrefix(stringValue), 16);
+        return new BigInteger(sign + Bytes.cleanHexPrefix(stringValue), 16);
     }
 }

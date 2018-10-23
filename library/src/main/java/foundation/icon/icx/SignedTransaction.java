@@ -24,9 +24,9 @@ import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Base64;
 
 import java.math.BigInteger;
-import java.util.Base64;
 import java.util.TreeSet;
 
 /**
@@ -49,14 +49,14 @@ public class SignedTransaction {
      * Create the parameters including signature
      */
     private void createProperties() {
-        RpcObject properties = getTransactionProperties();
+        RpcObject object = getTransactionProperties();
 
         RpcObject.Builder builder = new RpcObject.Builder();
-        for (String key : properties.keySet()) {
-            builder.put(key, properties.getItem(key));
+        for (String key : object.keySet()) {
+            builder.put(key, object.getItem(key));
         }
 
-        String signature = Base64.getEncoder().encodeToString(getSignature(properties));
+        String signature = Base64.toBase64String(getSignature(object));
         builder.put("signature", new RpcValue(signature));
         this.properties = builder.build();
     }
@@ -90,19 +90,19 @@ public class SignedTransaction {
         return builder.build();
     }
 
-    void putTransactionPropertyToBuilder(Builder builder, String key, BigInteger value) {
+    private void putTransactionPropertyToBuilder(Builder builder, String key, BigInteger value) {
         if (value != null) builder.put(key, new RpcValue(value));
     }
 
-    void putTransactionPropertyToBuilder(Builder builder, String key, String value) {
+    private void putTransactionPropertyToBuilder(Builder builder, String key, String value) {
         if (value != null) builder.put(key, new RpcValue(value));
     }
 
-    void putTransactionPropertyToBuilder(Builder builder, String key, Address value) {
+    private void putTransactionPropertyToBuilder(Builder builder, String key, Address value) {
         if (value != null) builder.put(key, new RpcValue(value));
     }
 
-    void putTransactionPropertyToBuilder(Builder builder, String key, RpcItem item) {
+    private void putTransactionPropertyToBuilder(Builder builder, String key, RpcItem item) {
         if (item != null) builder.put(key, item);
     }
 

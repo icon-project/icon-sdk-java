@@ -17,20 +17,13 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.crypto.IconKeys;
-import foundation.icon.icx.crypto.KeyStoreUtils;
-import foundation.icon.icx.crypto.Keystore;
-import foundation.icon.icx.crypto.KeystoreFile;
+import foundation.icon.icx.crypto.*;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Sign;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -58,8 +51,7 @@ public class KeyWallet implements Wallet {
      * @return KeyWallet
      */
     public static KeyWallet load(Bytes privateKey) {
-        Credentials credentials = Credentials.create(privateKey.toString());
-        Bytes publicKey = new Bytes(credentials.getEcKeyPair().getPublicKey());
+        Bytes publicKey = IconKeys.getPublicKey(privateKey);
         return new KeyWallet(privateKey, publicKey);
     }
 
@@ -70,10 +62,9 @@ public class KeyWallet implements Wallet {
      */
     public static KeyWallet create() throws
             InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        ECKeyPair ecKeyPair = IconKeys.createEcKeyPair();
-        Bytes privateKey = new Bytes(ecKeyPair.getPrivateKey());
-        Bytes pubicKey = new Bytes(ecKeyPair.getPublicKey());
-        return new KeyWallet(privateKey, pubicKey);
+        Bytes privateKey = IconKeys.createPrivateKey();
+        Bytes publicKey = IconKeys.getPublicKey(privateKey);
+        return new KeyWallet(privateKey, publicKey);
     }
 
     /**
@@ -83,10 +74,9 @@ public class KeyWallet implements Wallet {
      * @param file     the KeyStore file
      * @return KeyWallet
      */
-    public static KeyWallet load(String password, File file) throws IOException, CipherException {
-        Credentials credentials = KeyStoreUtils.loadCredentials(password, file);
-        Bytes privateKey = new Bytes(credentials.getEcKeyPair().getPrivateKey());
-        Bytes pubicKey = new Bytes(credentials.getEcKeyPair().getPublicKey());
+    public static KeyWallet load(String password, File file) throws IOException, KeystoreException {
+        Bytes privateKey = KeyStoreUtils.loadPrivateKey(password, file);
+        Bytes pubicKey = IconKeys.getPublicKey(privateKey);
         return new KeyWallet(privateKey, pubicKey);
     }
 
@@ -99,9 +89,8 @@ public class KeyWallet implements Wallet {
      * @return name of the KeyStore file
      */
     public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
-            CipherException, IOException {
-        ECKeyPair ecKeyPair = ECKeyPair.create(wallet.getPrivateKey().toByteArray());
-        KeystoreFile keystoreFile = Keystore.create(password, ecKeyPair, 1 << 14, 1);
+            KeystoreException, IOException {
+        KeystoreFile keystoreFile = Keystore.create(password, wallet.getPrivateKey(), 1 << 14, 1);
         return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
     }
 
@@ -119,14 +108,9 @@ public class KeyWallet implements Wallet {
     @Override
     public byte[] sign(byte[] data) {
         checkArgument(data, "hash not found");
-        ECKeyPair ecKeyPair = ECKeyPair.create(privateKey.toByteArray());
-        Sign.SignatureData signatureData = Sign.signMessage(data, ecKeyPair, false);
-
-        ByteBuffer buffer = ByteBuffer.allocate(signatureData.getR().length + signatureData.getS().length + 1);
-        buffer.put(signatureData.getR());
-        buffer.put(signatureData.getS());
-        buffer.put((byte) (signatureData.getV() - 27));
-        return buffer.array();
+        ECDSASignature signature = new ECDSASignature(privateKey);
+        BigInteger[] sig = signature.generateSignature(data);
+        return signature.recoverableSerialize(sig, data);
     }
 
     /**
@@ -136,6 +120,10 @@ public class KeyWallet implements Wallet {
      */
     public Bytes getPrivateKey() {
         return privateKey;
+    }
+
+    public Bytes getPublicKey() {
+        return publicKey;
     }
 
 }

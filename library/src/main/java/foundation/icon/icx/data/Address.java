@@ -18,7 +18,7 @@
 package foundation.icon.icx.data;
 
 import foundation.icon.icx.crypto.IconKeys;
-import org.web3j.utils.Numeric;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.util.Arrays;
 
@@ -40,14 +40,14 @@ public class Address {
     }
 
     public Address(String address) {
-        AddressPrefix prefix = IconKeys.getAddressHexPrefix(address);
-        if (prefix == null) {
+        AddressPrefix addressPrefix = IconKeys.getAddressHexPrefix(address);
+        if (addressPrefix == null) {
             throw new IllegalArgumentException("Invalid address prefix");
         } else if (!IconKeys.isValidAddress(address)) {
             throw new IllegalArgumentException("Invalid address");
         }
 
-        this.prefix = prefix;
+        this.prefix = addressPrefix;
         this.body = getAddressBody(address);
     }
 
@@ -62,7 +62,7 @@ public class Address {
 
     private byte[] getAddressBody(String address) {
         String cleanInput = IconKeys.cleanHexPrefix(address);
-        return Numeric.hexStringToByteArray(cleanInput);
+        return Hex.decode(cleanInput);
     }
 
     public AddressPrefix getPrefix() {
@@ -78,7 +78,7 @@ public class Address {
         if (isMalformed) {
             return malformedAddress;
         } else {
-            return getPrefix().getValue() + Numeric.toHexStringNoPrefix(body);
+            return getPrefix().getValue() + Hex.toHexString(body);
         }
     }
 

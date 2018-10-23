@@ -11,14 +11,14 @@ repositories {
 }
 
 ext {
-    bouncycastleVersion = '1.54'
+    bouncycastleVersion = '1.60'
     jacksonVersion = '2.9.6'
     okhttpVersion = '3.11.0'
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
 
-    mavenCentralSync = true
+    mavenCentralSync = false
 }
 
 dependencies {
