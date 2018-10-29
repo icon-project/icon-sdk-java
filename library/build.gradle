@@ -18,7 +18,7 @@ ext {
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
 
-    mavenCentralSync = false
+    mavenCentralSync = true
 }
 
 dependencies {
