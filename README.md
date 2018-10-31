@@ -305,7 +305,7 @@ Person memberPerson = iconService.call(call).execute();
 
 ## Version
 
-0.9.7 (beta)
+0.9.8 (beta)
 
 ## Android Support
 

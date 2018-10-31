@@ -1,5 +1,13 @@
 # Changelog
 
+### Version 0.9.8 - October 31, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
+
+#### API Changes
+  - Removes the crypto package of web3j and add the corresponding abilities into `foundation.icon.icx.crypto`
+
+#### Improvements
+  - Supports Android 3.0 or newer
+
 ### Version 0.9.7 - September 19, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
 
 #### API Changes
