@@ -297,15 +297,19 @@ Person memberPerson = iconService.call(call).execute();
 ```
 
 
-## Reference
+## References
 
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
+- [ICON Network](https://github.com/icon-project/icon-project.github.io/blob/master/docs/icon_network.md)
 
 
 ## Version
 
 0.9.7 (beta)
 
+## Android Support
+
+- Android 3.0+ (API 11+)
 
 ## Download
 
