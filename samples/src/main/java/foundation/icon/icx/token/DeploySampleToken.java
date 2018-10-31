@@ -89,7 +89,7 @@ public class DeploySampleToken {
     }
 
     private byte[] readFile() throws IOException {
-        File file = new File(getClass().getClassLoader().getResource("test.zi").getFile());
+        File file = new File(getClass().getClassLoader().getResource("sample_token.zip").getFile());
         return readBytes(file);
     }
 

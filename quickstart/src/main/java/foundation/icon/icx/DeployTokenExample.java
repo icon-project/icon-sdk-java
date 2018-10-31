@@ -173,8 +173,8 @@ public class DeployTokenExample {
     }
 
     private byte[] readFile() throws IOException {
-        // sample token : resource/test.zi
-        File file = new File(getClass().getClassLoader().getResource("test.zi").getFile());
+        // sample token : resource/sample_token.zip
+        File file = new File(getClass().getClassLoader().getResource("sample_token.zip").getFile());
         return readBytes(file);
     }
 

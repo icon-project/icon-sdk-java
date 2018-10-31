@@ -451,15 +451,15 @@ This example shows how to deploy token and check the result.
 
 You need the SCORE Project to deploy token.
 
-In this example, you will use ‘test.zi’ from the ‘resources’ folder.
+In this example, you will use ‘sample_token.zip’ from the ‘resources’ folder.
 
-*test.zi : SampleToken SCORE Project Zip file.
+*sample_token.zip : SampleToken SCORE Project Zip file.
 
-Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘test.zi’
+Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘sample_token.zip’
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
-// Read test.zi from ‘resources’ folder.
+// Read sample_token.zip from ‘resources’ folder.
 byte[] content = /* score binary */
 ```
 
