@@ -3,6 +3,7 @@ package foundation.icon.icx.crypto;
 
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
+import org.bouncycastle.crypto.RuntimeCryptoException;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -33,6 +34,8 @@ public class IconKeys {
     private static final SecureRandom SECURE_RANDOM;
     private static int isAndroid = -1;
 
+    public static final double MIN_BOUNCY_CASTLE_VERSION = 1.46;
+
     static {
         if (isAndroidRuntime()) {
             new LinuxSecureRandom();
@@ -40,12 +43,19 @@ public class IconKeys {
 
         Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
         Provider newProvider = new BouncyCastleProvider();
-        if (provider == null) {
-            Security.addProvider(newProvider);
-        } else if (provider.getVersion() < newProvider.getVersion()) {
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-            Security.addProvider(newProvider);
+
+        if (newProvider.getVersion() < MIN_BOUNCY_CASTLE_VERSION) {
+            String message = String.format(
+                    "The version of BouncyCastle should be %f or newer", MIN_BOUNCY_CASTLE_VERSION);
+            throw new RuntimeCryptoException(message);
         }
+
+        if (provider != null) {
+            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        }
+
+        Security.addProvider(newProvider);
+
         SECURE_RANDOM = new SecureRandom();
     }
 
