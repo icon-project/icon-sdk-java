@@ -56,20 +56,16 @@ public class DeploySampleToken {
         BigInteger networkId = new BigInteger("3");
         Address fromAddress = wallet.getAddress();
         Address toAddress = new Address("cx0000000000000000000000000000000000000000");
-        BigInteger stepLimit = new BigInteger("14685000");
+        BigInteger stepLimit = new BigInteger("146850000000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
 
         BigInteger initialSupply = new BigInteger("10000");
         BigInteger decimals = new BigInteger("18");
-        String tokenName = "ICON";
-        String tokenSymbol = "ICX";
 
         RpcObject params = new RpcObject.Builder()
-                .put("initialSupply", new RpcValue(initialSupply))
-                .put("decimals", new RpcValue(decimals))
-                .put("name", new RpcValue(tokenName))
-                .put("symbol", new RpcValue(tokenSymbol))
+                .put("_initialSupply", new RpcValue(initialSupply))
+                .put("_decimals", new RpcValue(decimals))
                 .build();
 
         Transaction transaction = TransactionBuilder.newBuilder()

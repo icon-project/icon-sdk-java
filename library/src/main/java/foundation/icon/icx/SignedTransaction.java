@@ -27,6 +27,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.TreeSet;
 
 /**
@@ -112,7 +113,7 @@ public class SignedTransaction {
      * @return signature
      */
     byte[] getSignature(RpcObject properties) {
-        return wallet.sign(sha256(serialize(properties)));
+        return wallet.sign(generateMessage(serialize(properties)));
     }
 
     /**
@@ -120,8 +121,8 @@ public class SignedTransaction {
      *
      * @return hash
      */
-    byte[] sha256(String data) {
-        return new SHA3.Digest256().digest(data.getBytes());
+    byte[] generateMessage(String data) {
+        return new SHA3.Digest256().digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

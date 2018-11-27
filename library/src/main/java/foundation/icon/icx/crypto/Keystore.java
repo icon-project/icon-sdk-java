@@ -15,7 +15,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -74,7 +74,7 @@ public class Keystore {
         byte[] salt = generateRandomBytes(32);
 
         byte[] derivedKey = generateDerivedScryptKey(
-                password.getBytes(Charset.forName("UTF-8")), salt, n, R, p, DKLEN);
+                password.getBytes(StandardCharsets.UTF_8), salt, n, R, p, DKLEN);
 
         byte[] encryptKey = Arrays.copyOfRange(derivedKey, 0, 16);
         byte[] iv = generateRandomBytes(16);
@@ -195,7 +195,7 @@ public class Keystore {
             int p = scryptKdfParams.getP();
             int r = scryptKdfParams.getR();
             byte[] salt = Hex.decode(scryptKdfParams.getSalt());
-            derivedKey = generateDerivedScryptKey(password.getBytes(Charset.forName("UTF-8")), salt, n, r, p, dklen);
+            derivedKey = generateDerivedScryptKey(password.getBytes(StandardCharsets.UTF_8), salt, n, r, p, dklen);
         } else if (kdfParams instanceof KeystoreFile.Aes128CtrKdfParams) {
             KeystoreFile.Aes128CtrKdfParams aes128CtrKdfParams =
                     (KeystoreFile.Aes128CtrKdfParams) crypto.getKdfparams();
@@ -203,7 +203,7 @@ public class Keystore {
             String prf = aes128CtrKdfParams.getPrf();
             byte[] salt = Hex.decode(aes128CtrKdfParams.getSalt());
 
-            derivedKey = generateAes128CtrDerivedKey(password.getBytes(Charset.forName("UTF-8")), salt, c, prf);
+            derivedKey = generateAes128CtrDerivedKey(password.getBytes(StandardCharsets.UTF_8), salt, c, prf);
         } else {
             throw new KeystoreException("Unable to deserialize params: " + crypto.getKdf());
         }
