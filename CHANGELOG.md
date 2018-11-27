@@ -1,5 +1,10 @@
 # Changelog
 
+### Version 0.9.9 - November 27, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
+
+#### Bugfixes
+  - Fix signature mismatch error in case of the non UTF-8 environment
+
 ### Version 0.9.8 - October 31, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
 
 #### API Changes
