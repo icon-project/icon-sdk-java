@@ -49,9 +49,8 @@ public class AnnotatedConverterFactory implements RpcConverter.RpcConverterFacto
                     }
                     return result;
                 } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
+                    throw new IllegalArgumentException(e);
                 }
-                return null;
             }
 
             @Override
