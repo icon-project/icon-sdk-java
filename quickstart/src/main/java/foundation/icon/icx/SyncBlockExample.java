@@ -92,6 +92,7 @@ public class SyncBlockExample {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    break;
                 }
             }
             System.out.println("######### block observable end #########");

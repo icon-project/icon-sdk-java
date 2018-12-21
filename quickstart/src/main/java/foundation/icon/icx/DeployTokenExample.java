@@ -151,6 +151,7 @@ public class DeployTokenExample {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                break;
             }
         }
         timer.cancel();
