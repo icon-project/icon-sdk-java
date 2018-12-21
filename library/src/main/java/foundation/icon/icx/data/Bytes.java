@@ -136,6 +136,11 @@ public class Bytes {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(data);
+    }
+
     /**
      * Gets the data as a hex string given size
      *

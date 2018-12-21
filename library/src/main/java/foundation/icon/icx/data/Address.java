@@ -97,6 +97,18 @@ public class Address {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        if (isMalformed) {
+            return malformedAddress.hashCode();
+        } else {
+            byte[] raw = new byte[body.length + 1];
+            raw[0] = (byte) prefix.ordinal();
+            System.arraycopy(body, 0, raw, 1, body.length);
+            return Arrays.hashCode(raw);
+        }
+    }
+
     public enum AddressPrefix {
 
         EOA("hx"),
