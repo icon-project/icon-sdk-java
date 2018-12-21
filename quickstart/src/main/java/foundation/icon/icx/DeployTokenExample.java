@@ -180,11 +180,12 @@ public class DeployTokenExample {
     }
 
     private byte[] readBytes(File file) throws IOException {
-        int length = (int) file.length();
+        long length = file.length();
         if (length > Integer.MAX_VALUE) throw new OutOfMemoryError("File is too big!!");
-        byte[] result = new byte[length];
-        DataInputStream inputStream = new DataInputStream(new FileInputStream(file));
-        inputStream.readFully(result);
+        byte[] result = new byte[(int) length];
+        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(file))) {
+            inputStream.readFully(result);
+        }
         return result;
     }
 
