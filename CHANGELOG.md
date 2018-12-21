@@ -1,5 +1,13 @@
 # Changelog
 
+### Version 0.9.10 - December 21, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
+
+#### Bugfixes
+  - Override hashCode() to keep identities corresponding to equality rule in data classes of `Address` and `Bytes`
+  - Throw an exception rather than print stack trace when conversion failure in `AnnotatedConverterFactory`
+  - Fix some bugs in sample and quickstart example
+  
+  
 ### Version 0.9.9 - November 27, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
 
 #### Bugfixes
