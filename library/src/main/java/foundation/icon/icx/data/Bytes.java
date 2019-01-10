@@ -52,6 +52,9 @@ public class Bytes {
 
     public Bytes(BigInteger value) {
         this.data = value.toByteArray();
+        if (this.data[0] == 0) {
+            this.data = Arrays.copyOfRange(this.data, 1, this.data.length);
+        }
     }
 
     /**
@@ -63,21 +66,25 @@ public class Bytes {
         return data;
     }
 
+    @Deprecated
+    private static byte[] toBytesPadded(BigInteger value, int length) {
+        return toBytesPadded(new Bytes(value).toByteArray(), length);
+    }
+
     /**
      * add the pad bytes to the passed in block, returning the
      * number of bytes added.
      */
-    private static byte[] toBytesPadded(BigInteger value, int length) {
+    public static byte[] toBytesPadded(byte[] value, int length) {
         byte[] result = new byte[length];
-        byte[] bytes = value.toByteArray();
 
         int bytesLength;
         int srcOffset;
-        if (bytes[0] == 0) {
-            bytesLength = bytes.length - 1;
+        if (value[0] == 0) {
+            bytesLength = value.length - 1;
             srcOffset = 1;
         } else {
-            bytesLength = bytes.length;
+            bytesLength = value.length;
             srcOffset = 0;
         }
 
@@ -86,7 +93,7 @@ public class Bytes {
         }
 
         int destOffset = length - bytesLength;
-        System.arraycopy(bytes, srcOffset, result, destOffset, bytesLength);
+        System.arraycopy(value, srcOffset, result, destOffset, bytesLength);
         return result;
     }
 
@@ -119,7 +126,7 @@ public class Bytes {
      * @return byte array given size
      */
     public byte[] toByteArray(int size) {
-        return toBytesPadded(new BigInteger(data), size);
+        return toBytesPadded(data, size);
     }
 
     @Override
@@ -145,7 +152,7 @@ public class Bytes {
      * Gets the data as a hex string given size
      *
      * @param withPrefix whether 0x prefix included
-     * @param size size of byte array
+     * @param size       size of byte array
      * @return hex string given size
      */
     public String toHexString(boolean withPrefix, int size) {
