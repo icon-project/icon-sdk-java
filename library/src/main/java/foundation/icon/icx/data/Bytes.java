@@ -50,11 +50,17 @@ public class Bytes {
         this.data = data;
     }
 
+    /**
+     * Creates an instance using BigInteger
+     * <p>
+     * Set a byte array of {@link BigInteger#toByteArray()} return value.
+     * The array will contain the minimum number of bytes required
+     * to represent this BigInteger, including at least one sign bit.
+     *
+     * @param value the {@linkplain java.math.BigInteger value}
+     */
     public Bytes(BigInteger value) {
         this.data = value.toByteArray();
-        if (this.data[0] == 0) {
-            this.data = Arrays.copyOfRange(this.data, 1, this.data.length);
-        }
     }
 
     /**
@@ -66,6 +72,9 @@ public class Bytes {
         return data;
     }
 
+    /**
+     * @deprecated Use {@linkplain foundation.icon.icx.crypto.IconKeys#toBytesPadded }
+     */
     @Deprecated
     private static byte[] toBytesPadded(BigInteger value, int length) {
         return toBytesPadded(new Bytes(value).toByteArray(), length);
@@ -78,15 +87,8 @@ public class Bytes {
     public static byte[] toBytesPadded(byte[] value, int length) {
         byte[] result = new byte[length];
 
-        int bytesLength;
-        int srcOffset;
-        if (value[0] == 0) {
-            bytesLength = value.length - 1;
-            srcOffset = 1;
-        } else {
-            bytesLength = value.length;
-            srcOffset = 0;
-        }
+        int bytesLength = value.length;
+        int srcOffset = 0;
 
         if (bytesLength > length) {
             throw new IllegalArgumentException("Input is too large to put in byte array of size " + length);

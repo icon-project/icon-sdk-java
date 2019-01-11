@@ -9,7 +9,8 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-public class BytesTest {
+
+class BytesTest {
 
     @Test
     void testCreate() {
@@ -17,54 +18,91 @@ public class BytesTest {
         byte[] byteArray = new byte[]{
                 (byte) 10, (byte) 16, (byte) 8
         };
-        String byteArrayToHex = Hex.toHexString(byteArray);
+        String hexValue = Hex.toHexString(byteArray);
+        BigInteger bigIntegerValue = new BigInteger(byteArray);
 
         Assertions.assertArrayEquals(byteArray, new Bytes(byteArray).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(byteArrayToHex).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(new BigInteger(1, byteArray)).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(new BigInteger(byteArrayToHex, 16)).toByteArray());
+        Assertions.assertArrayEquals(Hex.decode(hexValue), new Bytes(hexValue).toByteArray());
+        Assertions.assertArrayEquals(bigIntegerValue.toByteArray(), new Bytes(bigIntegerValue).toByteArray());
 
-        // first byte 0xff
-        byteArray = new byte[]{
-                (byte) -1, (byte) 128
-        };
-        byteArrayToHex = Hex.toHexString(byteArray);
-
-        Assertions.assertArrayEquals(byteArray, new Bytes(byteArray).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(byteArrayToHex).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(new BigInteger(1, byteArray)).toByteArray());
-        Assertions.assertArrayEquals(byteArray, new Bytes(new BigInteger(byteArrayToHex, 16)).toByteArray());
-
-        String stringVaule = "string value";
-        String hexValue = "ffaabb";
-        String tx = "0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
-
-        Assertions.assertEquals(hexValue, new Bytes(hexValue).toHexString(false));
-        Assertions.assertEquals(tx, new Bytes(tx).toString());
+        String tx = "2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc";
+        Assertions.assertArrayEquals(Hex.decode(tx), new Bytes(tx).toByteArray());
 
         byte[] secret = new SecureRandom().generateSeed(32);
-        Assertions.assertEquals(secret, new Bytes(secret).toByteArray());
+        Assertions.assertArrayEquals(secret, new Bytes(secret).toByteArray());
 
-        byte[] b = stringVaule.getBytes(StandardCharsets.UTF_8);
-        Assertions.assertEquals(b, new Bytes(b).toByteArray());
+        String stringValue = "string value";
+        byte[] b = stringValue.getBytes(StandardCharsets.UTF_8);
+        Assertions.assertArrayEquals(b, new Bytes(b).toByteArray());
+
+    }
+
+    @Test
+    void testBigInteger() {
+        String hexValue = "ff80";
+
+        // The first byte is sign bytes
+        // positive value : { 0x00, 0xff, 0x80 }
+        BigInteger positive = new BigInteger(hexValue, 16);
+        // negative value : { 0x80 }
+        BigInteger negative = new BigInteger(Hex.decode("ff0101"));
+
+        Assertions.assertArrayEquals(positive.toByteArray(), new Bytes(positive).toByteArray());
+        Assertions.assertArrayEquals(negative.toByteArray(), new Bytes(negative).toByteArray());
+
     }
 
     @Test
     void testThrow() {
-        String stringVaule = "string value";
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Bytes(stringVaule);
-        });
+        String stringValue = "string value";
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Bytes(stringValue));
 
-        byte[] b = stringVaule.getBytes(StandardCharsets.UTF_8);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Bytes.toBytesPadded(b, b.length - 1);
-        });
+        byte[] b = stringValue.getBytes(StandardCharsets.UTF_8);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Bytes.toBytesPadded(b, b.length - 1));
 
         String oddHex = "4d2";
-        Assertions.assertThrows(DecoderException.class, () -> {
-            new Bytes(oddHex);
-        });
-
+        Assertions.assertThrows(DecoderException.class, () -> new Bytes(oddHex));
     }
+
+    @Test
+    void testEquals() {
+        // same byte array
+        String hex = "7979";
+        byte[] byteArray = new byte[]{0x79, 0x79};
+        BigInteger big = new BigInteger("31097");
+
+        Bytes b1 = new Bytes(hex);
+        Bytes b2 = new Bytes(byteArray);
+        Bytes b3 = new Bytes(big);
+
+        // reflexive
+        compareFuncs(b1, b1, true);
+        compareFuncs(b2, b2, true);
+        compareFuncs(b3, b3, true);
+
+        // symmetric
+        compareFuncs(b1, b2, true);
+        compareFuncs(b2, b1, true);
+
+        // transitive
+        compareFuncs(b1, b2, true);
+        compareFuncs(b2, b3, true);
+        compareFuncs(b3, b1, true);
+
+        // nonullity
+        compareFuncs(b1, null, false);
+        compareFuncs(b2, null, false);
+        compareFuncs(b3, null, false);
+        compareFuncs(b3, null, false);
+
+        // different
+        String diff = "ffff";
+        Bytes b4 = new Bytes(diff);
+        compareFuncs(b3, b4, false);
+    }
+
+    private void compareFuncs(Bytes b1, Bytes b2, boolean expectEquals) {
+        Assertions.assertEquals(expectEquals, b1.equals(b2));
+    }
+
 }

@@ -49,8 +49,8 @@ public class ECDSASignature {
         byte recId = findRecoveryId(sig, message);
 
         ByteBuffer buffer = ByteBuffer.allocate(32 + 32 + 1);
-        buffer.put(new Bytes(sig[0]).toByteArray(32));
-        buffer.put(new Bytes(sig[1]).toByteArray(32));
+        buffer.put(IconKeys.toBytesPadded(sig[0], 32));
+        buffer.put(IconKeys.toBytesPadded(sig[1], 32));
         buffer.put(recId);
         return buffer.array();
     }

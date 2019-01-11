@@ -66,7 +66,8 @@ public class IconKeys {
         ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         keyPairGenerator.initialize(ecGenParameterSpec, secureRandom());
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        return new Bytes(((BCECPrivateKey) keyPair.getPrivate()).getD());
+        BigInteger d = ((BCECPrivateKey) keyPair.getPrivate()).getD();
+        return new Bytes(IconKeys.toBytesPadded(d, PRIVATE_KEY_SIZE));
     }
 
     public static Bytes getPublicKey(Bytes privateKey) {
@@ -77,11 +78,17 @@ public class IconKeys {
     }
 
     public static Address getAddress(Bytes publicKey) {
-        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray(PUBLIC_KEY_SIZE)));
+        if (publicKey.length() != PUBLIC_KEY_SIZE) {
+            throw new IllegalArgumentException("The length of Bytes is not " + PUBLIC_KEY_SIZE);
+        }
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray()));
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {
-        return getAddressHash(new Bytes(publicKey).toByteArray(PUBLIC_KEY_SIZE));
+        if (publicKey.signum() < 0) {
+            throw new IllegalArgumentException("The publicKey cannot be negative");
+        }
+        return getAddressHash(IconKeys.toBytesPadded(publicKey, PUBLIC_KEY_SIZE));
     }
 
     public static byte[] getAddressHash(byte[] publicKey) {
@@ -129,6 +136,14 @@ public class IconKeys {
 
     public static Address.AddressPrefix getAddressHexPrefix(String input) {
         return Address.AddressPrefix.fromString(input.substring(0, 2));
+    }
+
+    public static byte[] toBytesPadded(BigInteger value, int length) {
+        byte[] data = value.toByteArray();
+        if (data[0] == 0) {
+            data = Arrays.copyOfRange(data, 1, data.length);
+        }
+        return Bytes.toBytesPadded(data, length);
     }
 
     public static SecureRandom secureRandom() {
