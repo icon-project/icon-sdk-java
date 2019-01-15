@@ -52,10 +52,10 @@ public class IconServiceVCRTest {
     @BeforeEach
     void setUp() {
         scoreAddress = new Address("cxcc7ef86cdae93a89b6c08206a7962bcb9abb7bf4");
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(loggning)
+                .addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, URL));
         wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
@@ -269,10 +269,10 @@ public class IconServiceVCRTest {
 
     @Test
     void testV2() throws IOException {
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(loggning)
+                .addInterceptor(logging)
                 .build();
         HttpProvider provider = new HttpProvider(httpClient, TEST_V2_URL);
 
