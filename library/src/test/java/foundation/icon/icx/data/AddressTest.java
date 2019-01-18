@@ -95,6 +95,7 @@ public class AddressTest {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Bytes p = new Bytes(new BigInteger(pub, 16));
+            IconKeys.getAddress(p);
         });
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
