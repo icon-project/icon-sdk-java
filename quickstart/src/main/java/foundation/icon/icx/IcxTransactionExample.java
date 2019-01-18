@@ -42,10 +42,10 @@ public class IcxTransactionExample {
     public IcxTransactionExample() {
         // Logs HTTP request and response data
         // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
-        HttpLoggingInterceptor loggning = new HttpLoggingInterceptor();
-        loggning.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-//				.addInterceptor(loggning)
+//				.addInterceptor(logging)
                 .build();
 
         // Creates an instance of IconService using the HTTP provider
