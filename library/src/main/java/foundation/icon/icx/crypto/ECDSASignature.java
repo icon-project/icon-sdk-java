@@ -12,6 +12,7 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.math.ec.ECAlgorithms;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
+import org.bouncycastle.util.BigIntegers;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -41,7 +42,7 @@ public class ECDSASignature {
     /**
      * Serialize the result of `generateSignature` and recovery id
      *
-     * @param sig the R and S components of the signature, wrapped.
+     * @param sig     the R and S components of the signature, wrapped.
      * @param message Hash of the data that was signed.
      * @return 32 bytes for R + 32 bytes for S + 1 byte for recovery id
      */
@@ -49,8 +50,8 @@ public class ECDSASignature {
         byte recId = findRecoveryId(sig, message);
 
         ByteBuffer buffer = ByteBuffer.allocate(32 + 32 + 1);
-        buffer.put(IconKeys.toBytesPadded(sig[0], 32));
-        buffer.put(IconKeys.toBytesPadded(sig[1], 32));
+        buffer.put(BigIntegers.asUnsignedByteArray(32, sig[0]));
+        buffer.put(BigIntegers.asUnsignedByteArray(32, sig[1]));
         buffer.put(recId);
         return buffer.array();
     }
@@ -79,10 +80,10 @@ public class ECDSASignature {
      * Returns the recovery ID, a byte with value between 0 and 3, inclusive, that specifies which of 4 possible
      * curve points was used to sign a message. This value is also referred to as "v".
      *
-     * @throws RuntimeException if no recovery ID can be found.
      * @param sig     the R and S components of the signature, wrapped.
      * @param message Hash of the data that was signed.
      * @return recId   Which possible key to recover.
+     * @throws RuntimeException if no recovery ID can be found.
      */
     public byte findRecoveryId(BigInteger[] sig, byte[] message) {
         Bytes publicKey = IconKeys.getPublicKey(privateKey);

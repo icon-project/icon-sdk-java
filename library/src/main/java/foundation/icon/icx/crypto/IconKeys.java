@@ -10,6 +10,7 @@ import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.BigIntegers;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -59,15 +60,16 @@ public class IconKeys {
         SECURE_RANDOM = new SecureRandom();
     }
 
-    private IconKeys() { }
+    private IconKeys() {
+    }
 
     public static Bytes createPrivateKey() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("EC", "BC");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
         ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         keyPairGenerator.initialize(ecGenParameterSpec, secureRandom());
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         BigInteger d = ((BCECPrivateKey) keyPair.getPrivate()).getD();
-        return new Bytes(IconKeys.toBytesPadded(d, PRIVATE_KEY_SIZE));
+        return new Bytes(BigIntegers.asUnsignedByteArray(PRIVATE_KEY_SIZE, d));
     }
 
     public static Bytes getPublicKey(Bytes privateKey) {
@@ -88,7 +90,7 @@ public class IconKeys {
         if (publicKey.signum() < 0) {
             throw new IllegalArgumentException("The publicKey cannot be negative");
         }
-        return getAddressHash(IconKeys.toBytesPadded(publicKey, PUBLIC_KEY_SIZE));
+        return getAddressHash(BigIntegers.asUnsignedByteArray(PUBLIC_KEY_SIZE, publicKey));
     }
 
     public static byte[] getAddressHash(byte[] publicKey) {
@@ -136,14 +138,6 @@ public class IconKeys {
 
     public static Address.AddressPrefix getAddressHexPrefix(String input) {
         return Address.AddressPrefix.fromString(input.substring(0, 2));
-    }
-
-    public static byte[] toBytesPadded(BigInteger value, int length) {
-        byte[] data = value.toByteArray();
-        if (data[0] == 0) {
-            data = Arrays.copyOfRange(data, 1, data.length);
-        }
-        return Bytes.toBytesPadded(data, length);
     }
 
     public static SecureRandom secureRandom() {

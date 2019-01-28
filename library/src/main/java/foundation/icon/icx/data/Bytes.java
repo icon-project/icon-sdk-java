@@ -72,9 +72,6 @@ public class Bytes {
         return data;
     }
 
-    /**
-     * @deprecated Use {@linkplain foundation.icon.icx.crypto.IconKeys#toBytesPadded }
-     */
     @Deprecated
     private static byte[] toBytesPadded(BigInteger value, int length) {
         return toBytesPadded(new Bytes(value).toByteArray(), length);
