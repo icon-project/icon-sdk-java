@@ -74,7 +74,7 @@ public class Bytes {
 
     @Deprecated
     private static byte[] toBytesPadded(BigInteger value, int length) {
-        return toBytesPadded(new Bytes(value).toByteArray(), length);
+        return toBytesPadded(value.toByteArray(), length);
     }
 
     /**

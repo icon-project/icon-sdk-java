@@ -23,15 +23,25 @@ import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.crypto.KeystoreException;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -129,4 +139,26 @@ public class KeyWalletTest {
         });
     }
 
+    @Test
+    void testCreateSignVerify() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        String message = "Hello World!";
+        KeyWallet wallet = KeyWallet.create();
+
+        byte[] hash = new SHA3.Digest256().digest(message.getBytes(StandardCharsets.UTF_8));
+        byte[] signature = wallet.sign(hash);
+
+        byte[] pub = wallet.getPublicKey().toByteArray();
+        byte[] sigr = Arrays.copyOfRange(signature, 0, 32);
+        byte[] sigs = Arrays.copyOfRange(signature, 32, 32 * 2);
+
+        ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
+        ECDomainParameters domain = new ECDomainParameters(spec.getCurve(), spec.getG(), spec.getN());
+        ECPublicKeyParameters publicKeyParams =
+                new ECPublicKeyParameters(spec.getCurve().decodePoint(pub), domain);
+
+        ECDSASigner signer = new ECDSASigner();
+        signer.init(false, publicKeyParams);
+        boolean isVerify = signer.verifySignature(hash, new BigInteger(1, sigr), new BigInteger(1, sigs));
+        Assertions.assertTrue(isVerify);
+    }
 }

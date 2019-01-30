@@ -28,7 +28,7 @@ import java.util.Arrays;
 public class IconKeys {
 
     public static final int PRIVATE_KEY_SIZE = 32;
-    public static final int PUBLIC_KEY_SIZE = 64;
+    public static final int PUBLIC_KEY_SIZE = 65;
 
     public static final int ADDRESS_SIZE = 160;
     public static final int ADDRESS_LENGTH_IN_HEX = ADDRESS_SIZE >> 2;
@@ -75,8 +75,7 @@ public class IconKeys {
     public static Bytes getPublicKey(Bytes privateKey) {
         ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
         ECPoint pointQ = spec.getG().multiply(new BigInteger(1, privateKey.toByteArray()));
-        byte[] publicKeyBytes = pointQ.getEncoded(false);
-        return new Bytes(Arrays.copyOfRange(publicKeyBytes, 1, publicKeyBytes.length));
+        return new Bytes(pointQ.getEncoded(false));
     }
 
     public static Address getAddress(Bytes publicKey) {
@@ -94,7 +93,10 @@ public class IconKeys {
     }
 
     public static byte[] getAddressHash(byte[] publicKey) {
-        byte[] hash = new SHA3.Digest256().digest(publicKey);
+        // remove a constant prefix (0x04)
+        // https://github.com/bcgit/bc-java/blob/master/core/src/main/java/org/bouncycastle/math/ec/ECPoint.java#L489
+        byte[] pub = Arrays.copyOfRange(publicKey, 1, publicKey.length);
+        byte[] hash = new SHA3.Digest256().digest(pub);
 
         int length = 20;
         byte[] result = new byte[20];

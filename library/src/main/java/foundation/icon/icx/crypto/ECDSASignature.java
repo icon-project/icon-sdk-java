@@ -180,10 +180,7 @@ public class ECDSASignature {
         BigInteger srInv = rInv.multiply(s).mod(n);
         BigInteger eInvrInv = rInv.multiply(eInv).mod(n);
         ECPoint q = ECAlgorithms.sumOfTwoMultiplies(curve.getG(), eInvrInv, ecPoint, srInv);
-
-        byte[] qBytes = q.getEncoded(false);
-        // We remove the prefix
-        return new BigInteger(1, Arrays.copyOfRange(qBytes, 1, qBytes.length));
+        return new BigInteger(1, q.getEncoded(false));
     }
 
     /**
