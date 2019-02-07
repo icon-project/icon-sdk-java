@@ -50,6 +50,15 @@ public class Bytes {
         this.data = data;
     }
 
+    /**
+     * Creates an instance using BigInteger
+     * <p>
+     * Set a byte array of {@link BigInteger#toByteArray()} return value.
+     * The array will contain the minimum number of bytes required
+     * to represent this BigInteger, including at least one sign bit.
+     *
+     * @param value the {@linkplain java.math.BigInteger value}
+     */
     public Bytes(BigInteger value) {
         this.data = value.toByteArray();
     }
@@ -63,30 +72,27 @@ public class Bytes {
         return data;
     }
 
+    @Deprecated
+    private static byte[] toBytesPadded(BigInteger value, int length) {
+        return toBytesPadded(value.toByteArray(), length);
+    }
+
     /**
      * add the pad bytes to the passed in block, returning the
      * number of bytes added.
      */
-    private static byte[] toBytesPadded(BigInteger value, int length) {
+    public static byte[] toBytesPadded(byte[] value, int length) {
         byte[] result = new byte[length];
-        byte[] bytes = value.toByteArray();
 
-        int bytesLength;
-        int srcOffset;
-        if (bytes[0] == 0) {
-            bytesLength = bytes.length - 1;
-            srcOffset = 1;
-        } else {
-            bytesLength = bytes.length;
-            srcOffset = 0;
-        }
+        int bytesLength = value.length;
+        int srcOffset = 0;
 
         if (bytesLength > length) {
             throw new IllegalArgumentException("Input is too large to put in byte array of size " + length);
         }
 
         int destOffset = length - bytesLength;
-        System.arraycopy(bytes, srcOffset, result, destOffset, bytesLength);
+        System.arraycopy(value, srcOffset, result, destOffset, bytesLength);
         return result;
     }
 
@@ -119,7 +125,7 @@ public class Bytes {
      * @return byte array given size
      */
     public byte[] toByteArray(int size) {
-        return toBytesPadded(new BigInteger(data), size);
+        return toBytesPadded(data, size);
     }
 
     @Override
@@ -145,7 +151,7 @@ public class Bytes {
      * Gets the data as a hex string given size
      *
      * @param withPrefix whether 0x prefix included
-     * @param size size of byte array
+     * @param size       size of byte array
      * @return hex string given size
      */
     public String toHexString(boolean withPrefix, int size) {

@@ -10,6 +10,7 @@ import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.BigIntegers;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -27,7 +28,7 @@ import java.util.Arrays;
 public class IconKeys {
 
     public static final int PRIVATE_KEY_SIZE = 32;
-    public static final int PUBLIC_KEY_SIZE = 64;
+    public static final int PUBLIC_KEY_SIZE = 65;
 
     public static final int ADDRESS_SIZE = 160;
     public static final int ADDRESS_LENGTH_IN_HEX = ADDRESS_SIZE >> 2;
@@ -59,33 +60,43 @@ public class IconKeys {
         SECURE_RANDOM = new SecureRandom();
     }
 
-    private IconKeys() { }
+    private IconKeys() {
+    }
 
     public static Bytes createPrivateKey() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("EC", "BC");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
         ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
         keyPairGenerator.initialize(ecGenParameterSpec, secureRandom());
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        return new Bytes(((BCECPrivateKey) keyPair.getPrivate()).getD());
+        BigInteger d = ((BCECPrivateKey) keyPair.getPrivate()).getD();
+        return new Bytes(BigIntegers.asUnsignedByteArray(PRIVATE_KEY_SIZE, d));
     }
 
     public static Bytes getPublicKey(Bytes privateKey) {
         ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
         ECPoint pointQ = spec.getG().multiply(new BigInteger(1, privateKey.toByteArray()));
-        byte[] publicKeyBytes = pointQ.getEncoded(false);
-        return new Bytes(Arrays.copyOfRange(publicKeyBytes, 1, publicKeyBytes.length));
+        return new Bytes(pointQ.getEncoded(false));
     }
 
     public static Address getAddress(Bytes publicKey) {
-        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray(PUBLIC_KEY_SIZE)));
+        if (publicKey.length() != PUBLIC_KEY_SIZE) {
+            throw new IllegalArgumentException("The length of Bytes is not " + PUBLIC_KEY_SIZE);
+        }
+        return new Address(Address.AddressPrefix.EOA, getAddressHash(publicKey.toByteArray()));
     }
 
     public static byte[] getAddressHash(BigInteger publicKey) {
-        return getAddressHash(new Bytes(publicKey).toByteArray(PUBLIC_KEY_SIZE));
+        if (publicKey.signum() < 0) {
+            throw new IllegalArgumentException("The publicKey cannot be negative");
+        }
+        return getAddressHash(BigIntegers.asUnsignedByteArray(PUBLIC_KEY_SIZE, publicKey));
     }
 
     public static byte[] getAddressHash(byte[] publicKey) {
-        byte[] hash = new SHA3.Digest256().digest(publicKey);
+        // remove a constant prefix (0x04)
+        // https://github.com/bcgit/bc-java/blob/master/core/src/main/java/org/bouncycastle/math/ec/ECPoint.java#L489
+        byte[] pub = Arrays.copyOfRange(publicKey, 1, publicKey.length);
+        byte[] hash = new SHA3.Digest256().digest(pub);
 
         int length = 20;
         byte[] result = new byte[20];
