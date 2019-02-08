@@ -1,5 +1,10 @@
 # Changelog
 
+### Version 0.9.11 - January 8, 2019 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
+
+#### Bugfixes
+  - Fix the generation of the wrong address caused by the wrong conversion of BigInteger to byte array
+
 ### Version 0.9.10 - December 21, 2018 ([Maven](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk))
 
 #### Bugfixes
