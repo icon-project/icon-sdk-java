@@ -26,11 +26,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class TokenTransactionExample {
 
@@ -254,7 +250,11 @@ public class TokenTransactionExample {
 
     public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
         List<ScoreApi> apis = iconService.getScoreApi(CommonData.GOVERNANCE_ADDRESS).execute();
-        return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
+        Map<String, ScoreApi> map = new HashMap<String, ScoreApi>();
+        for (ScoreApi api : apis) {
+            map.put(api.getName(), api);
+        }
+        return map;
     }
 
 }

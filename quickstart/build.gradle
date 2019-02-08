@@ -4,15 +4,16 @@ plugins {
 
 group 'foundation.icon.icx'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_7
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation project(':library')
-
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    compile files('libs/library-0.9.11-java7.jar')
+    compile "org.bouncycastle:bcprov-jdk15on:1.60"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.9.6"
+    compile 'com.squareup.okhttp3:okhttp:3.11.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 }
