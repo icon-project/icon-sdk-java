@@ -2,9 +2,10 @@ plugins {
     id 'java-library'
     id "com.jfrog.bintray" version "1.8.4"
     id "maven-publish"
+    id "me.tatarka.retrolambda" version "3.7.0"
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -32,6 +33,11 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
+    defaultMethods true
+}
+
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
@@ -47,5 +53,3 @@ test {
 }
 
 apply from: '../publish.gradle'
-
-
