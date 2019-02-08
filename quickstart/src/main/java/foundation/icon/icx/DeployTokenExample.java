@@ -93,7 +93,7 @@ public class DeployTokenExample {
                                           BigInteger decimals, String tokenName, String tokenSymbol) throws IOException {
 
         // networkId of node 1:mainnet, 2~:etc
-        BigInteger networkId = new BigInteger("2");
+        BigInteger networkId = new BigInteger("3");
         // Maximum step allowance that can be used by the transaction
         BigInteger stepLimit = getMaxStepLimit();
         // Transaction creation time (timestamp is in the microsecond)
@@ -103,10 +103,8 @@ public class DeployTokenExample {
 
         // Convert information to object for the request.
         RpcObject params = new RpcObject.Builder()
-                .put("initialSupply", new RpcValue(initialSupply))
-                .put("decimals", new RpcValue(decimals))
-                .put("name", new RpcValue(tokenName))
-                .put("symbol", new RpcValue(tokenSymbol))
+                .put("_initialSupply", new RpcValue(initialSupply))
+                .put("_decimals", new RpcValue(decimals))
                 .build();
 
         // Create transaction to deploy token
