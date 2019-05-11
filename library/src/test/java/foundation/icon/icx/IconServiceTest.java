@@ -42,7 +42,7 @@ class IconServiceTest {
     void testIconServiceInit() {
         IconService iconService = new IconService(new Provider() {
             @Override
-            public <O> Request<O> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter) {
+            public <T> Request<T> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<T> converter) {
                 return null;
             }
 

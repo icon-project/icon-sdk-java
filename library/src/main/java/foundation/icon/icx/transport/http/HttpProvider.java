@@ -53,7 +53,7 @@ public class HttpProvider implements Provider {
      * @see Provider#request(foundation.icon.icx.transport.jsonrpc.Request, RpcConverter)
      */
     @Override
-    public <O> Request<O> request(final foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<O> converter) {
+    public <T> Request<T> request(final foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<T> converter) {
 
         // Makes the request body
         RequestBody body = new RequestBody() {

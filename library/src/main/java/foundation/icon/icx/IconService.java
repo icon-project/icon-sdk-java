@@ -182,11 +182,11 @@ public class IconService {
     /**
      * Calls a SCORE API just for reading
      *
-     * @param call instance of Call
-     * @param <O> responseType
+     * @param call an instance of Call
+     * @param <T> the response type
      * @return the Request object can execute a request
      */
-    public <O> Request<O> call(Call<O> call) {
+    public <T> Request<T> call(Call<T> call) {
         long requestId = System.currentTimeMillis();
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(requestId, "icx_call", call.getProperties());
         return provider.request(request, findConverter(call.responseType()));

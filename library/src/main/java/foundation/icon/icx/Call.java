@@ -29,14 +29,14 @@ import static foundation.icon.icx.TransactionBuilder.checkArgument;
 /**
  * Call contains parameters for querying request.
  *
- * @param <O> Response type
+ * @param <T> Response type
  */
-public final class Call<O> {
+public final class Call<T> {
 
     private RpcObject properties;
-    private Class<O> responseType;
+    private Class<T> responseType;
 
-    private Call(RpcObject properties, Class<O> responseType) {
+    private Call(RpcObject properties, Class<T> responseType) {
         this.properties = properties;
         this.responseType = responseType;
     }
@@ -46,7 +46,7 @@ public final class Call<O> {
         return properties;
     }
 
-    Class<O> responseType() {
+    Class<T> responseType() {
         return responseType;
     }
 
@@ -85,7 +85,7 @@ public final class Call<O> {
             return this;
         }
 
-        public <I> Builder params(I params) {
+        public <T> Builder params(T params) {
             this.params = RpcItemCreator.create(params);
             return this;
         }
@@ -110,10 +110,10 @@ public final class Call<O> {
          * Builds with User defined class. an object of the class would be returned
          *
          * @param responseType Response type
-         * @param <O> responseType
+         * @param <T> responseType
          * @return Call
          */
-        public <O> Call<O> buildWith(Class<O> responseType) {
+        public <T> Call<T> buildWith(Class<T> responseType) {
             RpcObject data = new RpcObject.Builder()
                     .put("method", new RpcValue(method))
                     .put("params", params)
@@ -132,5 +132,4 @@ public final class Call<O> {
             return new Call<>(propertiesBuilder.build(), responseType);
         }
     }
-
 }
