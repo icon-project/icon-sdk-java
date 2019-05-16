@@ -205,6 +205,19 @@ public class IconService {
         return provider.request(request, findConverter(Bytes.class));
     }
 
+    /**
+     * Gets an estimated step of how much step is necessary to allow the transaction to complete
+     *
+     * @param transaction the raw transaction without stepLimit and signature information
+     * @return the {@code Request} object can execute a request (result type is BigInteger)
+     */
+    public Request<BigInteger> estimateStep(Transaction transaction) {
+        long requestId = System.currentTimeMillis();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "debug_estimateStep", transaction.getProperties());
+        return provider.request(request, findConverter(BigInteger.class));
+    }
+
     @SuppressWarnings("unchecked")
     private <T> RpcConverter<T> findConverter(Class<T> type) {
         RpcConverter converter = converterMap.get(type);

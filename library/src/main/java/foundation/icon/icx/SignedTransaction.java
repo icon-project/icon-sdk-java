@@ -17,11 +17,9 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.jsonrpc.RpcArray;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
-import foundation.icon.icx.transport.jsonrpc.RpcObject.Builder;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Base64;
@@ -29,6 +27,8 @@ import org.bouncycastle.util.encoders.Base64;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.TreeSet;
+
+import static foundation.icon.icx.TransactionBuilder.checkArgument;
 
 /**
  * SignedTransaction serializes transaction messages and
@@ -40,19 +40,45 @@ public class SignedTransaction {
     private Wallet wallet;
     private RpcObject properties;
 
+    /**
+     * Creates a signed transaction
+     *
+     * @param transaction a raw transaction to be signed
+     * @param wallet a wallet for signing the transaction
+     */
     public SignedTransaction(Transaction transaction, Wallet wallet) {
+        checkArgument(transaction.getStepLimit(), "stepLimit not found");
         this.transaction = transaction;
         this.wallet = wallet;
-        createProperties();
+        createProperties(null);
+    }
+
+    /**
+     * Creates a signed transaction with the given stepLimit
+     *
+     * @param transaction a raw transaction to be signed
+     * @param wallet a wallet for signing the transaction
+     * @param stepLimit A maximum step allowance that can be used by the transaction.
+     *                  The stepLimit value of the transaction will be overridden by this value.
+     *
+     * @since 0.9.12
+     */
+    public SignedTransaction(Transaction transaction, Wallet wallet, BigInteger stepLimit) {
+        this.transaction = transaction;
+        this.wallet = wallet;
+        createProperties(stepLimit);
     }
 
     /**
      * Create the parameters including signature
      */
-    private void createProperties() {
+    private void createProperties(BigInteger stepLimit) {
         RpcObject object = getTransactionProperties();
 
         RpcObject.Builder builder = new RpcObject.Builder();
+        if (stepLimit != null) {
+            builder.put("stepLimit", new RpcValue(stepLimit));
+        }
         for (String key : object.keySet()) {
             builder.put(key, object.getItem(key));
         }
@@ -72,39 +98,7 @@ public class SignedTransaction {
     }
 
     RpcObject getTransactionProperties() {
-        BigInteger timestamp = transaction.getTimestamp();
-        if (timestamp == null) {
-            timestamp = new BigInteger(Long.toString(System.currentTimeMillis() * 1000L));
-        }
-
-        Builder builder = new Builder();
-        putTransactionPropertyToBuilder(builder, "version", transaction.getVersion());
-        putTransactionPropertyToBuilder(builder, "from", transaction.getFrom());
-        putTransactionPropertyToBuilder(builder, "to", transaction.getTo());
-        putTransactionPropertyToBuilder(builder, "value", transaction.getValue());
-        putTransactionPropertyToBuilder(builder, "stepLimit", transaction.getStepLimit());
-        putTransactionPropertyToBuilder(builder, "timestamp", timestamp);
-        putTransactionPropertyToBuilder(builder, "nid", transaction.getNid());
-        putTransactionPropertyToBuilder(builder, "nonce", transaction.getNonce());
-        putTransactionPropertyToBuilder(builder, "dataType", transaction.getDataType());
-        putTransactionPropertyToBuilder(builder, "data", transaction.getData());
-        return builder.build();
-    }
-
-    private void putTransactionPropertyToBuilder(Builder builder, String key, BigInteger value) {
-        if (value != null) builder.put(key, new RpcValue(value));
-    }
-
-    private void putTransactionPropertyToBuilder(Builder builder, String key, String value) {
-        if (value != null) builder.put(key, new RpcValue(value));
-    }
-
-    private void putTransactionPropertyToBuilder(Builder builder, String key, Address value) {
-        if (value != null) builder.put(key, new RpcValue(value));
-    }
-
-    private void putTransactionPropertyToBuilder(Builder builder, String key, RpcItem item) {
-        if (item != null) builder.put(key, item);
+        return transaction.getProperties();
     }
 
     /**
@@ -112,7 +106,7 @@ public class SignedTransaction {
      *
      * @return signature
      */
-    byte[] getSignature(RpcObject properties) {
+    private byte[] getSignature(RpcObject properties) {
         return wallet.sign(generateMessage(serialize(properties)));
     }
 
@@ -121,7 +115,7 @@ public class SignedTransaction {
      *
      * @return hash
      */
-    byte[] generateMessage(String data) {
+    private byte[] generateMessage(String data) {
         return new SHA3.Digest256().digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -200,5 +194,4 @@ public class SignedTransaction {
             return string.replaceAll("([\\\\.{}\\[\\]])", "\\\\$1");
         }
     }
-
 }

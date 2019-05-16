@@ -32,6 +32,7 @@ public class ConfirmedTransaction implements Transaction {
         this.properties = properties;
     }
 
+    @Override
     public RpcObject getProperties() {
         return properties;
     }

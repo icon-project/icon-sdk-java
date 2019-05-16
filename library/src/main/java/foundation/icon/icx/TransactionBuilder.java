@@ -209,7 +209,6 @@ public final class TransactionBuilder {
         public Transaction build() {
             return transactionData.build();
         }
-
     }
 
     /**
@@ -283,7 +282,6 @@ public final class TransactionBuilder {
         public Transaction build() {
             return transactionData.build();
         }
-
     }
 
     /**
@@ -344,8 +342,7 @@ public final class TransactionBuilder {
             checkAddress(from, "from not found");
             checkAddress(to, "to not found");
             checkArgument(version, "version not found");
-            checkArgument(stepLimit, "stepLimit not found");
-            return new SendingTransaction(this);
+            return new RawTransaction(this);
         }
 
         void checkAddress(Address address, String message) {
@@ -356,7 +353,7 @@ public final class TransactionBuilder {
         }
     }
 
-    private static class SendingTransaction implements Transaction {
+    private static class RawTransaction implements Transaction {
         private BigInteger version;
         private Address from;
         private Address to;
@@ -368,7 +365,7 @@ public final class TransactionBuilder {
         private String dataType;
         private RpcItem data;
 
-        private SendingTransaction(TransactionData transactionData) {
+        private RawTransaction(TransactionData transactionData) {
             version = transactionData.version;
             from = transactionData.from;
             to = transactionData.to;
@@ -430,6 +427,39 @@ public final class TransactionBuilder {
         public RpcItem getData() {
             return data;
         }
+
+        @Override
+        public RpcObject getProperties() {
+            if (timestamp == null) {
+                timestamp = new BigInteger(Long.toString(System.currentTimeMillis() * 1000L));
+            }
+            RpcObject.Builder builder = new RpcObject.Builder();
+            putPropertyToBuilder(builder, "version", getVersion());
+            putPropertyToBuilder(builder, "from", getFrom());
+            putPropertyToBuilder(builder, "to", getTo());
+            putPropertyToBuilder(builder, "value", getValue());
+            putPropertyToBuilder(builder, "stepLimit", getStepLimit());
+            putPropertyToBuilder(builder, "timestamp", timestamp);
+            putPropertyToBuilder(builder, "nid", getNid());
+            putPropertyToBuilder(builder, "nonce", getNonce());
+            putPropertyToBuilder(builder, "dataType", getDataType());
+            putPropertyToBuilder(builder, "data", getData());
+            return builder.build();
+        }
+
+        private void putPropertyToBuilder(RpcObject.Builder builder, String key, Object value) {
+            if (value != null) {
+                if (value instanceof BigInteger) {
+                    builder.put(key, new RpcValue((BigInteger) value));
+                } else if (value instanceof Address) {
+                    builder.put(key, new RpcValue((Address) value));
+                } else if (value instanceof String) {
+                    builder.put(key, new RpcValue((String) value));
+                } else if (value instanceof RpcItem) {
+                    builder.put(key, (RpcItem) value);
+                }
+            }
+        }
     }
 
     static <T> void checkArgument(T object, String message) {
@@ -437,5 +467,4 @@ public final class TransactionBuilder {
             throw new IllegalArgumentException(message);
         }
     }
-
 }
