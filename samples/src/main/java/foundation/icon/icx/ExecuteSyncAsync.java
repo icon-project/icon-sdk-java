@@ -7,26 +7,25 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 
-public class ExcuteSyncAsync {
+public class ExecuteSyncAsync {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public ExcuteSyncAsync() {
+    private ExecuteSyncAsync() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void sync() throws IOException {
+    private void sync() throws IOException {
         Block block = iconService.getLastBlock().execute();
         System.out.println("sync call block hash:" + block.getBlockHash());
     }
 
-    public void async() {
+    private void async() {
         iconService.getLastBlock().execute(new Callback<Block>() {
             @Override
             public void onSuccess(Block block) {
@@ -42,7 +41,7 @@ public class ExcuteSyncAsync {
     }
 
     public static void main(String[] args) throws IOException {
-        ExcuteSyncAsync call = new ExcuteSyncAsync();
+        ExecuteSyncAsync call = new ExecuteSyncAsync();
         call.sync();
         call.async();
     }

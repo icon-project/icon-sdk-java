@@ -16,38 +16,45 @@
 
 package foundation.icon.icx.get;
 
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.ScoreApi;
+import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.token.DeploySampleToken;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
 public class GetScoreApi {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public GetScoreApi() {
+    private GetScoreApi() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getScoreApi() throws IOException {
-        Address scoreAddress = new Address("cx59f7016d2a13ff9e667c7a26cabda844a58782ae");
+    private void getScoreApi(Address scoreAddress) throws IOException {
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
-        System.out.println("Score apis:" + apis);
+        System.out.println("SCORE APIs: " + apis);
     }
 
     public static void main(String[] args) throws IOException {
-        new GetScoreApi().getScoreApi();
+        TransactionResult result = new DeploySampleToken().sendTransaction();
+        if (BigInteger.ONE.equals(result.getStatus())) {
+            Address scoreAddress = new Address(result.getScoreAddress());
+            new GetScoreApi().getScoreApi(scoreAddress);
+        } else {
+            System.out.println("Deploy failed!");
+        }
     }
-
 }

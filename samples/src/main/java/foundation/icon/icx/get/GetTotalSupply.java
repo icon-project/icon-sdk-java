@@ -16,6 +16,7 @@
 
 package foundation.icon.icx.get;
 
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
@@ -26,21 +27,20 @@ import java.math.BigInteger;
 
 public class GetTotalSupply {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public GetTotalSupply() {
+    private GetTotalSupply() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getTotalSupply() throws IOException {
+    private void getTotalSupply() throws IOException {
         BigInteger totalSupply = iconService.getTotalSupply().execute();
-        System.out.println("totalSupply:" + totalSupply);
+        System.out.println("totalSupply: " + totalSupply);
     }
 
     public static void main(String[] args) throws IOException {

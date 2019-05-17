@@ -17,33 +17,35 @@
 package foundation.icon.icx.call;
 
 import foundation.icon.icx.Call;
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.token.DeploySampleToken;
+import foundation.icon.icx.token.SendTokenTransaction;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 public class CustomRequestParam {
 
-    public final String URL = "http://localhost:9000/api/v3";
-    private final Address scoreAddress = new Address("cxca23d7fd434fd37d5cd01c7183adf7658375a6db");
-
     private IconService iconService;
 
-    public CustomRequestParam() {
+    private CustomRequestParam() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getBalance() throws IOException {
-        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
+    private void getBalance(Address scoreAddress) throws IOException {
+        Address address = Constants.testAddress1;
         Param params = new Param();
         params._owner = address;
 
@@ -55,14 +57,21 @@ public class CustomRequestParam {
                 .build();
 
         RpcItem result = iconService.call(call).execute();
-        System.out.println("balance:"+result);
+        System.out.println("balance: " + result);
     }
 
     class Param {
-        public Address _owner;
+        Address _owner;
     }
 
     public static void main(String[] args) throws IOException {
-        new CustomRequestParam().getBalance();
+        TransactionResult result = new DeploySampleToken().sendTransaction();
+        if (BigInteger.ONE.equals(result.getStatus())) {
+            Address scoreAddress = new Address(result.getScoreAddress());
+            new SendTokenTransaction().sendTransaction(scoreAddress);
+            new CustomRequestParam().getBalance(scoreAddress);
+        } else {
+            System.out.println("Deploy failed!");
+        }
     }
 }

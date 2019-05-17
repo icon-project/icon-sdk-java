@@ -16,7 +16,9 @@
 
 package foundation.icon.icx.get;
 
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
+import foundation.icon.icx.SendIcxTransaction;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.data.TransactionResult;
@@ -25,36 +27,39 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 public class GetTransaction {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public GetTransaction() {
+    private GetTransaction() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getTransaction() throws IOException {
-        Bytes txHash = new Bytes("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
+    private void getTransaction(Bytes txHash) throws IOException {
         ConfirmedTransaction tx = iconService.getTransaction(txHash).execute();
-        System.out.println("transaction:" + tx);
+        System.out.println("ConfirmedTransaction: " + tx);
     }
 
-    public void getTransactionResult() throws IOException {
-        Bytes txHash = new Bytes("0xe8c167e2333eca73f10e1de03c9e616b655064aec2540913504cf0a4bab34db7");
-        TransactionResult tx = iconService.getTransactionResult(txHash).execute();
-        System.out.println("transaction:" + tx);
+    private void getTransactionResult(Bytes txHash) throws IOException {
+        TransactionResult result = iconService.getTransactionResult(txHash).execute();
+        System.out.println("TransactionResult: " + result);
     }
 
     public static void main(String[] args) throws IOException {
+        TransactionResult result = new SendIcxTransaction().sendTransaction();
+        if (!BigInteger.ONE.equals(result.getStatus())) {
+            System.out.println("SendIcxTransaction failed!");
+            return;
+        }
         GetTransaction transaction = new GetTransaction();
-        transaction.getTransaction();
-        transaction.getTransactionResult();
+        transaction.getTransaction(result.getTxHash());
+        transaction.getTransactionResult(result.getTxHash());
     }
 }

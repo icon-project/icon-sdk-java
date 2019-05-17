@@ -19,6 +19,7 @@ package foundation.icon.icx.token;
 import foundation.icon.icx.*;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -33,10 +34,6 @@ import java.math.BigInteger;
 
 public class DeploySampleToken {
 
-    public final String URL = "http://localhost:9000/api/v3";
-    public final String PRIVATE_KEY_STRING =
-            "2d42994b2f7735bbc93a3e64381864d06747e574aa94655c516f9ad0a74eed79";
-
     private IconService iconService;
     private Wallet wallet;
 
@@ -46,17 +43,16 @@ public class DeploySampleToken {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
-        wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
+        wallet = KeyWallet.load(Constants.privateKey);
     }
 
-    public void sendTransaction() throws IOException {
+    public TransactionResult sendTransaction() throws IOException {
         String contentType = "application/zip";
         byte[] content = readFile();
         BigInteger networkId = new BigInteger("3");
         Address fromAddress = wallet.getAddress();
         Address toAddress = new Address("cx0000000000000000000000000000000000000000");
-        BigInteger stepLimit = new BigInteger("146850000000");
         long timestamp = System.currentTimeMillis() * 1000L;
         BigInteger nonce = new BigInteger("1");
 
@@ -68,24 +64,34 @@ public class DeploySampleToken {
                 .put("_decimals", new RpcValue(decimals))
                 .build();
 
+        // make a raw transaction without the stepLimit
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(fromAddress)
                 .to(toAddress)
-                .stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .nonce(nonce)
                 .deploy(contentType, content)
                 .params(params)
                 .build();
 
-        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+        // get an estimated step value
+        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+
+        // set some margin value for the operation of `on_install`
+        BigInteger margin = BigInteger.valueOf(10000);
+
+        // make a signed transaction with the same raw transaction and the estimated step
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
-        System.out.println("txHash:" + hash);
+        System.out.println("txHash: " + hash);
+        TransactionResult result = Utils.getTransactionResult(iconService, hash);
+        System.out.println("Status: " + result.getStatus());
+        return result;
     }
 
     private byte[] readFile() throws IOException {
-        File file = new File(getClass().getClassLoader().getResource("sample_token.zip").getFile());
+        File file = new File(getClass().getClassLoader().getResource("sampleToken.zip").getFile());
         return readBytes(file);
     }
 

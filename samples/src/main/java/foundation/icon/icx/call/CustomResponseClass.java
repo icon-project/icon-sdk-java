@@ -17,6 +17,7 @@
 package foundation.icon.icx.call;
 
 import foundation.icon.icx.Call;
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
@@ -32,21 +33,19 @@ import java.math.BigInteger;
 
 public class CustomResponseClass {
 
-    public final String URL = "http://localhost:9000/api/v3";
     private final Address scoreAddress = new Address("cx0000000000000000000000000000000000000001");
-
     private IconService iconService;
 
-    public CustomResponseClass() {
+    private CustomResponseClass() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getStepCosts() throws IOException {
+    private void getStepCosts() throws IOException {
 
         iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
             @Override
@@ -63,10 +62,13 @@ public class CustomResponseClass {
                             cost.contractDestruct = o.getItem("contractDestruct").asInteger();
                             cost.contractCreate = o.getItem("contractCreate").asInteger();
                             cost.contractSet = o.getItem("contractSet").asInteger();
+                            cost.get = o.getItem("get").asInteger();
                             cost.set = o.getItem("set").asInteger();
                             cost.replace = o.getItem("replace").asInteger();
+                            cost.delete = o.getItem("delete").asInteger();
                             cost.input = o.getItem("input").asInteger();
                             cost.eventLog = o.getItem("eventLog").asInteger();
+                            cost.apiCall = o.getItem("apiCall").asInteger();
                             return (T) cost;
                         }
 
@@ -86,7 +88,7 @@ public class CustomResponseClass {
                 .buildWith(StepCost.class);
 
         StepCost costs = iconService.call(call).execute();
-        System.out.println("step costs:"+costs);
+        System.out.println("step costs: " + costs);
     }
 
     class StepCost {
@@ -97,10 +99,13 @@ public class CustomResponseClass {
         BigInteger contractUpdate;
         BigInteger contractDestruct;
         BigInteger contractSet;
+        BigInteger get;
         BigInteger set;
         BigInteger replace;
+        BigInteger delete;
         BigInteger input;
         BigInteger eventLog;
+        BigInteger apiCall;
 
         @Override
         public String toString() {
@@ -111,10 +116,13 @@ public class CustomResponseClass {
                     ", contractUpdate=" + contractUpdate +
                     ", contractDestruct=" + contractDestruct +
                     ", contractSet=" + contractSet +
+                    ", get=" + get +
                     ", set=" + set +
                     ", replace=" + replace +
+                    ", delete=" + delete +
                     ", input=" + input +
                     ", eventLog=" + eventLog +
+                    ", apiCall=" + apiCall +
                     '}';
         }
     }

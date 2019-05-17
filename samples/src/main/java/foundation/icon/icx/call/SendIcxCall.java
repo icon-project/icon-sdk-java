@@ -17,6 +17,7 @@
 package foundation.icon.icx.call;
 
 import foundation.icon.icx.Call;
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
@@ -29,25 +30,19 @@ import java.io.IOException;
 
 public class SendIcxCall {
 
-    public final String URL = "http://localhost:9000/api/v3";
     private final Address scoreAddress = new Address("cx0000000000000000000000000000000000000001");
-
     private IconService iconService;
 
-    public SendIcxCall() {
+    private SendIcxCall() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        this.iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public static void main(String[] args) throws IOException {
-        new SendIcxCall().getStepCosts();
-    }
-
-    public void getStepCosts() throws IOException {
+    private void getStepCosts() throws IOException {
         Call<RpcItem> call = new Call.Builder()
                 .to(scoreAddress)
                 .method("getStepCosts")
@@ -62,9 +57,16 @@ public class SendIcxCall {
         System.out.println("contractDestruct:"+object.getItem("contractDestruct").asInteger());
         System.out.println("contractCreate:"+object.getItem("contractCreate").asInteger());
         System.out.println("contractSet:"+object.getItem("contractSet").asInteger());
+        System.out.println("get:"+object.getItem("get").asInteger());
         System.out.println("set:"+object.getItem("set").asInteger());
         System.out.println("replace:"+object.getItem("replace").asInteger());
+        System.out.println("delete:"+object.getItem("delete").asInteger());
         System.out.println("input:"+object.getItem("input").asInteger());
         System.out.println("eventLog:"+object.getItem("eventLog").asInteger());
+        System.out.println("apiCall:"+object.getItem("apiCall").asInteger());
+    }
+
+    public static void main(String[] args) throws IOException {
+        new SendIcxCall().getStepCosts();
     }
 }

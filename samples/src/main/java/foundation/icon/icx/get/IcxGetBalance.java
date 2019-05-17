@@ -16,6 +16,7 @@
 
 package foundation.icon.icx.get;
 
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.transport.http.HttpProvider;
@@ -27,26 +28,24 @@ import java.math.BigInteger;
 
 public class IcxGetBalance {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public IcxGetBalance() {
+    private IcxGetBalance() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getBalance() throws IOException {
-        Address address = new Address("hx0000000000000000000000000000000000000000");
+    private void getBalance() throws IOException {
+        Address address = Constants.testAddress1;
         BigInteger balance = iconService.getBalance(address).execute();
-        System.out.println("balance:" + balance);
+        System.out.println("balance: " + balance);
     }
 
     public static void main(String[] args) throws IOException {
         new IcxGetBalance().getBalance();
     }
-
 }

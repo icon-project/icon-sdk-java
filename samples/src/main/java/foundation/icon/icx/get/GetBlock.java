@@ -16,9 +16,13 @@
 
 package foundation.icon.icx.get;
 
+import foundation.icon.icx.Constants;
 import foundation.icon.icx.IconService;
+import foundation.icon.icx.SendIcxTransaction;
+import foundation.icon.icx.Transaction;
 import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -28,41 +32,41 @@ import java.math.BigInteger;
 
 public class GetBlock {
 
-    public static final String URL = "http://localhost:9000/api/v3";
     private IconService iconService;
 
-    public GetBlock() {
+    private GetBlock() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, URL));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
     }
 
-    public void getBlockByHeight() throws IOException {
-        BigInteger height = new BigInteger("10");
-        Block block = iconService.getBlock(height).execute();
-        System.out.println("block:" + block);
-    }
-
-    public void getBlockByHash() throws IOException {
-        Bytes hash = new Bytes("0x980d74c90094c78f1dfaa60c396f5b91e5021de2b6cd6a17caa9d941aa4b0c60");
-        Block block = iconService.getBlock(hash).execute();
-        System.out.println("block:" + block);
-    }
-
-    public void getLastBlock() throws IOException {
+    private void getLastBlock() throws IOException {
         Block block = iconService.getLastBlock().execute();
-        System.out.println("block:" + block);
+        System.out.println("getLastBlock: " + block);
     }
 
+    private void getBlockByHash(Bytes blockHash) throws IOException {
+        Block block = iconService.getBlock(blockHash).execute();
+        System.out.println("getBlockByHash: " + block);
+    }
+
+    private void getBlockByHeight(BigInteger blockHeight) throws IOException {
+        Block block = iconService.getBlock(blockHeight).execute();
+        System.out.println("getBlockByHeight:" + block);
+    }
 
     public static void main(String[] args) throws IOException {
+        TransactionResult result = new SendIcxTransaction().sendTransaction();
+        if (!BigInteger.ONE.equals(result.getStatus())) {
+            System.out.println("SendIcxTransaction failed!");
+            return;
+        }
         GetBlock block = new GetBlock();
         block.getLastBlock();
-        block.getBlockByHash();
-        block.getBlockByHeight();
+        block.getBlockByHash(result.getBlockHash());
+        block.getBlockByHeight(result.getBlockHeight());
     }
-
 }
