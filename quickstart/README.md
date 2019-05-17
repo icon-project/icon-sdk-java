@@ -1,8 +1,8 @@
 # ICON SDK Java Quickstart
 
-This is an example project of Icon SDK Java.
+This is an example project of ICON SDK Java.
 
-In this project, the examples are implemented as below.
+In this project, the examples are implemented as follows.
 
 | Example       | Description |
 | ------------- | ----------- |
@@ -40,53 +40,31 @@ dependencies {
 
 
 
-
-#### Node URL
-
-ICON node fundamentally complies with the following composition.
-
-```
-http://ip_address:9000/api/v3
-```
-
-Default port is 9000 and the value can be changed according to the setting.
-
-
-
 ### IconService
 
-Generate `IconService` to communicate with the nodes.
+Create an `IconService` instance to communicate with ICON nodes.
 
-`IconService` allows you to send transaction, check the result and block information, etc.
-
-`OkHttpClient` is set as default to communicate with http.
+`IconService` allows you to send transactions, check the result and block information, etc.
 
 ```java
-String url ="http://127.0.0.1:9000/api/v3"; /* node url */
-// OkhttpClient library is used to communicate with http.
-OkHttpClient httpClient = new OkHttpClient.Builder()
-    			.build();
-IconService iconService = new IconService(new HttpProvider(httpClient, url));
+IconService iconService = new IconService(new HttpProvider("http://localhost:9000", 3));
 ```
-
-
 
 ---
 
 
-
 ### WalletExample
 
-This example shows how to create a new `KeyWallet` and load wallet with privateKey or Keystore file.
+This example shows how to create a new `KeyWallet` and load wallet with private key or Keystore file.
 
 #### Create
 
-Create new EOA by calling `create` function. After creation, the address and private Key can be looked up.
+Create new EOA by calling `create` function. After creation, the address and private key can be looked up.
 
 ```java
-KeyWallet wallet = KeyWallet.create(); //Wallet Creation
-System.out.println("address:"+wallet.getAddress()); // Address Check
-System.out.println("privateKey:"+wallet.getPrivateKey()); // PrivateKey Check
+KeyWallet wallet = KeyWallet.create(); // Wallet Creation
+System.out.println("address:" + wallet.getAddress()); // Address Check
+System.out.println("privateKey:" + wallet.getPrivateKey()); // PrivateKey Check
 
 // Output
 address:hx4d37a7013c14bedeedbe131c72e97ab337aea159
@@ -97,23 +75,23 @@ privateKey:00e1d6541bfd8be7d88be0d24516556a34ab477788022fa07b4a6c1d862c4de516
 
 You can call existing EOA by calling `load` function.
 
-After creation, address and private Key can be looked up.
+After creation, address and private key can be looked up.
 
 ```java
-String privateKey; /* privateKey */
-KeyWallet wallet = KeyWallet.load(new Bytes(privateKey));  // Load keywallet with privateKey
-System.out.println("address:"+wallet.getAddress()); // Address lookup
-System.out.println("privateKey:"+wallet.getPrivateKey()); // PrivateKey lookup
+String privateKey;
+KeyWallet wallet = KeyWallet.load(new Bytes(privateKey));  // Load keyWallet with privateKey
+System.out.println("address:" + wallet.getAddress()); // Address lookup
+System.out.println("privateKey:" + wallet.getPrivateKey()); // PrivateKey lookup
 ```
 
 #### Store
 
 After `KeyWallet` object creation, Keystore file can be stored by calling `store` function.
 
-After calling `store`, Keystore file’s name can be looked up with the returned value.
+After calling `store`, Keystore file name can be looked up with the returned value.
 
 ```java
-String password; /* password */
+String password;
 KeyWallet wallet; /* create or load keywallet */
 File destinationDirectory = new File(/* directory Path */);
 String fileName = KeyWallet.store(wallet, password, destinationDirectory);
@@ -142,12 +120,12 @@ In this example, you can create KeyWallet with `CommonData.PRIVATE_KEY_STRING` a
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
 Address toAddress = new Address(CommonData.ADDRESS_1);
-// 1 ICX -> 1000000000000000000 conversion
+// 1 ICX -> 1000000000000000000 loop conversion
 BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
 
 ```
 
-You can get a step cost to transfer icx as follows.
+You can get a default step cost to transfer ICX as follows.
 
 ```java
 // Get apis that provides Governance SCORE
@@ -175,7 +153,7 @@ public BigInteger getDefaultStepCost() throws IOException {
 }
 ```
 
-Generate transaction using the values above.
+Create a transaction using the values above.
 
 ```java
 // networkId of node 1:mainnet, 2~:etc
@@ -199,7 +177,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
 			.build();
 ```
 
-Generate SignedTransaction to add signature of the transaction.
+Create a `SignedTransaction` to add signature of the transaction.
 
 ```java
 // Create signature of the transaction
@@ -283,7 +261,7 @@ This example shows how to send token and check the balance.
 
 #### Token Transfer
 
-You can send the token(CommonData.TOKEN_ADDRESS) that is already generated as an example.
+You can send the token (CommonData.TOKEN_ADDRESS) that is already generated as an example.
 
 You can generate KeyWallet using `CommonData.PRIVATE_KEY_STRING` just like in the case of `IcxTransactionExample`, then send 1 Token to `CommonData.ADDRESS_1`
 

@@ -8,12 +8,12 @@ ICON supports SDK for 3rd party or user services development. You can integrate 
 
 
 
-## Quick start
+## Quick Start
 
 A simple query of the block by height is as follows.
 
 ```java
-IconService iconService = new IconService(new HttpProvider("https://url"));
+IconService iconService = new IconService(new HttpProvider("http://localhost:9000", 3));
 
 // Gets a block matching the block height.
 Request<Block> request = iconService.getBlock(height);
@@ -31,22 +31,22 @@ try {
 
 APIs are called through `IconService`.
 
-It can be initialized as follows.
+`IconService` can be initialized as follows.
 
 ```java
 // Creates an instance of IconService using the HTTP provider.
-IconService iconService = new IconService(new HttpProvider("https://url"));
+IconService iconService = new IconService(new HttpProvider("http://localhost:9000", 3));
 ```
 
-With the customized httpclient is 
+The code below shows initializing `IconService` with a custom HTTP client.
 
 ```java
 OkHttpClient okHttpClient = new OkHttpClient.Builder()
     .readTimeout(200, TimeUnit.MILLISECONDS)
     .writeTimeout(600, TimeUnit.MILLISECONDS)
     .build();
-     
-IconService iconService = new IconService(new HttpProvider(okHttpClient, "https://url"));
+
+IconService iconService = new IconService(new HttpProvider(okHttpClient, "http://localhost:9000", 3));
 ```
 
 
@@ -55,9 +55,9 @@ IconService iconService = new IconService(new HttpProvider(okHttpClient, "https:
 
 All queries are requested by a `Request` object.
 
-Its requests are executed as **Synchronized** or **Asynchronized**.
+Query requests can be executed as **Synchronized** or **Asynchronized**.
 
-Once the request has been executed, the request can not be executed again.
+Once the request has been executed, the same request object cannot be executed again.
 
 ```java
 Request<Block> request = iconService.getBlock(height);
@@ -67,7 +67,7 @@ request.execute(new Callback<Block>(){
     void onFailure(Exception exception) {
         ...
     }
-     
+
     void onResponse(Block block) {
         ...
     }
@@ -90,7 +90,7 @@ Request<Block> request = iconService.getBlock(new BigInteger("1000")); // by hei
 
 Request<Block> request = iconService.getBlock(new Bytes("0x000...000"); // by hash
 
-Request<Block> request = iconService.getLatestBlock(); // latest block
+Request<Block> request = iconService.getLastBlock(); // the last block
      
 
 // Gets the balance of an given account
@@ -113,7 +113,7 @@ Request<Transaction> request = iconService.getTransaction(new Bytes("0x000...000
 Request<TransactionResult> request = iconService.getTransactionResult(new Bytes("0x000...000"));
 
 
-// Calls a SCORE API just for reading
+// Calls a SCORE read-only API
 Call<BigInteger> call = new Call.Builder()
     .from(wallet.getAddress())
     .to(scoreAddress)
@@ -140,8 +140,7 @@ try {
 ```
 
 
-
-## Sending transactions
+## Transactions
 
 Calling SCORE APIs to change states is requested as sending a transaction.
 
@@ -206,9 +205,9 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
-    .value(BigInteger("150000000"))
-    .stepLimit(BigInteger("1000000"))
-    .nonce(BigInteger("1000000"))
+    .value(new BigInteger("150000000"))
+    .stepLimit(new BigInteger("1000000"))
+    .nonce(new BigInteger("1000000"))
     .message(message)
     .build();
 ```
@@ -217,7 +216,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
 
 And the request is executed as **Synchronized** or **Asynchronized** like a querying request.
 
-Once the request has been executed, the request can not be executed again.
+Once the request has been executed, the same request object cannot be executed again.
 
 ```java
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
@@ -245,10 +244,42 @@ try {
 ```
 
 
+## Step Estimation
+
+It is important to set a proper `stepLimit` value in your transaction to make the submitted transaction executed successfully.
+
+You can get an estimated step before sending your transaction and use it later for making a `SignedTransaction`.
+
+```java
+// make a raw transaction without the stepLimit
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
+    .from(fromAddress)
+    .to(toAddress)
+    .nonce(BigInteger.valueOf(1))
+    .call("transfer")
+    .params(params)
+    .build();
+
+// get an estimated step value
+BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+
+// set some margin value
+BigInteger margin = BigInteger.valueOf(10000);
+
+// make a signed transaction with the same raw transaction and the estimated step
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
+Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
+...
+```
+
+Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction for several reasons,
+so it is recommended to add some margin value to the estimation when you set `stepLimit` parameter of `SignedTransaction`.
+
 
 ## Converter
 
-All the requests and responses values are parcelled as `RpcItem`(RpcObject, RpcArray, RcpValue). You can convert your own class using `RpcConverter`.
+All the requests and responses values are parcelled as `RpcItem` (`RpcObject`, `RpcArray`, `RcpValue`). You can convert your own class using `RpcConverter`.
 
 ```java
 iconService.addConverterFactory(new RpcConverter.RpcConverterFactory() {
@@ -287,11 +318,11 @@ class Person {
 ...
     
 Call<Person> call = new Call.Builder()
-                .from(fromAddress)
-                .to(scoreAddress)
-                .method("searchMember")
-                .params(person) // the input parameter is an instance of Person type
-                .buildWith(Person.class); // build with the response type 'Person'
+    .from(fromAddress)
+    .to(scoreAddress)
+    .method("searchMember")
+    .params(person) // the input parameter is an instance of Person type
+    .buildWith(Person.class); // build with the response type 'Person'
 
 Person memberPerson = iconService.call(call).execute();
 ```
