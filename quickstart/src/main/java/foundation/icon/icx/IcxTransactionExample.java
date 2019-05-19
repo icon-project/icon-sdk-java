@@ -49,7 +49,7 @@ public class IcxTransactionExample {
                 .build();
 
         // Creates an instance of IconService using the HTTP provider
-        iconService = new IconService(new HttpProvider(httpClient, CommonData.URL));
+        iconService = new IconService(new HttpProvider(httpClient, CommonData.SERVER_URI, 3));
     }
 
     public static void main(String[] args) {
@@ -189,5 +189,4 @@ public class IcxTransactionExample {
         List<ScoreApi> apis = iconService.getScoreApi(CommonData.GOVERNANCE_ADDRESS).execute();
         return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
     }
-
 }

@@ -19,7 +19,6 @@ package foundation.icon.icx;
 import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
-import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -51,7 +50,7 @@ public class SyncBlockExample {
                 .build();
 
         // Creates an instance of IconService using the HTTP provider
-        iconService = new IconService(new HttpProvider(httpClient, CommonData.URL));
+        iconService = new IconService(new HttpProvider(httpClient, CommonData.SERVER_URI, 3));
     }
 
     public static void main(String[] args) throws IOException {
@@ -59,7 +58,7 @@ public class SyncBlockExample {
         example.observableBlock();
     }
 
-    void observableBlock() {
+    private void observableBlock() {
         if (!isRunningCheckResult) {
             System.out.println("######### block observable start #########");
             // Set timer to abort operation after {terminatedTime}
@@ -95,11 +94,12 @@ public class SyncBlockExample {
                     break;
                 }
             }
+            timer.cancel();
             System.out.println("######### block observable end #########");
         }
     }
 
-    void syncBlock(Block block) throws IOException {
+    private void syncBlock(Block block) throws IOException {
         System.out.println("block height:" + block.getHeight());
 
         // the transaction list of blocks
@@ -192,5 +192,4 @@ public class SyncBlockExample {
         timer.cancel();
         timer = new Timer();
     }
-
 }

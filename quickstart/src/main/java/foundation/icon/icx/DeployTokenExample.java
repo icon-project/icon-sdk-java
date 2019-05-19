@@ -16,10 +16,7 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Bytes;
-import foundation.icon.icx.data.CommonData;
-import foundation.icon.icx.data.ScoreApi;
-import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.data.*;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
@@ -44,7 +41,7 @@ public class DeployTokenExample {
     private long terminatedTime = 60 * 1000L;
     private boolean isRunningCheckResult = false;
 
-    public DeployTokenExample() {
+    DeployTokenExample() {
         // Logs HTTP request and response data
         // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -54,16 +51,19 @@ public class DeployTokenExample {
                 .build();
 
         // Creates an instance of IconService using the HTTP provider
-        iconService = new IconService(new HttpProvider(httpClient, CommonData.URL));
+        iconService = new IconService(new HttpProvider(httpClient, CommonData.SERVER_URI, 3));
     }
 
     public static void main(String[] args) throws IOException {
-        DeployTokenExample example = new DeployTokenExample();
         // Loads a wallet from bytes of the private key
         Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
 
+        new DeployTokenExample().deploy(wallet);
+    }
+
+    Address deploy(Wallet wallet) throws IOException {
         // Read binary data of the SCORE
-        byte[] content = example.readFile();
+        byte[] content = readFile();
 
         // Enter information about tokens to deploy
         BigInteger initialSupply = new BigInteger("100000000000");
@@ -71,31 +71,29 @@ public class DeployTokenExample {
         String tokenName = "StandardToken";
         String tokenSymbol = "ST";
 
-        try {
-            // Create request object to send transaction.
-            Request<Bytes> request = example.sendTransaction(wallet, content,
-                    initialSupply, decimals, tokenName, tokenSymbol);
+        // Create request object to send transaction.
+        Request<Bytes> request = sendTransaction(wallet, content,
+                initialSupply, decimals, tokenName, tokenSymbol);
 
-            // Synchronized request execution
-            Bytes txHash = request.execute();
-            System.out.println("######### sendTransaction #########");
-            System.out.println(String.format("Deploy Token name:%s(%s), creator:%s, txHash:%s",
-                    tokenName, tokenSymbol, wallet.getAddress(), txHash));
+        // Synchronized request execution
+        Bytes txHash = request.execute();
+        System.out.println("######### sendTransaction #########");
+        System.out.println(String.format("Deploy Token name:%s(%s), creator:%s, txHash:%s",
+                tokenName, tokenSymbol, wallet.getAddress(), txHash));
 
-            // Check the transaction result requested by transaction hash
-            example.checkResult(txHash);
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Check the transaction result requested by transaction hash
+        TransactionResult result = checkResult(txHash);
+        if (result != null && BigInteger.ONE.equals(result.getStatus())) {
+            return new Address(result.getScoreAddress());
         }
+        throw new IOException("Deploy failed!");
     }
 
-    public Request<Bytes> sendTransaction(Wallet wallet, byte[] content, BigInteger initialSupply,
-                                          BigInteger decimals, String tokenName, String tokenSymbol) throws IOException {
+    private Request<Bytes> sendTransaction(Wallet wallet, byte[] content, BigInteger initialSupply,
+                                           BigInteger decimals, String tokenName, String tokenSymbol) throws IOException {
 
-        // networkId of node 1:mainnet, 2~:etc
+        // Network ID ("1" for Mainnet, "2" for Testnet, etc)
         BigInteger networkId = new BigInteger("3");
-        // Maximum step allowance that can be used by the transaction
-        BigInteger stepLimit = getMaxStepLimit();
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // Content's mime-type
@@ -107,32 +105,39 @@ public class DeployTokenExample {
                 .put("_decimals", new RpcValue(decimals))
                 .build();
 
-        // Create transaction to deploy token
+        // Create a raw transaction to deploy a token SCORE (without stepLimit)
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(wallet.getAddress())
                 .to(CommonData.SCORE_INSTALL_ADDRESS)
-                .stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .deploy(contentType, content)
                 .params(params)
                 .build();
 
-        // Create signedTransaction for signature of transaction
-        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+        // Get an estimated step value
+        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+
+        // Set some margin value for the operation of `on_install`
+        BigInteger margin = BigInteger.valueOf(10000);
+
+        // Create a signedTransaction with the sender's wallet and the estimatedStep
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
         return iconService.sendTransaction(signedTransaction);
     }
 
-    public void checkResult(Bytes hash) {
+    private TransactionResult checkResult(Bytes hash) {
         // Set timer to abort operation after {terminatedTime}
         startTimer();
         isRunningCheckResult = true;
+        TransactionResult result = null;
+
         System.out.println("######### check Result #########");
         while (isRunningCheckResult) {
 
             try {
                 // Get the transaction result with a transaction hash.
-                TransactionResult result = iconService.getTransactionResult(hash).execute();
+                result = iconService.getTransactionResult(hash).execute();
                 System.out.println("confirm transaction txHash:" + hash);
                 System.out.println("transaction status(1:success, 0:failure):" + result.getStatus());
                 System.out.println("created score address:" + result.getScoreAddress());
@@ -154,6 +159,7 @@ public class DeployTokenExample {
         }
         timer.cancel();
         System.out.println("######### end #########");
+        return result;
     }
 
     void startTimer() {
@@ -173,7 +179,7 @@ public class DeployTokenExample {
 
     private byte[] readFile() throws IOException {
         // sample token : resource/sample_token.zip
-        File file = new File(getClass().getClassLoader().getResource("sample_token.zip").getFile());
+        File file = new File(getClass().getClassLoader().getResource("sampleToken.zip").getFile());
         return readBytes(file);
     }
 

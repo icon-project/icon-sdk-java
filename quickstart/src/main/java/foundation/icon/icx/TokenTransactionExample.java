@@ -26,23 +26,18 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 public class TokenTransactionExample {
 
     private IconService iconService;
-    private Wallet wallet;
     private Address tokenAddress;
-    private Address toAddress;
     private Timer timer = new Timer();
     private long terminatedTime = 5 * 1000L;
     private boolean isRunningCheckResult = false;
 
-    public TokenTransactionExample() {
+    private TokenTransactionExample(Address tokenAddress) {
         // Logs HTTP request and response data
         // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -52,27 +47,27 @@ public class TokenTransactionExample {
                 .build();
 
         // Creates an instance of IconService using the HTTP provider
-        iconService = new IconService(new HttpProvider(httpClient, CommonData.URL));
+        iconService = new IconService(new HttpProvider(httpClient, CommonData.SERVER_URI, 3));
+
+        this.tokenAddress = tokenAddress;
         printTitle();
     }
 
-    void printTitle() {
+    private void printTitle() {
         try {
-            String tokenName = getTokenName(new Address(CommonData.TOKEN_ADDRESS));
-            String tokenSymbol = getTokenSymbol(new Address(CommonData.TOKEN_ADDRESS));
+            String tokenName = getTokenName(tokenAddress);
+            String tokenSymbol = getTokenSymbol(tokenAddress);
             System.out.println(String.format("Token:%s(%s)", tokenName, tokenSymbol));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
-        TokenTransactionExample example = new TokenTransactionExample();
+    public static void main(String[] args) throws IOException {
         // Loads a wallet from bytes of the private key
         Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
-
-        // Score address
-        Address tokenAddress = new Address(CommonData.TOKEN_ADDRESS);
+        // Deploy a token SCORE and get the SCORE address
+        Address tokenAddress = new DeployTokenExample().deploy(wallet);
         // Address to receive token
         Address toAddress = new Address(CommonData.ADDRESS_1);
         // decimal of token
@@ -80,13 +75,14 @@ public class TokenTransactionExample {
         // The amount of token to be sent (Convert unit : 1 -> 1000000000000000000)
         BigInteger value = IconAmount.of("1", tokenDecimals).toLoop();
 
+        TokenTransactionExample example = new TokenTransactionExample(tokenAddress);
 
         try {
             // Create request object to send transaction.
-            Request<Bytes> request = example.sendTransaction(wallet, tokenAddress, toAddress, value);
+            Request<Bytes> request = example.sendTransaction(wallet, toAddress, value);
 
             // Print balances for EOA before sending
-            example.printBalance();
+            example.printBalance(wallet, toAddress);
 
             // Synchronized request execution
             Bytes txHash = request.execute();
@@ -96,21 +92,17 @@ public class TokenTransactionExample {
 
             // Check the transaction result requested by transaction hash
             example.checkResult(txHash);
+
+            // Print token balances for EOA after sending
+            example.printBalance(wallet, toAddress);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public Request<Bytes> sendTransaction(Wallet wallet, Address tokenAddress, Address toAddress, BigInteger value) throws IOException {
-        this.tokenAddress = tokenAddress;
-        this.wallet = wallet;
-        this.toAddress = toAddress;
-
-        // networkId of node 1:mainnet, 2~:etc
+    private Request<Bytes> sendTransaction(Wallet wallet, Address toAddress, BigInteger value) throws IOException {
+        // Network ID ("1" for Mainnet, "2" for Testnet, etc)
         BigInteger networkId = new BigInteger("3");
-        // Recommended step limit to transfer token:
-        // Use 'default' step cost multiplied by 2 in the response of getStepCosts API
-        BigInteger stepLimit = getDefaultStepCost().multiply(new BigInteger("2"));
         // Transaction creation time (timestamp is in the microsecond)
         long timestamp = System.currentTimeMillis() * 1000L;
         // 'transfer' as a methodName means to transfer token
@@ -123,23 +115,25 @@ public class TokenTransactionExample {
                 .put("_value", new RpcValue(value))
                 .build();
 
-        // Create transaction to transfer token
+        // Create a raw transaction to transfer token (without stepLimit)
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(wallet.getAddress())
                 .to(tokenAddress)
-                .stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .call(methodName)
                 .params(params)
                 .build();
 
-        // Create signedTransaction for signature of transaction
-        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet );
+        // Get an estimated step value
+        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+
+        // Create a signedTransaction with the sender's wallet and the estimatedStep
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep);
         return iconService.sendTransaction(signedTransaction);
     }
 
-    public void checkResult(Bytes hash) {
+    private void checkResult(Bytes hash) {
         // Set timer to abort operation after {terminatedTime}
         startTimer();
         isRunningCheckResult = true;
@@ -152,9 +146,6 @@ public class TokenTransactionExample {
                 System.out.println("confirm transaction txHash:"+hash);
                 System.out.println("transaction status(1:success, 0:failure):"+result.getStatus());
                 System.out.println("transaction:"+result);
-
-                // Print token balances for EOA after sending
-                printBalance();
 
                 break;
             } catch (Exception e ) {
@@ -188,7 +179,7 @@ public class TokenTransactionExample {
         timer = new Timer();
     }
 
-    void printBalance() throws IOException {
+    void printBalance(Wallet wallet, Address toAddress) throws IOException {
         BigInteger fromBalance = getTokenBalance(wallet.getAddress());
         BigInteger toBalance = getTokenBalance(toAddress);
         System.out.println("######### print token balance #########");
@@ -234,27 +225,4 @@ public class TokenTransactionExample {
         RpcItem result = iconService.call(call).execute();
         return result.asString();
     }
-
-    public BigInteger getDefaultStepCost() throws IOException {
-        // APIs that Governance SCORE provides.
-        // "getStepCosts" : a table of the step costs for each actions.
-        String methodName = "getStepCosts";
-        // Check input and output parameters of api if you need
-        Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
-        ScoreApi api = governanceScoreApiMap.get(methodName);
-        System.out.println("[getStepCosts]\ninputs:" + api.getInputs() + "\noutputs:" + api.getOutputs());
-
-        Call<RpcItem> call = new Call.Builder()
-                .to(CommonData.GOVERNANCE_ADDRESS)
-                .method(methodName)
-                .build();
-        RpcItem result = iconService.call(call).execute();
-        return result.asObject().getItem("default").asInteger();
-    }
-
-    public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
-        List<ScoreApi> apis = iconService.getScoreApi(CommonData.GOVERNANCE_ADDRESS).execute();
-        return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
-    }
-
 }
