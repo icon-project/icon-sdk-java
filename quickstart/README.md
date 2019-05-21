@@ -8,37 +8,39 @@ In this project, the examples are implemented as follows.
 | ------------- | ----------- |
 | WalletExample | An example of creating and loading a keywallet. |
 | IcxTransactionExample | An example of transferring ICX and confirming the result. |
-| TokenTransactionExample | An example of transferring IRC token and confirming the result. |
 | DeployTokenExample | An example of deploying token. |
+| TokenTransactionExample | An example of transferring IRC token and confirming the result. |
 | SyncBlockExample | An example of checking block confirmation and printing the ICX and token transfer information. |
 
 
+## Prerequisite
 
-### Add Dependency
+This Java SDK works on the following platforms:
 
-Please add dependency to use `icon-sdk-java`.
+- Java 8+ (for Java7, you can explore source code [here](https://github.com/icon-project/icon-sdk-java/blob/sdk-for-java7/README.md))
+- Android 3.0+ (API 11+)
 
-Maven
+## Installation
+
+Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk) or grab via Maven:
 
 ```xml
-<dependencies>
-	<dependency>
-		<groupId>foundation.icon</groupId>
-		<artifactId>icon-sdk</artifactId>
-		<version>[x.y.z]</version>
-	</dependency>
-</dependencies>
+<dependency>
+    <groupId>foundation.icon</groupId>
+    <artifactId>icon-sdk</artifactId>
+    <version>[x.y.z]</version>
+</dependency>
 ```
 
-Gradle
+or Gradle:
 
-```gradle
+```groovy
 dependencies {
-	implementation 'foundation.icon:icon-sdk:[x.y.z]'
+    implementation 'foundation.icon:icon-sdk:[x.y.z]'
 }
 ```
 
-
+## Using the SDK
 
 ### IconService
 
@@ -50,14 +52,12 @@ Create an `IconService` instance to communicate with ICON nodes.
 IconService iconService = new IconService(new HttpProvider("http://localhost:9000", 3));
 ```
 
----
 
-
-### WalletExample
+### Wallet
 
 This example shows how to create a new `KeyWallet` and load wallet with private key or Keystore file.
 
-#### Create
+#### Create a wallet
 
 Create new EOA by calling `create` function. After creation, the address and private key can be looked up.
 
@@ -71,7 +71,7 @@ address:hx4d37a7013c14bedeedbe131c72e97ab337aea159
 privateKey:00e1d6541bfd8be7d88be0d24516556a34ab477788022fa07b4a6c1d862c4de516
 ```
 
-#### Load
+#### Load a wallet
 
 You can call existing EOA by calling `load` function.
 
@@ -84,45 +84,38 @@ System.out.println("address:" + wallet.getAddress()); // Address lookup
 System.out.println("privateKey:" + wallet.getPrivateKey()); // PrivateKey lookup
 ```
 
-#### Store
+#### Store the wallet
 
-After `KeyWallet` object creation, Keystore file can be stored by calling `store` function.
+After `KeyWallet` object creation, the Keystore file can be stored by calling `store` function.
 
-After calling `store`, Keystore file name can be looked up with the returned value.
+After calling `store`, the Keystore file’s name can be looked up with the returned value.
 
 ```java
 String password;
 KeyWallet wallet; /* create or load keywallet */
 File destinationDirectory = new File(/* directory Path */);
 String fileName = KeyWallet.store(wallet, password, destinationDirectory);
-System.out.println("fileName:"+fileName);	// keystore file name output
+System.out.println("fileName:" + fileName); // Keystore file name output
 
 // Output
 fileName:UTC--2018-08-30T03-27-41.768000000Z--hx4d37a7013c14bedeedbe131c72e97ab337aea159.json
 ```
 
-
-
----
-
-
-
-### IcxTransactionExample
+### ICX Transfer
 
 This example shows how to transfer ICX and check the result.
 
 *For the KeyWallet and IconService creation, please refer to the information above.*
 
-#### ICX Transfer
+#### ICX transfer transaction
 
-In this example, you can create KeyWallet with `CommonData.PRIVATE_KEY_STRING` and transfer 1 ICX to `CommonData.ADDRESS_1`.
+In this example, you can create a KeyWallet with `CommonData.PRIVATE_KEY_STRING` and transfer 1 ICX to `CommonData.ADDRESS_1`.
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
 Address toAddress = new Address(CommonData.ADDRESS_1);
 // 1 ICX -> 1000000000000000000 loop conversion
 BigInteger value = IconAmount.of("1", IconAmount.Unit.ICX).toLoop();
-
 ```
 
 You can get a default step cost to transfer ICX as follows.
@@ -153,58 +146,46 @@ public BigInteger getDefaultStepCost() throws IOException {
 }
 ```
 
-Create a transaction using the values above.
+Generate a transaction using the values above.
 
 ```java
-// networkId of node 1:mainnet, 2~:etc
-BigInteger networkId = new BigInteger("3"); // input node’s networkld
-// Recommended icx transfer step limit :
+// Network ID ("1" for Mainnet, "2" for Testnet, etc)
+BigInteger networkId = new BigInteger("3");
+// Recommended step limit to transfer icx:
 // use 'default' step cost in the response of getStepCosts API
 BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
 
-// Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit : us)
+// Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit: us)
 // If the timestamp is considerably different from the current time, the transaction will be rejected.
 long timestamp = System.currentTimeMillis() * 1000L;
 
 //Enter transaction information
 Transaction transaction = TransactionBuilder.newBuilder()
-            .nid(networkId)
-			.from(fromAddress)
-			.to(toAddress)
-			.value(value)
-			.stepLimit(stepLimit)
-			.timestamp(new BigInteger(Long.toString(timestamp)))
-			.build();
+        .nid(networkId)
+        .from(fromAddress)
+        .to(toAddress)
+        .value(value)
+        .stepLimit(stepLimit)
+        .timestamp(new BigInteger(Long.toString(timestamp)))
+        .build();
 ```
 
-Create a `SignedTransaction` to add signature of the transaction.
+Generate a `SignedTransaction` to add the signature of the transaction.
 
 ```java
 // Create signature of the transaction
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 // Read params to transfer to nodes
 System.out.println(signedTransaction.getProperties());
-```
-
-After calling sendTransaction from `IconService`, you can send transaction and check the transaction’s hash value. ICX transfer is now sent.
-
-```java
-// Send transaction
+// Send the transaction
 Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
-
-// Print transaction hash
-System.out.println("txHash:"+txHash);
-
-// Output
-txHash:0x6b17886de346655d96373f2e0de494cb8d7f36ce9086cb15a57d3dcf24523c8f
 ```
 
-#### Check the Transaction Result
+#### Check the transaction result
 
-After transaction is sent, the result can be looked up with the returned hash value.
+After a transaction is sent, the result can be looked up with the returned hash value.
 
-In this example, you can check your transaction result in every 2 seconds because of the block confirmation time.
-Checking the result is as follows:
+In this example, you can check your transaction result in every 2 seconds because of the block confirmation time. Checking the result is as follows:
 
 ```java
 // Check the result with the transaction hash
@@ -219,138 +200,190 @@ You can check the following information using the TransactionResult.
 
 - status : 1 (success), 0 (failure)
 - to : transaction’s receiving address
-- failure : Only exists if status is 0(failure). code(str), message(str) property included
+- failure : Only exists if the status is 0(failure). code(str), message(str) property included
 - txHash : transaction hash
 - txIndex : transaction index in a block
 - blockHeight : Block height of the transaction
 - blockHash : Block hash of the transaction
-- cumulativeStepUsed : Accumulated amount of consumed step’s until the transaction is executed in block
+- cumulativeStepUsed : Accumulated amount of consumed step until the transaction is executed in block
 - stepUsed : Consumed step amount to send the transaction
 - stepPrice : Consumed step price to send the transaction
 - scoreAddress : SCORE address if the transaction generated SCORE (optional)
-- eventLogs :  Occurred EventLog’s list during execution of the transaction.
-- logsBloom : Indexed Data’s Bloom Filter value from the occurred Eventlog’s Data
+- eventLogs : List of EventLogs written during the execution of the transaction.
+- logsBloom : Bloom Filter of the indexed data of the Eventlogs.
 
-#### Check the Balance
+#### Check the ICX balance
 
 In this example, you can check the ICX balance by looking up the transaction before and after the transaction.
 
-ICX balance can be confirmed by calling getBalance function from `IconService`
+ICX balance can be confirmed by calling `getBalance` function from `IconService`
 
 ```java
 KeyWallet wallet; /* create or load */
 // Check the wallet balance
 BigInteger balance = iconService.getBalance(wallet.getAddress()).execute();
-System.out.println("balance:"+balance));
+System.out.println("balance:" + balance));
 
 // Output
 balance:5000000000000000000
 ```
 
+### Token Deploy and Transfer
 
-
----
-
-
-
-### TokenTransactionExample
-
-This example shows how to send token and check the balance.
+This example shows how to deploy a token and check the result. After that, shows how to send tokens and check the balance.
 
 *For KeyWallet and IconService generation, please refer to the information above.*
 
-#### Token Transfer
+#### Token deploy transaction
 
-You can send the token (CommonData.TOKEN_ADDRESS) that is already generated as an example.
+You need a SCORE project to deploy token.
 
-You can generate KeyWallet using `CommonData.PRIVATE_KEY_STRING` just like in the case of `IcxTransactionExample`, then send 1 Token to `CommonData.ADDRESS_1`
+In this example, you will use ‘sampleToken.zip’ from the ‘resources’ folder.
 
-You need token address to send your token.
+* sampleToken.zip: SampleToken SCORE project zip file.
+
+Generate a keyWallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘sampleToken.zip’
+
+```java
+Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
+// Read sampleToken.zip from ‘resources’ folder.
+byte[] content = /* score binary */
+```
+
+Prepare basic information of the token you want to deploy and make a parameter object.
+
+```java
+BigInteger initialSupply = new BigInteger("100000000000");
+BigInteger decimals = new BigInteger("18");
+
+RpcObject params = new RpcObject.Builder()
+	.put("_initialSupply", new RpcValue(initialSupply))
+	.put("_decimals", new RpcValue(decimals))
+	.build();
+```
+
+Generate a raw transaction to deploy a token SCORE without the stepLimit value.
+
+```java
+Transaction transaction = TransactionBuilder.newBuilder()
+	.nid(networkId)
+	.from(wallet.getAddress())
+	.to(CommonData.SCORE_INSTALL_ADDRESS)
+	.timestamp(new BigInteger(Long.toString(timestamp)))
+	.deploy(contentType, content)
+	.params(params)
+	.build();
+```
+
+Get an estimated step value using `estimateStep` API of `IconService`.
+
+```java
+BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+```
+
+Generate a `SignedTransaction` with the same raw transaction and the estimated step.
+Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction.
+So we need to add some margin value to the estimation when you set `stepLimit` parameter of `SignedTransaction`.
+
+```java
+// Set some margin value for the operation of `on_install`
+BigInteger margin = BigInteger.valueOf(10000);
+
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
+```
+
+You can check the transaction hash value by calling `sendTransaction` from `IconService`.
+
+```java
+Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
+
+// Print Transaction Hash
+System.out.println("txHash:"+txHash);
+
+// Output
+txHash:0x6b17886de346655d96373f2e0de494cb8d7f36ce9086cb15a57d3dcf24523c8f
+```
+
+#### Check the Result
+
+After sending the transaction, you can check the result with the returned hash value.
+
+In this example, you can check your transaction result in every 2 seconds because of the block confirmation time.
+
+If the transaction succeeds, you can check the `scoreAddress` from the result.
+
+You can use the SCORE after the SCORE passes the audit and is finally accepted to deploy.
+
+```java
+// Checking the results with transaction hash
+TransactionResult result = iconService.getTransactionResult(hash).execute();
+System.out.println("transaction status(1:success, 0:failure):"+result.getStatus());
+System.out.println("created score address:"+result.getScoreAddress());
+System.out.println("waiting accept score...");
+
+// Output
+transaction status(1:success, 0:failure):1
+created score address:cxd7fce67cc95b731dfbfdd8c8b34e8a5d0664a9ed
+waiting accept score...
+```
+
+*For the 'TransactionResult', please refer to the `IcxTransactionExample`.*
+
+#### Token transfer transaction
+
+You can get the token SCORE address by checking the `scoreAddress` from the deploy transaction result above, and use this to send the token.
+
+You can generate a KeyWallet using `CommonData.PRIVATE_KEY_STRING` just like in the case of `IcxTransactionExample`, then send 1 Token to `CommonData.ADDRESS_1`.
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
 Address toAddress = new Address(CommonData.ADDRESS_1);
-Address tokenAddress = new Address(CommonData.TOKEN_ADDRESS); //Token Address
+
+// Deploy a token SCORE and get the SCORE address
+Address tokenAddress = new DeployTokenExample().deploy(wallet);
+
 int tokenDecimals = 18;	// token decimal
 // 1 ICX -> 1000000000000000000 conversion
 BigInteger value = IconAmount.of("1", tokenDecimals).toLoop();
-
 ```
 
-You can get a step cost to send token as follows.
+Generate a transaction with the given parameters above.
+You have to add receiving address and value to `RpcObject` to send token.
 
 ```java
-// Get apis that provides Governance SCORE
-public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
-    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
-    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
-    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
-}
-
-// You can use "governance score apis" to get step costs.
-public BigInteger getDefaultStepCost() throws IOException {
-    String methodName = "getStepCosts";
-
-    // Check input and output parameters of api if you need
-    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
-    ScoreApi api = governanceScoreApiMap.get(methodName);
-    System.out.println("[getStepCosts]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
-
-    Call<RpcItem> call = new Call.Builder()
-        .to(GOVERNANCE_ADDRESS)	// cx0000000000000000000000000000000000000001
-        .method(methodName)
-        .build();
-    RpcItem result = iconService.call(call).execute();
-
-    // For sending token, it is about twice the default value.
-    return result.asObject().getItem("default").asInteger().multiply(new BigInteger("2"));;
-}
-```
-
-Generate Transaction with the given parameters above. You have to add receiving address and value to ‘RpcObject’ to send token.
-
-```java
-// networkId of node 1:mainnet, 2~:etc
-BigInteger networkId = new BigInteger("3"); // input node’s networkld
-// Recommended Step limit to send transaction for token transfer :
-// Use 'default' step cost multiplied by 2 in the response of getStepCosts API
-BigInteger stepLimit = getDefaultStepCost(); // Please refer to the above description.
-// Timestamp is used to prevent the identical transactions. Only current time is required (Default:US)
-// If the timestamp is considerably different from the current time, the transaction will be rejected.
+// Network ID ("1" for Mainnet, "2" for Testnet, etc)
+BigInteger networkId = new BigInteger("3");
+// Transaction creation time (timestamp is in the microsecond)
 long timestamp = System.currentTimeMillis() * 1000L;
-// SCORE name that send transaction is “transfer”.
+// 'transfer' as a methodName means to transfer token
+// https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md
 String methodName = "transfer";
 
 // Enter receiving address and the token value.
-// You must enter the given key name("_to", "_value"). Otherwise, the transaction will be rejected.
-
+// You must enter the given key name ("_to", "_value"). Otherwise, the transaction will be rejected.
 RpcObject params = new RpcObject.Builder()
-                .put("_to", new RpcValue(toAddress))
-                .put("_value", new RpcValue(value))
-                .build();
+	.put("_to", new RpcValue(toAddress))
+	.put("_value", new RpcValue(value))
+	.build();
 
-// Enter transaction information
+// Create a raw transaction to transfer token (without stepLimit)
 Transaction transaction = TransactionBuilder.newBuilder()
-                .nid(networkId)
-                .from(wallet.getAddress())
-                .to(tokenAddress)
-                .stepLimit(stepLimit)
-                .timestamp(new BigInteger(Long.toString(timestamp)))
-                .call(methodName)
-                .params(params)
-                .build();
+	.nid(networkId)
+	.from(wallet.getAddress())
+	.to(tokenAddress)
+	.timestamp(new BigInteger(Long.toString(timestamp)))
+	.call(methodName)
+	.params(params)
+	.build();
+
+// Get an estimated step value
+BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+
+// Create a signedTransaction with the sender's wallet and the estimatedStep
+SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep);
 ```
 
-Generate SignedTransaction to add signature to your transaction.
-
-```java
-// Generate transaction signature.
-SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-// Read params to send to nodes.
-System.out.println(signedTransaction.getProperties());
-```
-
- Call sendTransaction from ‘IconService’ to check the transaction hash. Token transaction is now sent.
+Call `sendTransaction` from `IconService` to check the transaction hash.
 
 ```java
 // Send transaction
@@ -381,20 +414,19 @@ transaction status(1:success, 0:failure):1
 
 *For the TransactionResult, please refer to the `IcxTransactionExample`.*
 
-#### Check the Token Balance
+#### Check the token balance
 
 In this example, you can check the token balance before and after the transaction.
 
-You can check the token balance by calling ‘balanceOf’ from the token SCORE.
+You can check the token balance by calling `balanceOf` from the token SCORE.
 
 ```java
-Address tokenAddress = new Address(CommonData.TOKEN_ADDRESS); //Token Address
 KeyWallet wallet; /* create or load */
+Address tokenAddress; /* returned from `new DeployTokenExample().deploy(wallet)` */
+String methodName = "balanceOf"; /* Method name to check the balance */
 
-String methodName = "balanceOf"; // Method name to check the balance
-
-// How to enter balance address
-// You must enter the given key name (“_owner”). Otherwise, your transaction will be rejected.
+// Enter the address to check balance.
+// You must enter the given key name ("_owner"). Otherwise, your transaction will be rejected.
 RpcObject params = new RpcObject.Builder()
     .put("_owner", new RpcValue(wallet.getAddress()))
     .build();
@@ -413,170 +445,15 @@ System.out.println("balance:"+balance));
 balance:6000000000000000000
 ```
 
-
-
----
-
-
-
-### DeployTokenExample
-
-This example shows how to deploy token and check the result.
-
-*For the KeyWallet and IconService generation, please refer to the information above.*
-
-#### Token Deploy
-
-You need the SCORE Project to deploy token.
-
-In this example, you will use ‘sample_token.zip’ from the ‘resources’ folder.
-
-*sample_token.zip : SampleToken SCORE Project Zip file.
-
-Generate Keywallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘sample_token.zip’
-
-```java
-Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
-// Read sample_token.zip from ‘resources’ folder.
-byte[] content = /* score binary */
-```
-
-Enter the basic information of the token you want to deploy.
-
-```java
-BigInteger initialSupply = new BigInteger("100000000000");
-BigInteger decimals = new BigInteger("18");
-String tokenName = "StandardToken";
-String tokenSymbol = "ST";
-```
-
-You can get the maximum step limit value as follows.
-
-```java
-// Get apis that provides Governance SCORE
-public Map<String, ScoreApi> getGovernanceScoreApi() throws IOException {
-    // GOVERNANCE_ADDRESS : cx0000000000000000000000000000000000000001
-    List<ScoreApi> apis = iconService.getScoreApi(GOVERNANCE_ADDRESS).execute();
-    return apis.stream().collect(Collectors.toMap(ScoreApi::getName, api -> api));
-}
-
-// You can use "governance score apis" to get max step cost.
-public BigInteger getMaxStepLimit() throws IOException {
-    // APIs that Governance SCORE provides.
-    // "getMaxStepLimit" : the maximum step limit value that any SCORE execution should be bounded by.
-    String methodName = "getMaxStepLimit";
-    // Check input and output parameters of api if you need
-    Map<String, ScoreApi> governanceScoreApiMap = getGovernanceScoreApi();
-    ScoreApi api = governanceScoreApiMap.get(methodName);
-    System.out.println("[getMaxStepLimit]\n inputs:" + api.getInputs() + "\n outputs:" + api.getOutputs());
-
-    RpcObject params = new RpcObject.Builder()
-            .put(api.getInputs().get(0).getName(), new RpcValue("invoke"))
-            .build();
-
-    Call<BigInteger> call = new Call.Builder()
-            .to(CommonData.GOVERNANCE_ADDRESS) // cx0000000000000000000000000000000000000001
-            .method(methodName)
-            .params(params)
-            .buildWith(BigInteger.class);
-    return iconService.call(call).execute();
-}
-```
-
-Generate transaction with the given values above.
-
-```java
-BigInteger networkId = new BigInteger("3"); // input node’s networkld
-BigInteger stepLimit = getMaxStepLimit(); // Please refer to the above description.
-long timestamp = System.currentTimeMillis() * 1000L; //timestamp declaration
-// Use cx0 to deploy SCORE.
-Address scoreInstall = new Address(CommonData.SCORE_INSTALL_ADDRESS);
-String contentType = "application/zip";
-
-// Enter token information
-// key name ("initialSupply", "decimals", "name", "symbol")
-// You must enter the given values. Otherwise, your transaction will be rejected.
-RpcObject params = new RpcObject.Builder()
-    .put("initialSupply", new RpcValue(initialSupply))
-    .put("decimals", new RpcValue(decimals))
-    .put("name", new RpcValue(tokenName))
-    .put("symbol", new RpcValue(tokenSymbol))
-    .build();
-
-Transaction transaction = TransactionBuilder.newBuilder() //Enter transaction information.
-    .nid(networkId)
-    .from(wallet.getAddress())
-    .to(scoreInstall)
-    .stepLimit(stepLimit)
-    .timestamp(new BigInteger(Long.toString(timestamp)))
-    .deploy(contentType, content)
-    .params(params)
-    .build();
-
-```
-
-Generate SignedTransaction to add signature to the transaction.
-
-```java
-// Generate signature of the transaction.
-SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-// Read params to send to nodes.
-System.out.println(signedTransaction.getProperties());
-```
-
-You can check the transaction hash value by calling sendTransaction from ‘IconService` Token transfer is now completed.
-
-```java
-// Token Transfer
-Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
-
-// Print Transaction Hash
-System.out.println("txHash:"+txHash);
-
-// Output
-txHash:0x6b17886de346655d96373f2e0de494cb8d7f36ce9086cb15a57d3dcf24523c8f
-```
-
-#### Check the Result
-
-After sending the transaction, you can check the result with the returned hash value.
-
-In this example, you can check your transaction result in every 2 seconds because of the block confirmation time.
-
-If the transaction succeeds, you can check scoreAddress from the result.
-
-You can use SCORE after SCORE audit is successfully accepted.
-
-```java
-// Checking the results with transaction hash
-TransactionResult result = iconService.getTransactionResult(hash).execute();
-System.out.println("transaction status(1:success, 0:failure):"+result.getStatus());
-System.out.println("created score address:"+result.getScoreAddress());
-System.out.println("waiting accept score...");
-
-// Output
-transaction status(1:success, 0:failure):1
-created score address:cxd7fce67cc95b731dfbfdd8c8b34e8a5d0664a9ed
-waiting accept score...
-```
-
-*For the 'TransactionResult', please refer to the `IcxTransactionExample`.*
-
-
-
----
-
-
-
-### SyncBlockExample
+### Sync Block
 
 This example shows how to read block information and print the transaction result for every block creation.
 
 *Please refer to above for KeyWallet and IconService creation.*
 
-#### Read Block Information
+#### Read block information
 
-In this example, 'getLastBlock' is called periodically in order to check the new blocks,
+In this example, `getLastBlock` is called periodically in order to check the new blocks,
 
 by updating the transaction information for every block creation.
 
@@ -601,10 +478,10 @@ transaction hash:0x0d2b71ec3045bfd39f90da844cb03c58490fe364c7715cc299db346c1153f
 transaction:ConfirmedTransaction...stepLimit=0xfa0...value=0x21e19e...version=0x3...
 ```
 
-You can check the following information using the ConfirmedTransaction:
+You can check the following information using the `ConfirmedTransaction`:
 
 - version : json rpc server version
-- to : Receiving address of transaction
+- to : Receiving address of the transaction
 - value: The amount of ICX coins to transfer to the address. If omitted, the value is assumed to be 0
 - timestamp: timestamp of the transmitting transaction (unit: microseconds)
 - nid : network ID
@@ -613,7 +490,7 @@ You can check the following information using the ConfirmedTransaction:
 - dataType: A value indicating the type of the data item (call, deploy, message)
 - data: Various types of data are included according to dataType.
 
-#### Transaction Output
+#### Transaction output
 
 After reading the `TransactionResult`, merge with `ConfirmedTransaction` to send ICX or tokens. Transaction output is as follows:
 
@@ -652,15 +529,14 @@ if (transaction.getDataType() != null &&
                            ",amount:" + value);
     }
 }
-
 ```
 
-#### Check the Token Name & Symbol
+#### Check the token name & symbol
 
-You can check the token SCORE by calling the `name` and` symbol` functions.
+You can check the token SCORE by calling the `name` and `symbol` functions.
 
 ```java
-Address tokenAddress = new Address(CommonData.TOKEN_ADDRESS); //Token Address
+Address tokenAddress; /* returned from `new DeployTokenExample().deploy(wallet)` */
 
 Call<RpcItem> call = new Call.Builder()
     .to(tokenAddress)
@@ -682,50 +558,16 @@ System.out.println("tokenName:"+tokenName);
 System.out.println("tokenSymbol:"+tokenSymbol);
 
 // Output
-tokenName:StandardToken	
+tokenName:StandardToken
 tokenSymbol:ST
-
 ```
 
+## References
 
-
-----------
-
-
-
-### References
-
-- [Javadoc](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
+- [API Reference](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md) 
 
 
+## Licenses
 
-### Q&A
-
-1. What is KeyWallet?
-- A class that manages EOA's private / public key pair.
-- Transaction message signing function.
-- Keystore creation and import / export function.
-2. What is keyStore file?
-- Text / file that is encrypted with a private key.
-3. Why use HttpLoggingInterceptor?
-- To log detailed information of http request / response (option)
-4. What is stepLimit for?
--  Since transaction fee is required to send transaction, you can set the maximum fee limit. If your actual transaction fee exceeds the stepLimit that you have set, the transaction will fail but still your transaction fee(stepLimit) will be consumed.
-5. What is networId?
-- 1 for mainNet, etc
-6. Why sendTransaction method is named as ‘transfer’, when transferring token?
-- Transfer as a methodName means to transfer token
-- [Refer to IRC2 Specification](https://github.com/icon-project/IIPs/blob/master/IIPS/iip-2.md)
-7. What is httpProvider?
-- Class that supports node and jsonRpc communication.
-8. Is the HttpLoggingInterceptor in SampleCode deleted at all?
-- HttpLoggingInterceptor is not an SDK library, but one of the 'okhttpclient' related libraries. This is not a required library, but an additional one that is used to record the Log in detail. Please add dependency to use it as below.
-
-```xml
-<dependency>
-	<groupId>com.squareup.okhttp3</groupId>
-	<artifactId>logging-interceptor</artifactId>
-	<version>3.11.0</version>
-</dependency>
-```
+This project follows the Apache 2.0 License. Please refer to [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.

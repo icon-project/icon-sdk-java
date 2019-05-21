@@ -7,6 +7,36 @@
 ICON supports SDK for 3rd party or user services development. You can integrate ICON SDK for your project and utilize ICON’s functionality.
 
 
+## Version
+
+0.9.11 (beta)
+
+## Prerequisite
+
+This Java SDK works on the following platforms:
+
+- Java 8+ (for Java7, you can explore source code [here](https://github.com/icon-project/icon-sdk-java/blob/sdk-for-java7/README.md))
+- Android 3.0+ (API 11+)
+
+## Installation
+
+Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk) or grab via Maven:
+
+```xml
+<dependency>
+    <groupId>foundation.icon</groupId>
+    <artifactId>icon-sdk</artifactId>
+    <version>[x.y.z]</version>
+</dependency>
+```
+
+or Gradle:
+
+```groovy
+dependencies {
+    implementation 'foundation.icon:icon-sdk:[x.y.z]'
+}
+```
 
 ## Quick Start
 
@@ -26,11 +56,9 @@ try {
 ```
 
 
-
 ## IconService
 
 APIs are called through `IconService`.
-
 `IconService` can be initialized as follows.
 
 ```java
@@ -49,14 +77,10 @@ OkHttpClient okHttpClient = new OkHttpClient.Builder()
 IconService iconService = new IconService(new HttpProvider(okHttpClient, "http://localhost:9000", 3));
 ```
 
-
-
 ## Queries
 
 All queries are requested by a `Request` object.
-
 Query requests can be executed as **Synchronized** or **Asynchronized**.
-
 Once the request has been executed, the same request object cannot be executed again.
 
 ```java
@@ -87,31 +111,23 @@ The querying APIs are as follows.
 ```java
 // Gets the block
 Request<Block> request = iconService.getBlock(new BigInteger("1000")); // by height
-
 Request<Block> request = iconService.getBlock(new Bytes("0x000...000"); // by hash
-
 Request<Block> request = iconService.getLastBlock(); // the last block
-     
 
 // Gets the balance of an given account
 Request<BigInteger> request = iconService.getBalance(new Address("hx000...1");
 
-
 // Gets a list of the SCORE API
 Request<List<ScoreApi>> request = iconService.getScoreApi(new Address("cx000...1"));
-
 
 // Gets the total supply of icx
 Request<BigInteger> request = iconService.getTotalSupply();
 
-
 // Gets a transaction matching the given transaction hash
 Request<Transaction> request = iconService.getTransaction(new Bytes("0x000...000"));
 
-
 // Gets the result of the transaction matching the given transaction hash
 Request<TransactionResult> request = iconService.getTransactionResult(new Bytes("0x000...000"));
-
 
 // Calls a SCORE read-only API
 Call<BigInteger> call = new Call.Builder()
@@ -122,7 +138,7 @@ Call<BigInteger> call = new Call.Builder()
     .buildWith(BigInteger.class);
 Request<BigInteger> request = iconService.call(call);
 
-// Calls without response type                                                     
+// Calls without response type
 Call<RpcItem> call = new Call.Builder()
     .from(wallet.getAddress())
     .to(scoreAddress)
@@ -136,9 +152,8 @@ try {
     ...
 } catch (Exception e) {
     ...
-}                                                     
+}
 ```
-
 
 ## Transactions
 
@@ -167,7 +182,7 @@ KeyWallet.store(wallet, "password", dir); // throw exception if an error exists.
 **Creating transactions**
 
 ```java
-// sending icx
+// send ICX
 Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
@@ -177,7 +192,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nonce(new BigInteger("1000000"))
     .build();
 
-// deploy
+// deploy a SCORE
 Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
@@ -188,7 +203,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .params(params)
     .build();
 
-// call
+// call a method in SCORE
 Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
@@ -200,7 +215,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .params(params)
     .build();
 
-// message
+// send a message
 Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
@@ -214,7 +229,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
 
 `SignedTransaction` object signs a transaction using the wallet.
 
-And the request is executed as **Synchronized** or **Asynchronized** like a querying request.
+And the request can be executed as **Synchronized** or **Asynchronized** like a query request.
 
 Once the request has been executed, the same request object cannot be executed again.
 
@@ -228,7 +243,7 @@ request.execute(new Callback<Bytes>(){
     void onFailure(Exception e) {
         ...
     }
-     
+
     void onResponse(Bytes txHash) {
         ...
     }
@@ -276,7 +291,6 @@ Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
 Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction for several reasons,
 so it is recommended to add some margin value to the estimation when you set `stepLimit` parameter of `SignedTransaction`.
 
-
 ## Converter
 
 All the requests and responses values are parcelled as `RpcItem` (`RpcObject`, `RpcArray`, `RcpValue`). You can convert your own class using `RpcConverter`.
@@ -316,7 +330,7 @@ class Person {
 }
 
 ...
-    
+
 Call<Person> call = new Call.Builder()
     .from(fromAddress)
     .to(scoreAddress)
@@ -334,35 +348,6 @@ Person memberPerson = iconService.call(call).execute();
 - [ICON Network](https://github.com/icon-project/icon-project.github.io/blob/master/docs/icon_network.md)
 
 
-## Version
-
-0.9.11 (beta)
-
-## Android Support
-
-- Android 3.0+ (API 11+)
-
-## Download
-
-Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk) or grab via Maven:
-
-```xml
-<dependency>
-  <groupId>foundation.icon</groupId>
-  <artifactId>icon-sdk</artifactId>
-  <version>[x.y.z]</version>
-</dependency>
-```
-
-or Gradle:
-
-```groovy
-implementation 'foundation.icon:icon-sdk:[x.y.z]'
-```
-
-
-## License
+## Licenses
 
 This project follows the Apache 2.0 License. Please refer to [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.
-
-
