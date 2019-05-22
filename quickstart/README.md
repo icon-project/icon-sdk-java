@@ -1,44 +1,16 @@
 # ICON SDK Java Quickstart
 
 This is an example project of ICON SDK Java.
-
 In this project, the examples are implemented as follows.
 
-| Example       | Description |
-| ------------- | ----------- |
-| WalletExample | An example of creating and loading a keywallet. |
-| IcxTransactionExample | An example of transferring ICX and confirming the result. |
-| DeployTokenExample | An example of deploying token. |
+| Example                 | Description |
+| ----------------------- | ----------- |
+| WalletExample           | An example of creating and loading a `Keywallet`. |
+| IcxTransactionExample   | An example of transferring ICX and confirming the result. |
+| DeployTokenExample      | An example of deploying token. |
 | TokenTransactionExample | An example of transferring IRC token and confirming the result. |
-| SyncBlockExample | An example of checking block confirmation and printing the ICX and token transfer information. |
+| SyncBlockExample        | An example of checking block confirmation and printing the ICX and token transfer information. |
 
-
-## Prerequisite
-
-This Java SDK works on the following platforms:
-
-- Java 8+ (for Java7, you can explore source code [here](https://github.com/icon-project/icon-sdk-java/blob/sdk-for-java7/README.md))
-- Android 3.0+ (API 11+)
-
-## Installation
-
-Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk) or grab via Maven:
-
-```xml
-<dependency>
-    <groupId>foundation.icon</groupId>
-    <artifactId>icon-sdk</artifactId>
-    <version>[x.y.z]</version>
-</dependency>
-```
-
-or Gradle:
-
-```groovy
-dependencies {
-    implementation 'foundation.icon:icon-sdk:[x.y.z]'
-}
-```
 
 ## Using the SDK
 
@@ -55,7 +27,7 @@ IconService iconService = new IconService(new HttpProvider("http://localhost:900
 
 ### Wallet
 
-This example shows how to create a new `KeyWallet` and load wallet with private key or Keystore file.
+This example shows how to create a new `KeyWallet` or load wallet with a private key or Keystore file.
 
 #### Create a wallet
 
@@ -109,7 +81,7 @@ This example shows how to transfer ICX and check the result.
 
 #### ICX transfer transaction
 
-In this example, you can create a KeyWallet with `CommonData.PRIVATE_KEY_STRING` and transfer 1 ICX to `CommonData.ADDRESS_1`.
+In this example, you can create a `KeyWallet` with `CommonData.PRIVATE_KEY_STRING` and transfer 1 ICX to `CommonData.ADDRESS_1`.
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
@@ -196,7 +168,7 @@ System.out.println("transaction status(1:success, 0:failure):"+result.getStatus(
 transaction status(1:success, 0:failure):1
 ```
 
-You can check the following information using the TransactionResult.
+You can check the following information using the `TransactionResult`.
 
 - status : 1 (success), 0 (failure)
 - to : transaction’s receiving address
@@ -242,7 +214,7 @@ In this example, you will use ‘sampleToken.zip’ from the ‘resources’ fol
 
 * sampleToken.zip: SampleToken SCORE project zip file.
 
-Generate a keyWallet using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘sampleToken.zip’
+Generate a `KeyWallet` using `CommonData.PRIVATE_KEY_STRING`, then read the binary data from ‘sampleToken.zip’
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
@@ -262,7 +234,7 @@ RpcObject params = new RpcObject.Builder()
 	.build();
 ```
 
-Generate a raw transaction to deploy a token SCORE without the stepLimit value.
+Generate a raw transaction to deploy a token SCORE without the `stepLimit` value.
 
 ```java
 Transaction transaction = TransactionBuilder.newBuilder()
@@ -275,24 +247,24 @@ Transaction transaction = TransactionBuilder.newBuilder()
 	.build();
 ```
 
-Get an estimated step value using `estimateStep` API of `IconService`.
+Get an estimated Step value using `estimateStep` API of `IconService`.
 
 ```java
 BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
 ```
 
-Generate a `SignedTransaction` with the same raw transaction and the estimated step.
+Generate a `SignedTransaction` with the same raw transaction and the estimated Step.
 Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction.
-So we need to add some margin value to the estimation when you set `stepLimit` parameter of `SignedTransaction`.
+So we need to add some margin to the estimation when you set the `stepLimit` of the `SignedTransaction`.
 
 ```java
-// Set some margin value for the operation of `on_install`
+// Set some margin for the operation of `on_install`
 BigInteger margin = BigInteger.valueOf(10000);
 
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
 ```
 
-You can check the transaction hash value by calling `sendTransaction` from `IconService`.
+Calling `sendTransaction` API of `IconService` will return the transaction hash.
 
 ```java
 Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
@@ -333,7 +305,7 @@ waiting accept score...
 
 You can get the token SCORE address by checking the `scoreAddress` from the deploy transaction result above, and use this to send the token.
 
-You can generate a KeyWallet using `CommonData.PRIVATE_KEY_STRING` just like in the case of `IcxTransactionExample`, then send 1 Token to `CommonData.ADDRESS_1`.
+You can generate a `KeyWallet` using `CommonData.PRIVATE_KEY_STRING` just like in the case of `IcxTransactionExample`, then send 1 Token to `CommonData.ADDRESS_1`.
 
 ```java
 Wallet wallet = KeyWallet.load(new Bytes(CommonData.PRIVATE_KEY_STRING));
@@ -400,7 +372,7 @@ txHash:0x6b17886de346655d96373f2e0de494cb8d7f36ce9086cb15a57d3dcf24523c8f
 
 You can check the result with the returned hash value of your transaction.
 
-In this example, you can check your transaction result in every 2 seconds because of the block confirmation time.
+In this example, you check your transaction result in every 2 seconds because the block confirmation time is around 2 seconds.
 Checking the result is as follows:
 
 ```java
@@ -564,6 +536,7 @@ tokenSymbol:ST
 
 ## References
 
+- [Overview](https://github.com/icon-project/icon-sdk-java/blob/master/README.md)
 - [API Reference](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md) 
 

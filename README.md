@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/icon/icon-sdk/icon-sdk/images/download.svg) ](https://bintray.com/icon/icon-sdk/icon-sdk/_latestVersion)
+[![Download](https://api.bintray.com/packages/icon/icon-sdk/icon-sdk/images/download.svg)](https://bintray.com/icon/icon-sdk/icon-sdk/_latestVersion)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/foundation.icon/icon-sdk/badge.svg)](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk)
 [![Javadocs](http://www.javadoc.io/badge/foundation.icon/icon-sdk.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
 
@@ -6,6 +6,7 @@
 
 ICON supports SDK for 3rd party or user services development. You can integrate ICON SDK for your project and utilize ICON’s functionality.
 
+This document is focused on how to use the SDK properly. For the detailed API specification, see the API reference documentation.
 
 ## Version
 
@@ -15,7 +16,7 @@ ICON supports SDK for 3rd party or user services development. You can integrate 
 
 This Java SDK works on the following platforms:
 
-- Java 8+ (for Java7, you can explore source code [here](https://github.com/icon-project/icon-sdk-java/blob/sdk-for-java7/README.md))
+- Java 8+ (for Java 7, you can explore source code [here](https://github.com/icon-project/icon-sdk-java/blob/sdk-for-java7/README.md))
 - Android 3.0+ (API 11+)
 
 ## Installation
@@ -40,20 +41,8 @@ dependencies {
 
 ## Quick Start
 
-A simple query of the block by height is as follows.
-
-```java
-IconService iconService = new IconService(new HttpProvider("http://localhost:9000", 3));
-
-// Gets a block matching the block height.
-Request<Block> request = iconService.getBlock(height);
-try {
-    Block block = request.execute();
-    ...
-} catch (IOException e) {
-    ...    
-}
-```
+We provide different types of code examples to help you to start quickly from scratch.
+Please refer to the separate [Quick Start] project for the code examples.
 
 
 ## IconService
@@ -86,17 +75,6 @@ Once the request has been executed, the same request object cannot be executed a
 ```java
 Request<Block> request = iconService.getBlock(height);
 
-// Asynchronized request execution
-request.execute(new Callback<Block>(){
-    void onFailure(Exception exception) {
-        ...
-    }
-
-    void onResponse(Block block) {
-        ...
-    }
-});
-
 // Synchronized request execution
 try {
     Block block = request.execute();
@@ -104,6 +82,19 @@ try {
 } catch (Exception e) {
     ...
 }
+
+// Asynchronized request execution
+request.execute(new Callback<Block>(){
+    @Override
+    public void onSuccess(Block block) {
+        ...
+    }
+
+    @Override
+    public void onFailure(Exception exception) {
+        ...
+    }
+});
 ```
 
 The querying APIs are as follows.
@@ -228,26 +219,13 @@ Transaction transaction = TransactionBuilder.newBuilder()
 ```
 
 `SignedTransaction` object signs a transaction using the wallet.
-
 And the request can be executed as **Synchronized** or **Asynchronized** like a query request.
-
 Once the request has been executed, the same request object cannot be executed again.
 
 ```java
 SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
 Request<Bytes> request = iconService.sendTransaction(signedTransaction);
-
-// Asynchronized request execution
-request.execute(new Callback<Bytes>(){
-    void onFailure(Exception e) {
-        ...
-    }
-
-    void onResponse(Bytes txHash) {
-        ...
-    }
-});
 
 // Synchronized request execution
 try {
@@ -256,6 +234,19 @@ try {
 } catch (Exception e) {
     ...
 }
+
+// Asynchronized request execution
+request.execute(new Callback<Bytes>() {
+    @Override
+    public void onSuccess(Bytes result) {
+        ...
+    }
+
+    @Override
+    public void onFailure(Exception exception) {
+        ...
+    }
+});
 ```
 
 
@@ -263,7 +254,7 @@ try {
 
 It is important to set a proper `stepLimit` value in your transaction to make the submitted transaction executed successfully.
 
-You can get an estimated step before sending your transaction and use it later for making a `SignedTransaction`.
+`estimateStep` API provides a way to **estimate** the Step usage of a given transaction. Using the method, you can get an estimated Step usage before sending your transaction then make a `SignedTransaction` with the `stepLimit` based on the estimation.
 
 ```java
 // make a raw transaction without the stepLimit
@@ -279,7 +270,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
 // get an estimated step value
 BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
 
-// set some margin value
+// set some margin
 BigInteger margin = BigInteger.valueOf(10000);
 
 // make a signed transaction with the same raw transaction and the estimated step
@@ -288,8 +279,8 @@ Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
 ...
 ```
 
-Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction for several reasons,
-so it is recommended to add some margin value to the estimation when you set `stepLimit` parameter of `SignedTransaction`.
+Note that the estimation can be smaller or larger than the actual amount of step to be used by the transaction,
+so it is recommended to add some margin to the estimation when you set the `stepLimit` of the `SignedTransaction`.
 
 ## Converter
 
@@ -344,8 +335,13 @@ Person memberPerson = iconService.call(call).execute();
 
 ## References
 
-- [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
-- [ICON Network](https://github.com/icon-project/icon-project.github.io/blob/master/docs/icon_network.md)
+- [Quick Start]
+- [ICON JSON-RPC API v3]
+- [ICON Network]
+
+[Quick Start]: https://github.com/icon-project/icon-sdk-java/tree/master/quickstart
+[ICON JSON-RPC API v3]: https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md
+[ICON Network]: https://github.com/icon-project/icon-project.github.io/blob/master/docs/icon_network.md
 
 
 ## Licenses
