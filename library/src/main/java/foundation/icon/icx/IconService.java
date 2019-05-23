@@ -217,6 +217,8 @@ public class IconService {
      *
      * @param transaction a raw transaction without stepLimit and signature information
      * @return a {@code Request} object that can execute the request (return type is BigInteger)
+     *
+     * @since 0.9.12
      */
     public Request<BigInteger> estimateStep(Transaction transaction) {
         long requestId = System.currentTimeMillis();
