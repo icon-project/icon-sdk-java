@@ -102,23 +102,23 @@ The querying APIs are as follows.
 ```java
 // Gets the block
 Request<Block> request = iconService.getBlock(new BigInteger("1000")); // by height
-Request<Block> request = iconService.getBlock(new Bytes("0x000...000"); // by hash
+Request<Block> request = iconService.getBlock(new Bytes("0x5e23...af83"); // by hash
 Request<Block> request = iconService.getLastBlock(); // the last block
 
 // Gets the balance of an given account
-Request<BigInteger> request = iconService.getBalance(new Address("hx000...1");
+Request<BigInteger> request = iconService.getBalance(new Address("hxe7af...dfcb");
 
 // Gets a list of the SCORE API
-Request<List<ScoreApi>> request = iconService.getScoreApi(new Address("cx000...1"));
+Request<List<ScoreApi>> request = iconService.getScoreApi(new Address("cx0000...0001"));
 
 // Gets the total supply of icx
 Request<BigInteger> request = iconService.getTotalSupply();
 
 // Gets a transaction matching the given transaction hash
-Request<Transaction> request = iconService.getTransaction(new Bytes("0x000...000"));
+Request<Transaction> request = iconService.getTransaction(new Bytes("0x5e23...af83"));
 
 // Gets the result of the transaction matching the given transaction hash
-Request<TransactionResult> request = iconService.getTransactionResult(new Bytes("0x000...000"));
+Request<TransactionResult> request = iconService.getTransactionResult(new Bytes("0x5e23...af83"));
 
 // Calls a SCORE read-only API
 Call<BigInteger> call = new Call.Builder()
@@ -159,10 +159,10 @@ Before sending a transaction, the transaction should be signed. It can be done u
 Wallet wallet = KeyWallet.create();
 
 // Loads a wallet from the private key.
-Wallet wallet = KeyWallet.load(new Bytes("0x0000"));
+Wallet wallet = KeyWallet.load(new Bytes("592eb2...27ff0c"));
 
 // Loads a wallet from the key store file.
-File file = new File("./key.keystore");
+File file = new File("./keystore_file");
 Wallet wallet = KeyWallet.load("password", file);
 
 // Stores the keystore on the file path.
@@ -180,7 +180,6 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .to(scoreAddress)
     .value(new BigInteger("150000000"))
     .stepLimit(new BigInteger("1000000"))
-    .nonce(new BigInteger("1000000"))
     .build();
 
 // deploy a SCORE
@@ -188,8 +187,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
-    .stepLimit(new BigInteger("5000000"))
-    .nonce(new BigInteger("1000000"))
+    .stepLimit(new BigInteger("2000000000"))
     .deploy("application/zip", content)
     .params(params)
     .build();
@@ -199,9 +197,7 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
-    .value(new BigInteger("150000000"))
     .stepLimit(new BigInteger("1000000"))
-    .nonce(new BigInteger("1000000"))
     .call("transfer")
     .params(params)
     .build();
@@ -211,10 +207,19 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(wallet.getAddress())
     .to(scoreAddress)
-    .value(new BigInteger("150000000"))
     .stepLimit(new BigInteger("1000000"))
-    .nonce(new BigInteger("1000000"))
     .message(message)
+    .build();
+
+// deposit ICX to SCORE
+Transaction transaction = TransactionBuilder.newBuilder()
+    .nid(networkId)
+    .from(wallet.getAddress())
+    .to(scoreAddress)
+    .value(depositAmount)
+    .stepLimit(new BigInteger("1000000"))
+    .deposit()
+    .add()
     .build();
 ```
 
@@ -262,7 +267,6 @@ Transaction transaction = TransactionBuilder.newBuilder()
     .nid(networkId)
     .from(fromAddress)
     .to(toAddress)
-    .nonce(BigInteger.valueOf(1))
     .call("transfer")
     .params(params)
     .build();

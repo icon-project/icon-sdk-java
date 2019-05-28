@@ -41,7 +41,7 @@ public class DeploySampleToken {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(logging)
+                //.addInterceptor(logging)
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
         wallet = KeyWallet.load(Constants.privateKey);
