@@ -28,21 +28,10 @@ class HttpProviderTest {
         String[] validEndpoints = {
                 "http://localhost:9000/api/v3",
                 "https://ctz.solidwallet.io/api/v3",
-        };
-        String[] invalidEndpoints = {
-                "http://localhost:9000/",
-                "http://localhost:9000/api/v3/",
-                "http://localhost:9000/api/v3/file",
-                "https://ctz.solidwallet.io",
-                "https://ctz.solidwallet.io/",
+                "http://localhost:9000/api/v3/channel",
         };
         for (String endpoint : validEndpoints) {
             assertDoesNotThrow(() -> {
-                new HttpProvider(endpoint);
-            });
-        }
-        for (String endpoint : invalidEndpoints) {
-            assertThrows(IllegalArgumentException.class, () -> {
                 new HttpProvider(endpoint);
             });
         }

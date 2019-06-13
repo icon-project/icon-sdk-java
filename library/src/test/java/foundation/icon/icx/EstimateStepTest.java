@@ -79,6 +79,22 @@ class EstimateStepTest {
                 argThat(converter -> converter.equals(Converters.BIG_INTEGER)));
     }
 
+    @Test
+    void testWithLegacyProvider() {
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(BigInteger.valueOf(3))
+                .from(fromAddress)
+                .to(toAddress)
+                .value(new BigInteger("de0b6b3a7640000", 16))
+                .nonce(BigInteger.valueOf(1))
+                .build();
+
+        IconService iconService = new IconService(new HttpProvider("http://localhost:9000/api/v3"));
+        assertThrows(UnsupportedOperationException.class, () -> {
+            iconService.estimateStep(transaction).execute();
+        });
+    }
+
     @Disabled
     @Test
     void testSimpleTransfer() throws IOException {

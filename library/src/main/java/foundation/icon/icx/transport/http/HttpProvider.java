@@ -42,11 +42,15 @@ public class HttpProvider implements Provider {
 
     private final OkHttpClient httpClient;
     private String serverUri;
+    private String endpointUri;
     private int version;
     private HashMap<String, String> urlMap;
 
     /**
-     * @deprecated Do not use this constructor. Use {@link #HttpProvider(OkHttpClient, String, int)} instead.
+     * Initializes a new {@code HttpProvider} with the custom http client object and the given endpoint url.
+     *
+     * @param httpClient a custom http client to send HTTP requests and read their responses
+     * @param url an endpoint url, ex) {@code http://localhost:9000/api/v3}
      */
     public HttpProvider(OkHttpClient httpClient, String url) {
         this(httpClient, true, url, 3);
@@ -66,7 +70,10 @@ public class HttpProvider implements Provider {
     }
 
     /**
-     * @deprecated Do not use this constructor. Use {@link #HttpProvider(String, int)} instead.
+     * Initializes a new {@code HttpProvider} with the given endpoint url.
+     * This will use a default http client object for the operation.
+     *
+     * @param url an endpoint url, ex) {@code http://localhost:9000/api/v3}
      */
     public HttpProvider(String url) {
         this(new OkHttpClient.Builder().build(), url);
@@ -120,7 +127,16 @@ public class HttpProvider implements Provider {
         };
 
         String method = request.getMethod();
-        String url = urlMap.get(method.substring(0, method.indexOf("_")));
+        String prefix = method.substring(0, method.indexOf("_"));
+        String url;
+        if (endpointUri != null) {
+            if (!prefix.equals("icx")) {
+                throw new UnsupportedOperationException("Unsupported operation in this provider");
+            }
+            url = endpointUri;
+        } else {
+            url = urlMap.get(prefix);
+        }
 
         okhttp3.Request httpRequest = new okhttp3.Request.Builder()
                 .url(url)
@@ -148,9 +164,7 @@ public class HttpProvider implements Provider {
             try {
                 URI uri = new URI(input);
                 if (allowPath) {
-                    if (!"/api/v3".equals(uri.getPath())) {
-                        throw new IllegalArgumentException("Malformed endpoint URI");
-                    }
+                    endpointUri = input;
                 } else {
                     if (!"".equals(uri.getPath())) {
                         throw new IllegalArgumentException("Path is not allowed");
