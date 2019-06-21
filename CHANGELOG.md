@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.14 - Jun 21, 2019
+- Fix the bug that generates an invalid signature when a `stepLimit` is given
+
 ## 0.9.13 - Jun 14, 2019
 - Add a new `DepositBuilder` to support add/withdraw deposit transactions
 - Add a new `getStepUsedDetails` method to `TransactionResult`

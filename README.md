@@ -10,7 +10,7 @@ This document is focused on how to use the SDK properly. For the detailed API sp
 
 ## Version
 
-0.9.13 (beta)
+0.9.14 (beta)
 
 ## Prerequisite
 
@@ -27,7 +27,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
     <groupId>foundation.icon</groupId>
     <artifactId>icon-sdk</artifactId>
-    <version>0.9.13</version>
+    <version>0.9.14</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation 'foundation.icon:icon-sdk:0.9.13'
+    implementation 'foundation.icon:icon-sdk:0.9.14'
 }
 ```
 
