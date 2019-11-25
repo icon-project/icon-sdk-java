@@ -56,9 +56,10 @@ public class RpcItemSerializer extends JsonSerializer<RpcItem> {
                 serialize(childItem, gen);
             }
             gen.writeEndArray();
+        } else if (item == null || item.isNull()) {
+            gen.writeNull();
         } else {
             gen.writeString(item.asString());
         }
     }
-
 }
