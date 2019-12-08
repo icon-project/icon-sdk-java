@@ -92,9 +92,9 @@ public class TransactionV2Test {
                 .build();
 
         ConfirmedTransaction tx = CONFIRMED_TRANSACTION.convertTo(object);
-
         assertEquals("123124124124", tx.getTo().toString());
         assertNull(tx.getTimestamp());
+        assertNull(tx.getFrom());
 
         object = new RpcObject.Builder()
                 .put("to", new RpcValue("bf85fac2d0b507a2db9ce9526e6d91476f16a2d269f51636f9c4b2d512017faf"))
@@ -121,6 +121,4 @@ public class TransactionV2Test {
         assertEquals("hxa23651905d221dd36b", tx.getTo().toString());
         assertEquals("1535964734110836", tx.getTimestamp().toString());
     }
-
-
 }
