@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx.transport.jsonrpc;
@@ -40,12 +39,9 @@ class DeserializerTest {
 
     @Test
     void testRpcDeserializer() throws IOException {
-
         String json = "{\"stringValue\":\"string\",\"array\":[{\"longValue\":1533018344753765,\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"},\"0x4d2\",\"0x0\",\"string\",\"0x010203\"],\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\",\"object\":{\"stringValue\":\"string\",\"intValue\":\"0x4d2\",\"booleanValue\":\"0x0\",\"bytesValue\":\"0x010203\"}}";
         RpcObject root = (RpcObject) mapper.readValue(json, RpcItem.class);
-
         RpcValue rpcValue;
-
         RpcArray array = (RpcArray) root.getItem("array");
 
         RpcObject obj = (RpcObject) array.get(0);
@@ -85,7 +81,22 @@ class DeserializerTest {
         RpcItem rpcItem = mapper.readValue(json, RpcItem.class);
 
         assertTrue(rpcItem instanceof RpcValue);
-        assertEquals("0x1234", ((RpcValue) rpcItem).asString());
+        assertEquals("0x1234", rpcItem.asString());
     }
 
+    @Test
+    void testNullAndEmptyBytes() throws IOException {
+        String json = "null";
+        RpcItem rpcItem = mapper.readValue(json, RpcItem.class);
+        assertNull(rpcItem);
+
+        json = "{\"key\": null}";
+        rpcItem = mapper.readValue(json, RpcItem.class);
+        assertTrue(rpcItem.asObject().getItem("key").isNull());
+
+        json = "\"0x\"";
+        rpcItem = mapper.readValue(json, RpcItem.class);
+        assertEquals(0, rpcItem.asByteArray().length);
+        assertArrayEquals(new byte[0], rpcItem.asByteArray());
+    }
 }

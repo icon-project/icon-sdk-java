@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx.transport.jsonrpc;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SerializerTest {
@@ -40,7 +40,6 @@ class SerializerTest {
 
     @Test
     void testRpcSerializer() throws JsonProcessingException {
-
         RpcItem intValue = new RpcValue(new BigInteger("1234"));
         RpcItem booleanValue = new RpcValue(false);
         RpcItem stringValue = new RpcValue("string");
@@ -76,4 +75,20 @@ class SerializerTest {
         assertTrue(json.length() > 0);
     }
 
+    @Test
+    void testNullAndEmptyBytes() throws JsonProcessingException {
+        String expected = "{\"key\":null}";
+        RpcItem rpcItem = new RpcObject.Builder()
+                .put("key", RpcValue.NULL)
+                .build();
+        String json = mapper.writeValueAsString(rpcItem);
+        assertEquals(expected, json);
+
+        expected = "{\"key\":\"0x\"}";
+        rpcItem = new RpcObject.Builder()
+                .put("key", new RpcValue(new byte[0]))
+                .build();
+        json = mapper.writeValueAsString(rpcItem);
+        assertEquals(expected, json);
+    }
 }
