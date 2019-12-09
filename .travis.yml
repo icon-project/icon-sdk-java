@@ -1,15 +1,20 @@
 language: java
 
+services:
+  - docker
+
+install:
+  - docker run -d -it -p 9000:9000 iconloop/tbears:1.5.0
+
 jobs:
   include:
-    - 
+    -
       if: branch = develop
-      script: 
+      script:
         - echo "on develop"
         - ./gradlew clean assemble javadocJar sourcesJar test --scan -s
-    - 
+    -
       if: branch = master
-      script: 
+      script:
         - echo "on master"
-        - ./gradlew clean assemble javadocJar sourcesJar test bintrayUpload  --scan -s
-       
+        - ./gradlew clean assemble javadocJar sourcesJar test bintrayUpload --scan -s

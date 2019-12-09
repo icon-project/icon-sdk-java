@@ -23,7 +23,6 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -95,7 +94,6 @@ class EstimateStepTest {
         });
     }
 
-    @Disabled
     @Test
     void testSimpleTransfer() throws IOException {
         Transaction transaction = TransactionBuilder.newBuilder()
@@ -142,7 +140,6 @@ class EstimateStepTest {
         assertEquals(estimatedStep, result.getStepUsed());
     }
 
-    @Disabled
     @Test
     void testDeploy() throws IOException {
         // deploy sample token
