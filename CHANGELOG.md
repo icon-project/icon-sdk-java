@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.15 - Dec 9, 2019
+- Fix the wrong handling of null and empty bytes when `RpcObject` is serialized/deserialized
+- Define `RpcValue.NULL` for null value
+- Add a new method `getDefault` in `ScoreApi.Param`
+
 ## 0.9.14 - Jun 21, 2019
 - Fix the bug that generates an invalid signature when a `stepLimit` is given
 
