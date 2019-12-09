@@ -119,22 +119,27 @@ class EstimateStepTest {
         Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
         TransactionResult result = txHandler.getTransactionResult(txHash);
         assertEquals(BigInteger.ONE, result.getStatus());
+        assertEquals(estimatedStep, result.getStepUsed());
 
         Transaction transaction2 = TransactionBuilder.newBuilder()
                 .nid(BigInteger.valueOf(3))
                 .from(fromAddress)
                 .to(toAddress)
-                .stepLimit(BigInteger.valueOf(200000))
+                .stepLimit(estimatedStep)
                 .value(new BigInteger("de0b6b3a7640000", 16))
                 .nonce(BigInteger.ONE)
                 .build();
 
-        signedTransaction = new SignedTransaction(transaction2, owner, estimatedStep);
+        // this should override the existing stepLimit
+        BigInteger customStep = BigInteger.valueOf(200000);
+        signedTransaction = new SignedTransaction(transaction2, owner, customStep);
         RpcObject properties = signedTransaction.getProperties();
-        assertEquals(estimatedStep, properties.getItem("stepLimit").asInteger());
+        assertEquals(customStep, properties.getItem("stepLimit").asInteger());
         txHash = iconService.sendTransaction(signedTransaction).execute();
         result = txHandler.getTransactionResult(txHash);
         assertEquals(BigInteger.ONE, result.getStatus());
+        // the actual stepUsed should still be the estimatedStep
+        assertEquals(estimatedStep, result.getStepUsed());
     }
 
     @Disabled
