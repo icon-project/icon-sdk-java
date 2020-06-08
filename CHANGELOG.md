@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.15.korda - Jun 7, 2020
+- add byte[] password methods for Security coding.
+
 ## 0.9.15 - Dec 9, 2019
 - Fix the wrong handling of null and empty bytes when `RpcObject` is serialized/deserialized
 - Define `RpcValue.NULL` for null value
