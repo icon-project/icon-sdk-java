@@ -7,6 +7,7 @@ import foundation.icon.icx.data.Bytes;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.InputMismatchException;
@@ -41,6 +42,11 @@ public class KeyStoreUtils {
 
     public static Bytes loadPrivateKey(String password, File source)
             throws IOException, KeystoreException {
+        return loadPrivateKey(password.getBytes(StandardCharsets.UTF_8), source);
+    }
+
+    public static Bytes loadPrivateKey(byte[] password, File source)
+        throws IOException, KeystoreException {
         ObjectMapper mapper = new ObjectMapper();
         KeystoreFile keystoreFile = mapper.readValue(source, KeystoreFile.class);
         if (keystoreFile.getCoinType() == null || !keystoreFile.getCoinType().equalsIgnoreCase("icx"))

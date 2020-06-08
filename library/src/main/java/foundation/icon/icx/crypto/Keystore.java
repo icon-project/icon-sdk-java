@@ -70,11 +70,15 @@ public class Keystore {
 
     public static KeystoreFile create(String password, Bytes privateKey, int n, int p)
             throws KeystoreException {
+        return create(password.getBytes(StandardCharsets.UTF_8), privateKey, n, p);
+    }
+
+    public static KeystoreFile create(byte[] password, Bytes privateKey, int n, int p)
+        throws KeystoreException {
 
         byte[] salt = generateRandomBytes(32);
 
-        byte[] derivedKey = generateDerivedScryptKey(
-                password.getBytes(StandardCharsets.UTF_8), salt, n, R, p, DKLEN);
+        byte[] derivedKey = generateDerivedScryptKey(password, salt, n, R, p, DKLEN);
 
         byte[] encryptKey = Arrays.copyOfRange(derivedKey, 0, 16);
         byte[] iv = generateRandomBytes(16);
@@ -84,7 +88,7 @@ public class Keystore {
 
 
         byte[] cipherText = performCipherOperation(
-                Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
+            Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
 
         byte[] mac = generateMac(derivedKey, cipherText);
 
@@ -175,6 +179,11 @@ public class Keystore {
 
     public static Bytes decrypt(String password, KeystoreFile keystoreFile)
             throws KeystoreException {
+        return decrypt(password.getBytes(StandardCharsets.UTF_8), keystoreFile);
+    }
+
+    public static Bytes decrypt(byte[] password, KeystoreFile keystoreFile)
+        throws KeystoreException {
 
         validate(keystoreFile);
 
@@ -189,21 +198,21 @@ public class Keystore {
         KeystoreFile.KdfParams kdfParams = crypto.getKdfparams();
         if (kdfParams instanceof KeystoreFile.ScryptKdfParams) {
             KeystoreFile.ScryptKdfParams scryptKdfParams =
-                    (KeystoreFile.ScryptKdfParams) crypto.getKdfparams();
+                (KeystoreFile.ScryptKdfParams) crypto.getKdfparams();
             int dklen = scryptKdfParams.getDklen();
             int n = scryptKdfParams.getN();
             int p = scryptKdfParams.getP();
             int r = scryptKdfParams.getR();
             byte[] salt = Hex.decode(scryptKdfParams.getSalt());
-            derivedKey = generateDerivedScryptKey(password.getBytes(StandardCharsets.UTF_8), salt, n, r, p, dklen);
+            derivedKey = generateDerivedScryptKey(password, salt, n, r, p, dklen);
         } else if (kdfParams instanceof KeystoreFile.Aes128CtrKdfParams) {
             KeystoreFile.Aes128CtrKdfParams aes128CtrKdfParams =
-                    (KeystoreFile.Aes128CtrKdfParams) crypto.getKdfparams();
+                (KeystoreFile.Aes128CtrKdfParams) crypto.getKdfparams();
             int c = aes128CtrKdfParams.getC();
             String prf = aes128CtrKdfParams.getPrf();
             byte[] salt = Hex.decode(aes128CtrKdfParams.getSalt());
 
-            derivedKey = generateAes128CtrDerivedKey(password.getBytes(StandardCharsets.UTF_8), salt, c, prf);
+            derivedKey = generateAes128CtrDerivedKey(password, salt, c, prf);
         } else {
             throw new KeystoreException("Unable to deserialize params: " + crypto.getKdf());
         }

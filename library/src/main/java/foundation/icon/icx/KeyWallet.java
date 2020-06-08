@@ -24,6 +24,7 @@ import foundation.icon.icx.data.Bytes;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -75,6 +76,17 @@ public class KeyWallet implements Wallet {
      * @return KeyWallet
      */
     public static KeyWallet load(String password, File file) throws IOException, KeystoreException {
+        return load(password.getBytes(StandardCharsets.UTF_8), file);
+    }
+
+    /**
+     * Loads a key wallet from the KeyStore file
+     *
+     * @param password the password byte array(UTF-8) of KeyStore
+     * @param file     the KeyStore file
+     * @return KeyWallet
+     */
+    public static KeyWallet load(byte[] password, File file) throws IOException, KeystoreException {
         Bytes privateKey = KeyStoreUtils.loadPrivateKey(password, file);
         Bytes pubicKey = IconKeys.getPublicKey(privateKey);
         return new KeyWallet(privateKey, pubicKey);
@@ -90,6 +102,19 @@ public class KeyWallet implements Wallet {
      */
     public static String store(KeyWallet wallet, String password, File destinationDirectory) throws
             KeystoreException, IOException {
+        return store(wallet, password.getBytes(StandardCharsets.UTF_8), destinationDirectory);
+    }
+
+    /**
+     * Stores the KeyWallet as a KeyStore
+     *
+     * @param wallet               the wallet to store
+     * @param password             the password byte array (UTF-8) of KeyStore
+     * @param destinationDirectory the KeyStore file is stored at.
+     * @return name of the KeyStore file
+     */
+    public static String store(KeyWallet wallet, byte[] password, File destinationDirectory) throws
+        KeystoreException, IOException {
         KeystoreFile keystoreFile = Keystore.create(password, wallet.getPrivateKey(), 1 << 14, 1);
         return KeyStoreUtils.generateWalletFile(keystoreFile, destinationDirectory);
     }
