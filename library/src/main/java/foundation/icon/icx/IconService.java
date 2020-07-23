@@ -12,15 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx;
 
 import foundation.icon.icx.crypto.IconKeys;
-import foundation.icon.icx.data.*;
-import foundation.icon.icx.transport.jsonrpc.*;
+import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Block;
+import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.ConfirmedTransaction;
+import foundation.icon.icx.data.Converters;
+import foundation.icon.icx.data.ScoreApi;
+import foundation.icon.icx.data.TransactionResult;
+import foundation.icon.icx.transport.jsonrpc.AnnotatedConverterFactory;
+import foundation.icon.icx.transport.jsonrpc.AnnotationConverter;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -34,9 +44,9 @@ import java.util.Map;
 @SuppressWarnings("WeakerAccess")
 public class IconService {
 
-    private Provider provider;
-    private List<RpcConverter.RpcConverterFactory> converterFactories = new ArrayList<>();
-    private Map<Class, RpcConverter<?>> converterMap = new HashMap<>();
+    private final Provider provider;
+    private final List<RpcConverter.RpcConverterFactory> converterFactories = new ArrayList<>();
+    private final Map<Class<?>, RpcConverter<?>> converterMap = new HashMap<>();
 
     /**
      * Creates an IconService instance
@@ -170,7 +180,7 @@ public class IconService {
     }
 
     /**
-     * Gets the result of a transaction by transaction hash
+     * Gets the result of a transaction specified by the transaction hash
      *
      * @param hash a transaction hash
      * @return a {@code TransactionResult} object
@@ -229,7 +239,7 @@ public class IconService {
 
     @SuppressWarnings("unchecked")
     private <T> RpcConverter<T> findConverter(Class<T> type) {
-        RpcConverter converter = converterMap.get(type);
+        RpcConverter<T> converter = (RpcConverter<T>) converterMap.get(type);
         if (converter != null) return converter;
 
         for (RpcConverterFactory factory : converterFactories) {

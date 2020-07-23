@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx;
@@ -77,7 +76,7 @@ public final class TransactionBuilder {
      */
     public static final class Builder {
 
-        private TransactionData transactionData;
+        private final TransactionData transactionData;
 
         private Builder() {
             this.transactionData = new TransactionData();
@@ -227,8 +226,8 @@ public final class TransactionBuilder {
      */
     public static final class CallBuilder {
 
-        private TransactionData transactionData;
-        private RpcObject.Builder dataBuilder;
+        private final TransactionData transactionData;
+        private final RpcObject.Builder dataBuilder;
 
         private CallBuilder(TransactionData transactionData, String method) {
             this.transactionData = transactionData;
@@ -277,7 +276,7 @@ public final class TransactionBuilder {
      * A Builder for the message transaction.
      */
     public static final class MessageBuilder {
-        private TransactionData transactionData;
+        private final TransactionData transactionData;
 
         private MessageBuilder(TransactionData transactionData, String message) {
             this.transactionData = transactionData;
@@ -300,8 +299,8 @@ public final class TransactionBuilder {
      */
     public static final class DeployBuilder {
 
-        private TransactionData transactionData;
-        private RpcObject.Builder dataBuilder;
+        private final TransactionData transactionData;
+        private final RpcObject.Builder dataBuilder;
 
         private DeployBuilder(TransactionData transactionData, String contentType, byte[] content) {
             this.transactionData = transactionData;
@@ -394,7 +393,7 @@ public final class TransactionBuilder {
     }
 
     private static class TransactionData {
-        private BigInteger version = new BigInteger("3");
+        private final BigInteger version = new BigInteger("3");
         private Address from;
         private Address to;
         private BigInteger value;
@@ -421,16 +420,16 @@ public final class TransactionBuilder {
     }
 
     private static class RawTransaction implements Transaction {
-        private BigInteger version;
-        private Address from;
-        private Address to;
-        private BigInteger value;
-        private BigInteger stepLimit;
+        private final BigInteger version;
+        private final Address from;
+        private final Address to;
+        private final BigInteger value;
+        private final BigInteger stepLimit;
         private BigInteger timestamp;
-        private BigInteger nid;
-        private BigInteger nonce;
-        private String dataType;
-        private RpcItem data;
+        private final BigInteger nid;
+        private final BigInteger nonce;
+        private final String dataType;
+        private final RpcItem data;
 
         private RawTransaction(TransactionData transactionData) {
             version = transactionData.version;

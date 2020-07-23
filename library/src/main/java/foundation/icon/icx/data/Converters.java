@@ -12,16 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx.data;
 
-import foundation.icon.icx.transport.jsonrpc.*;
+import foundation.icon.icx.transport.jsonrpc.RpcArray;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcItemCreator;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public final class Converters {
@@ -182,23 +190,20 @@ public final class Converters {
         };
     }
 
-    public static <T> Object fromRpcItem(T item, Class<?> type) {
+    public static Object fromRpcItem(RpcItem item, Class<?> type) {
         if (item == null) return null;
-
         if (item.getClass().isAssignableFrom(RpcArray.class)) {
             return fromRpcArray((RpcArray) item, type);
         }
-
         if (item.getClass().isAssignableFrom(RpcObject.class)) {
             return fromRpcObject((RpcObject) item, type);
         }
-
         return fromRpcValue((RpcValue) item, type);
     }
 
-    static <T> Object fromRpcArray(RpcArray array, Class<T> type) {
+    static Object fromRpcArray(RpcArray array, Class<?> type) {
         if (type.isAssignableFrom(RpcArray.class)) return array;
-        List result = new ArrayList<T>();
+        List<Object> result = new ArrayList<>();
         for (RpcItem item : array) {
             Object v = fromRpcItem(item, type);
             if (v != null) result.add(fromRpcItem(item, type));
@@ -206,9 +211,9 @@ public final class Converters {
         return result;
     }
 
-    static <T> Object fromRpcObject(RpcObject object, Class<T> type) {
+    static Object fromRpcObject(RpcObject object, Class<?> type) {
         if (type.isAssignableFrom(RpcObject.class)) return object;
-        Map result = new HashMap();
+        Map<String, Object> result = new HashMap<>();
         Set<String> keys = object.keySet();
         for (String key : keys) {
             Object v = fromRpcItem(object.getItem(key), type);
@@ -217,7 +222,7 @@ public final class Converters {
         return result;
     }
 
-    static <T> Object fromRpcValue(RpcValue value, Class<T> type) {
+    static Object fromRpcValue(RpcValue value, Class<?> type) {
         if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class)) {
             return value.asBoolean();
         } else if (type.isAssignableFrom(String.class)) {
