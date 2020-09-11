@@ -10,7 +10,7 @@ This document is focused on how to use the SDK properly. For the detailed API sp
 
 ## Version
 
-0.9.15 (beta)
+1.0.0
 
 ## Prerequisite
 
@@ -27,7 +27,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
     <groupId>foundation.icon</groupId>
     <artifactId>icon-sdk</artifactId>
-    <version>0.9.15</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation 'foundation.icon:icon-sdk:0.9.15'
+    implementation 'foundation.icon:icon-sdk:1.0.0'
 }
 ```
 
@@ -343,11 +343,11 @@ Person memberPerson = iconService.call(call).execute();
 - [ICON JSON-RPC API v3]
 - [ICON Network]
 
-[Quick Start]: https://github.com/icon-project/icon-sdk-java/tree/master/quickstart
-[ICON JSON-RPC API v3]: https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md
-[ICON Network]: https://github.com/icon-project/icon-project.github.io/blob/master/docs/icon_network.md
+[Quick Start]: quickstart
+[ICON JSON-RPC API v3]: https://www.icondev.io/docs/icon-json-rpc-v3
+[ICON Network]: https://www.icondev.io/docs/the-icon-network
 
 
-## Licenses
+## License
 
-This project follows the Apache 2.0 License. Please refer to [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.
+This project is available under the [Apache License, Version 2.0](LICENSE).

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 - Sep 11, 2020
+- There are no special features or incompatibilities related to the version number change. This is just a numbering change to drop the beta tag.
+- Remove unused field and method of `jsonrpc.Response`
+- Add `Address.getBody()` method
+
 ## 0.9.15 - Dec 9, 2019
 - Fix the wrong handling of null and empty bytes when `RpcObject` is serialized/deserialized
 - Define `RpcValue.NULL` for null value
