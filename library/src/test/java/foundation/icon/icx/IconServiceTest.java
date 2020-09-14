@@ -24,6 +24,7 @@ import foundation.icon.icx.data.BlockNotification;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.EventNotification;
 import foundation.icon.icx.data.NetworkId;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
@@ -39,7 +40,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static foundation.icon.icx.SampleKeys.PRIVATE_KEY_STRING;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -188,6 +188,44 @@ class IconServiceTest {
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testSendTransactionAndWait() {
+        Provider provider = mock(Provider.class);
+
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(NetworkId.MAIN)
+                .from(new Address(SampleKeys.ADDRESS))
+                .to(new Address(AddressPrefix.EOA, getRandomBytes(20)))
+                .value(BigInteger.TEN.pow(18))
+                .stepLimit(new BigInteger("20000", 16))
+                .build();
+        Wallet wallet = KeyWallet.load(new Bytes(SampleKeys.PRIVATE_KEY_STRING));
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
+
+        IconService iconService = new IconService(provider);
+        Request<TransactionResult> req = iconService.sendTransactionAndWait(signedTransaction);
+
+        verify(provider).request(
+                argThat(request -> request.getMethod().equals("icx_sendTransactionAndWait")),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testWaitTransactionResult() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
+        Request<TransactionResult> req = iconService.waitTransactionResult(hash);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("txHash", new RpcValue(hash));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_waitTransactionResult", params)),
                 argThat(Objects::nonNull));
     }
 
@@ -358,7 +396,7 @@ class IconServiceTest {
                 .timestamp(new BigInteger("563a6cf330136", 16))
                 .nonce(new BigInteger("1"))
                 .build();
-        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
+        Wallet wallet = KeyWallet.load(new Bytes(SampleKeys.PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
@@ -399,7 +437,7 @@ class IconServiceTest {
                 .params(params)
                 .build();
 
-        Wallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
+        Wallet wallet = KeyWallet.load(new Bytes(SampleKeys.PRIVATE_KEY_STRING));
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
 
         IconService iconService = new IconService(provider);
