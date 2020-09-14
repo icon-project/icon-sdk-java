@@ -12,19 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package foundation.icon.icx;
 
 import foundation.icon.icx.Call.Builder;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Address.AddressPrefix;
+import foundation.icon.icx.data.Base64;
+import foundation.icon.icx.data.BlockNotification;
 import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.EventNotification;
 import foundation.icon.icx.data.NetworkId;
-import foundation.icon.icx.transport.jsonrpc.*;
+import foundation.icon.icx.transport.jsonrpc.RpcConverter;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.transport.monitor.Monitor;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +47,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class IconServiceTest {
+    private static SecureRandom secureRandom;
+
+    @BeforeAll
+    static void setup() {
+        secureRandom = new SecureRandom();
+    }
+
+    private byte[] getRandomBytes(int size) {
+        byte[] bytes = new byte[size];
+        secureRandom.nextBytes(bytes);
+        return bytes;
+    }
+
     @Test
     void testIconServiceInit() {
         IconService iconService = new IconService(new Provider() {
@@ -66,9 +88,8 @@ class IconServiceTest {
     void testGetBalance() {
         Provider provider = mock(Provider.class);
 
-        Address address = new Address("hx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
-
         IconService iconService = new IconService(provider);
+        Address address = new Address(AddressPrefix.EOA, getRandomBytes(20));
         iconService.getBalance(address);
 
         HashMap<String, RpcValue> params = new HashMap<>();
@@ -98,9 +119,8 @@ class IconServiceTest {
     void testGetBlockByHash() {
         Provider provider = mock(Provider.class);
 
-        Bytes hash = new Bytes("0x033f8d96045eb8301fd17cf078c28ae58a3ba329f6ada5cf128ee56dc2af26f7");
-
         IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
         iconService.getBlock(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
@@ -123,14 +143,12 @@ class IconServiceTest {
                 argThat(Objects::nonNull));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testGetScoreApi() {
         Provider provider = mock(Provider.class);
 
-        Address address = new Address("cx4873b94352c8c1f3b2f09aaeccea31ce9e90bd31");
-
         IconService iconService = new IconService(provider);
+        Address address = new Address(AddressPrefix.CONTRACT, getRandomBytes(20));
         iconService.getScoreApi(address);
 
         HashMap<String, RpcValue> params = new HashMap<>();
@@ -145,9 +163,8 @@ class IconServiceTest {
     void testGetTransaction() {
         Provider provider = mock(Provider.class);
 
-        Bytes hash = new Bytes("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
-
         IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
         iconService.getTransaction(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
@@ -162,9 +179,8 @@ class IconServiceTest {
     void testGetTransactionResult() {
         Provider provider = mock(Provider.class);
 
-        Bytes hash = new Bytes("0x2600770376fbf291d3d445054d45ed15280dd33c2038931aace3f7ea2ab59dbc");
-
         IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
         iconService.getTransactionResult(hash);
 
         HashMap<String, RpcValue> params = new HashMap<>();
@@ -172,6 +188,104 @@ class IconServiceTest {
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getTransactionResult", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetDataByHash() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
+        Request<Base64> req = iconService.getDataByHash(hash);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("hash", new RpcValue(hash));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getDataByHash", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetBlockHeaderByHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(8));
+        Request<Base64> req = iconService.getBlockHeaderByHeight(height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getBlockHeaderByHeight", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetVotesByHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(8));
+        Request<Base64> req = iconService.getVotesByHeight(height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getVotesByHeight", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetProofForResult() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Bytes hash = new Bytes(getRandomBytes(32));
+        BigInteger index = new BigInteger(getRandomBytes(2));
+        Request<Base64[]> req = iconService.getProofForResult(hash, index);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("hash", new RpcValue(hash));
+        params.put("index", new RpcValue(index));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getProofForResult", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testMonitorBlocks() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger startHeight = new BigInteger(getRandomBytes(10));
+        Monitor<BlockNotification> bm = iconService.monitorBlocks(startHeight);
+
+        verify(provider).monitor(
+                argThat(monitorSpec -> "block".equals(monitorSpec.getPath())),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testMonitorEvents() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger startHeight = new BigInteger(getRandomBytes(10));
+        String event = "Event(Address)";
+        Address addr = new Address(AddressPrefix.EOA, getRandomBytes(20));
+        Monitor<EventNotification> em = iconService.monitorEvents(startHeight, event, addr, null, null);
+
+        verify(provider).monitor(
+                argThat(monitorSpec -> "event".equals(monitorSpec.getPath())
+                        && startHeight.equals(monitorSpec.getParams().getItem("height").asInteger())
+                        && event.equals(monitorSpec.getParams().getItem("event").asString())
+                        && addr.equals(monitorSpec.getParams().getItem("addr").asAddress())
+                ),
                 argThat(Objects::nonNull));
     }
 
@@ -207,8 +321,8 @@ class IconServiceTest {
         person.hasPermission = false;
 
         Call<PersonResponse> call = new Builder()
-                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
-                .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .from(new Address(AddressPrefix.EOA, getRandomBytes(20)))
+                .to(new Address(AddressPrefix.CONTRACT, getRandomBytes(20)))
                 .method("addUser")
                 .params(person)
                 .buildWith(PersonResponse.class);
@@ -227,7 +341,6 @@ class IconServiceTest {
                             dataParams.getItem("hasPermission").asBoolean() == person.hasPermission;
                 }),
                 argThat(Objects::nonNull));
-
     }
 
     @Test
@@ -254,9 +367,9 @@ class IconServiceTest {
         String expected = "xR6wKs+IA+7E91bT8966jFKlK5mayutXCvayuSMCrx9KB7670CsWa0B7LQzgsxU0GLXaovlAT2MLs1XuDiSaZQE=";
         verify(provider).request(
                 argThat(request -> {
-                    boolean isMethodMathces = request.getMethod().equals("icx_sendTransaction");
-                    boolean isSignaureMatches = request.getParams().getItem("signature").asString().equals(expected);
-                    return isMethodMathces && isSignaureMatches;
+                    boolean isMethodMatches = request.getMethod().equals("icx_sendTransaction");
+                    boolean isSignatureMatches = request.getParams().getItem("signature").asString().equals(expected);
+                    return isMethodMatches && isSignatureMatches;
                 }),
                 argThat(Objects::nonNull));
     }
@@ -295,9 +408,9 @@ class IconServiceTest {
         String expected = "ITpAdh3bUV4Xj0WQIPlfhv+ppA+K+LtXqaYMjnt8pMwV7QJwyZNQuhH2ljdGPR+31wG+GpKEdOEuqeYOwODBVwA=";
         verify(provider).request(
                 argThat(request -> {
-                    boolean isMethodMathces = request.getMethod().equals("icx_sendTransaction");
-                    boolean isSignaureMatches = request.getParams().getItem("signature").asString().equals(expected);
-                    return isMethodMathces && isSignaureMatches;
+                    boolean isMethodMatches = request.getMethod().equals("icx_sendTransaction");
+                    boolean isSignatureMatches = request.getParams().getItem("signature").asString().equals(expected);
+                    return isMethodMatches && isSignatureMatches;
                 }),
                 argThat(Objects::nonNull));
     }
@@ -313,18 +426,15 @@ class IconServiceTest {
         person.hasPermission = false;
 
         Call<PersonResponse> call = new Builder()
-                .from(new Address("hxbe258ceb872e08851f1f59694dac2558708ece11"))
-                .to(new Address("cx5bfdb090f43a808005ffc27c25b213145e80b7cd"))
+                .from(new Address(AddressPrefix.EOA, getRandomBytes(20)))
+                .to(new Address(AddressPrefix.CONTRACT, getRandomBytes(20)))
                 .method("addUser")
                 .params(person)
                 .buildWith(PersonResponse.class);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            iconService.call(call);
-        });
+        assertThrows(IllegalArgumentException.class, () -> iconService.call(call));
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isRequestMatches(foundation.icon.icx.transport.jsonrpc.Request request, String method, Map<String, RpcValue> params) {
 
         if (!request.getMethod().equals(method)) return false;
