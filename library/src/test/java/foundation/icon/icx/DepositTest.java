@@ -27,6 +27,7 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -94,6 +95,7 @@ class DepositTest {
         });
     }
 
+    @Tag("integration")
     @Test
     void testSimpleAddAndWithdraw() throws IOException {
         // deploy a sample token first and get the address

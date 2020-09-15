@@ -45,7 +45,17 @@ task sourcesJar(type: Jar) {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags "integration"
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+    description = 'Runs integration tests.'
+    group = 'verification'
 }
 
 apply from: '../publish.gradle'
