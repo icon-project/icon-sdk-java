@@ -156,7 +156,7 @@ public class HttpProvider implements Provider {
     private void generateUrlMap() {
         urlMap = new HashMap<>();
         urlMap.put("icx", serverUri + "/api/v" + version);
-        urlMap.put("debug", serverUri + "/api/debug/v" + version);
+        urlMap.put("debug", serverUri + "/api/v" + version + "d");
     }
 
     private class Parser {

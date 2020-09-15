@@ -16,9 +16,15 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.Address;
+
+import java.math.BigInteger;
 
 public class Constants {
-    static final String SERVER_URL = "http://localhost:9000";
-    static final Bytes PRIVATE_KEY = new Bytes("592eb276d534e2c41a2d9356c0ab262dc233d87e4dd71ce705ec130a8d27ff0c");
+    public static final Address ZERO_ADDRESS = new Address("cx0000000000000000000000000000000000000000");
+    public static final BigInteger DEFAULT_STEP = BigInteger.valueOf(100000);
+
+    public static final String SERVER_URL = "http://localhost:9000";
+    public static final String GOD_WALLET_PASSWORD = "gochain";
+    public static final String GOD_WALLET_FILENAME = "godWallet.json";
 }

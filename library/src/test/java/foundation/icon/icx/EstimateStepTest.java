@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -46,15 +47,16 @@ class EstimateStepTest {
     private KeyWallet owner;
 
     @BeforeEach
-    void init() {
+    void init() throws Exception {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 //.addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, "http://localhost:9000", 3));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
         txHandler = new TransactionHandler(iconService);
-        owner = KeyWallet.load(Constants.PRIVATE_KEY);
+        owner = KeyWallet.load(Constants.GOD_WALLET_PASSWORD,
+                new File(getClass().getClassLoader().getResource(Constants.GOD_WALLET_FILENAME).getFile()));
     }
 
     @Test
@@ -89,7 +91,7 @@ class EstimateStepTest {
                 .value(ICX)
                 .build();
 
-        IconService iconService = new IconService(new HttpProvider("http://localhost:9000/api/v3"));
+        IconService iconService = new IconService(new HttpProvider(Constants.SERVER_URL + "/api/v3"));
         assertThrows(UnsupportedOperationException.class, () -> {
             iconService.estimateStep(transaction).execute();
         });
@@ -108,7 +110,7 @@ class EstimateStepTest {
                 .build();
 
         BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
-        assertEquals(new BigInteger("100000"), estimatedStep);
+        assertEquals(Constants.DEFAULT_STEP, estimatedStep);
 
         assertThrows(IllegalArgumentException.class, () -> {
             new SignedTransaction(transaction, owner);
@@ -131,7 +133,7 @@ class EstimateStepTest {
                 .build();
 
         // this should override the existing stepLimit
-        BigInteger customStep = BigInteger.valueOf(200000);
+        BigInteger customStep = estimatedStep.add(estimatedStep);
         signedTransaction = new SignedTransaction(transaction2, owner, customStep);
         RpcObject properties = signedTransaction.getProperties();
         assertEquals(customStep, properties.getItem("stepLimit").asInteger());

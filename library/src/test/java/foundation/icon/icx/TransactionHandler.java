@@ -16,7 +16,6 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.RpcError;
@@ -29,8 +28,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 class TransactionHandler {
-    private static final Address ZERO_ADDRESS = new Address("cx0000000000000000000000000000000000000000");
-    private static final long DEFAULT_STEP = 100000;
     private final IconService iconService;
 
     TransactionHandler(IconService iconService) {
@@ -42,14 +39,14 @@ class TransactionHandler {
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(BigInteger.valueOf(3))
                 .from(wallet.getAddress())
-                .to(ZERO_ADDRESS)
+                .to(Constants.ZERO_ADDRESS)
                 .deploy("application/zip", content)
                 .params(params)
                 .build();
 
         // get an estimated step value and add some margin
         BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
-        BigInteger margin = BigInteger.valueOf(DEFAULT_STEP);
+        BigInteger margin = Constants.DEFAULT_STEP;
 
         // make a signed transaction with the same raw transaction and the estimated step
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));

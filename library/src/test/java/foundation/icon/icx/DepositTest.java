@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -43,7 +44,7 @@ class DepositTest {
     private TransactionHandler txHandler;
 
     @BeforeEach
-    void init() {
+    void init() throws Exception {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -51,7 +52,8 @@ class DepositTest {
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
         txHandler = new TransactionHandler(iconService);
-        owner = KeyWallet.load(Constants.PRIVATE_KEY);
+        owner = KeyWallet.load(Constants.GOD_WALLET_PASSWORD,
+                new File(getClass().getClassLoader().getResource(Constants.GOD_WALLET_FILENAME).getFile()));
     }
 
     @Test
