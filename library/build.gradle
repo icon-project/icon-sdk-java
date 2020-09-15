@@ -1,7 +1,8 @@
 plugins {
     id 'java-library'
-    id "com.jfrog.bintray" version "1.8.4"
     id "maven-publish"
+    id "com.jfrog.artifactory" version "4.17.2"
+    id "com.jfrog.bintray" version "1.8.5"
 }
 
 repositories {
@@ -59,5 +60,3 @@ task integrationTest(type: Test) {
 }
 
 apply from: '../publish.gradle'
-
-
