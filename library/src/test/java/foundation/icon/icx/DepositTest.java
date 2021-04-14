@@ -91,8 +91,20 @@ class DepositTest {
                     .value(depositAmount)
                     .stepLimit(new BigInteger("200000"))
                     .deposit()
-                    .withdraw(new Bytes("0x55cce746e97c7fe9dc0ffcd6b590f7917e7282c18dc65c9121e66ceda9710541"))
                     .add()
+                    .withdraw(BigInteger.TEN)
+                    .build();
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            TransactionBuilder.newBuilder()
+                    .nid(BigInteger.valueOf(3))
+                    .from(owner.getAddress())
+                    .to(scoreAddress)
+                    .value(depositAmount)
+                    .stepLimit(new BigInteger("200000"))
+                    .deposit()
+                    .add()
+                    .withdraw()
                     .build();
         });
     }
