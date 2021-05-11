@@ -1,8 +1,6 @@
 plugins {
     id 'java-library'
     id "maven-publish"
-    id "com.jfrog.artifactory" version "4.17.2"
-    id "com.jfrog.bintray" version "1.8.5"
 }
 
 repositories {
@@ -11,6 +9,7 @@ repositories {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 ext {
@@ -20,8 +19,6 @@ ext {
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
-
-    mavenCentralSync = true
 }
 
 dependencies {
@@ -33,16 +30,6 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-}
-
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 test {
