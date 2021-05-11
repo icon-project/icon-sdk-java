@@ -49,7 +49,7 @@ public class HttpProvider implements Provider {
 
     private final OkHttpClient httpClient;
     private String serverUri;
-    private String endpointUri;
+    private String channel;
     private final int version;
     private HashMap<String, String> urlMap;
 
@@ -135,15 +135,7 @@ public class HttpProvider implements Provider {
 
         String method = request.getMethod();
         String prefix = method.substring(0, method.indexOf("_"));
-        String url;
-        if (endpointUri != null) {
-            if (!prefix.equals("icx")) {
-                throw new UnsupportedOperationException("Unsupported operation in this provider");
-            }
-            url = endpointUri;
-        } else {
-            url = urlMap.get(prefix);
-        }
+        String url = urlMap.get(prefix);
 
         okhttp3.Request httpRequest = new okhttp3.Request.Builder()
                 .url(url)
@@ -155,12 +147,11 @@ public class HttpProvider implements Provider {
 
     private void generateUrlMap() {
         urlMap = new HashMap<>();
-        urlMap.put("icx", serverUri + "/api/v" + version);
-        urlMap.put("debug", serverUri + "/api/v" + version + "d");
+        urlMap.put("icx", serverUri + "/api/v" + version + "/" + channel);
+        urlMap.put("debug", serverUri + "/api/v" + version + "d/" + channel);
     }
 
     private class Parser {
-
         private final String input;
 
         Parser(String s) {
@@ -171,16 +162,27 @@ public class HttpProvider implements Provider {
             try {
                 URI uri = new URI(input);
                 if (allowPath) {
-                    endpointUri = input;
+                    channel = getChannel(uri.getPath());
                 } else {
                     if (!"".equals(uri.getPath())) {
                         throw new IllegalArgumentException("Path is not allowed");
                     }
+                    channel = "";
                 }
                 serverUri = uri.getScheme() + "://" + uri.getAuthority();
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e.getMessage());
             }
+        }
+
+        private String getChannel(String path) {
+            String[] tokens = path.replaceFirst("/$", "").split("/(?=[^/]+$)");
+            if ("/api/v3".equals(tokens[0])) {
+                return tokens[1];
+            } else if ("/api".equals(tokens[0]) && "v3".equals(tokens[1])) {
+                return "";
+            }
+            throw new IllegalArgumentException("Invalid URI path");
         }
     }
 
@@ -274,8 +276,9 @@ public class HttpProvider implements Provider {
         }
 
         private okhttp3.WebSocket newWebSocket(String request) {
+            String url = urlMap.get("icx");
             okhttp3.Request httpRequest = new okhttp3.Request.Builder()
-                    .url(endpointUri + "/" + spec.getPath())
+                    .url(url + "/" + spec.getPath())
                     .build();
             return httpClient.newWebSocket(httpRequest, new WebSocketListenerImpl(request));
         }
