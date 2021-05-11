@@ -24,7 +24,7 @@ public class Constants {
     public static final Address ZERO_ADDRESS = new Address("cx0000000000000000000000000000000000000000");
     public static final BigInteger DEFAULT_STEP = BigInteger.valueOf(100000);
 
-    public static final String SERVER_URL = "http://localhost:9000";
+    public static final String SERVER_URL = "http://localhost:9082";
     public static final String GOD_WALLET_PASSWORD = "gochain";
     public static final String GOD_WALLET_FILENAME = "godWallet.json";
 }

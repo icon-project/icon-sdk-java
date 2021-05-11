@@ -91,8 +91,8 @@ class EstimateStepTest {
                 .value(ICX)
                 .build();
 
-        IconService iconService = new IconService(new HttpProvider(Constants.SERVER_URL + "/api/v3"));
-        assertThrows(UnsupportedOperationException.class, () -> {
+        IconService iconService = new IconService(new HttpProvider("http://localhost:8080/api/v3/channel"));
+        assertThrows(java.net.ConnectException.class, () -> {
             iconService.estimateStep(transaction).execute();
         });
     }

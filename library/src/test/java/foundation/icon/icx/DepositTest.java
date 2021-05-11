@@ -163,7 +163,7 @@ class DepositTest {
                 .to(scoreAddress)
                 .stepLimit(new BigInteger("200000"))
                 .deposit()
-                .withdraw(depositId)
+                .withdraw()
                 .build();
         SignedTransaction signedTransaction = new SignedTransaction(transaction, owner);
         Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
@@ -184,10 +184,12 @@ class DepositTest {
         Address from = event.getIndexed().get(2).asAddress();
         BigInteger amount = event.getData().get(0).asInteger();
         BigInteger term = event.getData().get(1).asInteger();
-        assertEquals(txHash, id);
+        if (id.length() != 0) {
+            assertEquals(txHash, id);
+            assertEquals(BigInteger.valueOf(BLOCKS_IN_ONE_MONTH), term);
+        }
         assertEquals(sender, from);
         assertEquals(depositAmount, amount);
-        assertEquals(BigInteger.valueOf(BLOCKS_IN_ONE_MONTH), term);
     }
 
     private void ensureDepositWithdrawn(TransactionResult result, Address scoreAddress, String funcSig,
@@ -199,10 +201,12 @@ class DepositTest {
         Address from = event.getIndexed().get(2).asAddress();
         BigInteger amount = event.getData().get(0).asInteger();
         BigInteger penalty = event.getData().get(1).asInteger();
-        assertEquals(txHash, id);
+        if (id.length() != 0) {
+            assertEquals(txHash, id);
+        }
         assertEquals(sender, from);
         assertEquals(depositAmount, amount);
-        assertEquals(BigInteger.valueOf(0), penalty);
+        assertEquals(BigInteger.ZERO, penalty);
     }
 
     private EventLog findEventLog(TransactionResult result, Address scoreAddress, String funcSig) {
