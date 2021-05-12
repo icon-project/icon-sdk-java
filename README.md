@@ -1,6 +1,5 @@
-[![Download](https://api.bintray.com/packages/icon/icon-sdk/icon-sdk/images/download.svg)](https://bintray.com/icon/icon-sdk/icon-sdk/_latestVersion)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/foundation.icon/icon-sdk/badge.svg)](https://search.maven.org/search?q=g:foundation.icon%20a:icon-sdk)
-[![Javadocs](http://www.javadoc.io/badge/foundation.icon/icon-sdk.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
+[![Maven Central](https://img.shields.io/maven-central/v/foundation.icon/icon-sdk/1.0.0)](https://search.maven.org/artifact/foundation.icon/icon-sdk/1.0.0/jar)
+[![Javadocs](http://www.javadoc.io/badge2/foundation.icon/icon-sdk/1.0.0/javadoc.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk/1.0.0)
 
 # ICON SDK for Java
 
