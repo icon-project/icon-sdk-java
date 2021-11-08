@@ -16,59 +16,60 @@
 
 package foundation.icon.icx;
 
-import foundation.icon.icx.data.*;
+import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.Converters;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class EstimateStepTest {
+    private static final BigInteger ICX = BigInteger.TEN.pow(18);
 
     private IconService iconService;
     private TransactionHandler txHandler;
     private KeyWallet owner;
-    private Address fromAddress;
-    private Address toAddress;
 
     @BeforeEach
-    void init() {
+    void init() throws Exception {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 //.addInterceptor(logging)
                 .build();
-        iconService = new IconService(new HttpProvider(httpClient, "http://localhost:9000", 3));
+        iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
         txHandler = new TransactionHandler(iconService);
-        owner = KeyWallet.load(Constants.PRIVATE_KEY);
-
-        fromAddress = owner.getAddress();
-        toAddress = new Address("hxca1b18d749e4339e9661061af7e1e6cabcef8a19");
+        owner = KeyWallet.load(Constants.GOD_WALLET_PASSWORD,
+                new File(getClass().getClassLoader().getResource(Constants.GOD_WALLET_FILENAME).getFile()));
     }
 
     @Test
-    void testGetMethod() {
+    void testGetMethod() throws Exception {
         Provider provider = mock(Provider.class);
-        Address fromAddress = new Address("hxe7af5fcfd8dfc67530a01a0e403882687528dfcb");
-        Address toAddress = new Address("hxca1b18d749e4339e9661061af7e1e6cabcef8a19");
+        Wallet from = KeyWallet.create();
+        Wallet to = KeyWallet.create();
 
         Transaction transaction = TransactionBuilder.newBuilder()
-                .nid(NetworkId.MAIN)
-                .from(fromAddress)
-                .to(toAddress)
-                .value(new BigInteger("de0b6b3a7640000", 16))
-                .timestamp(new BigInteger("563a6cf330136", 16))
-                .nonce(new BigInteger("1"))
+                .nid(BigInteger.valueOf(3))
+                .from(from.getAddress())
+                .to(to.getAddress())
+                .value(ICX)
                 .build();
 
         IconService iconService = new IconService(provider);
@@ -79,33 +80,37 @@ class EstimateStepTest {
     }
 
     @Test
-    void testWithLegacyProvider() {
+    void testWithLegacyProvider() throws Exception {
+        Wallet from = KeyWallet.create();
+        Wallet to = KeyWallet.create();
+
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(BigInteger.valueOf(3))
-                .from(fromAddress)
-                .to(toAddress)
-                .value(new BigInteger("de0b6b3a7640000", 16))
-                .nonce(BigInteger.valueOf(1))
+                .from(from.getAddress())
+                .to(to.getAddress())
+                .value(ICX)
                 .build();
 
-        IconService iconService = new IconService(new HttpProvider("http://localhost:9000/api/v3"));
-        assertThrows(UnsupportedOperationException.class, () -> {
+        IconService iconService = new IconService(new HttpProvider("http://localhost:8080/api/v3/channel"));
+        assertThrows(java.net.ConnectException.class, () -> {
             iconService.estimateStep(transaction).execute();
         });
     }
 
+    @Tag("integration")
     @Test
-    void testSimpleTransfer() throws IOException {
+    void testSimpleTransfer() throws Exception {
+        Wallet to = KeyWallet.create();
+
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(BigInteger.valueOf(3))
-                .from(fromAddress)
-                .to(toAddress)
-                .value(new BigInteger("de0b6b3a7640000", 16))
-                .nonce(BigInteger.valueOf(1))
+                .from(owner.getAddress())
+                .to(to.getAddress())
+                .value(ICX)
                 .build();
 
         BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
-        assertEquals(new BigInteger("100000"), estimatedStep);
+        assertEquals(Constants.DEFAULT_STEP, estimatedStep);
 
         assertThrows(IllegalArgumentException.class, () -> {
             new SignedTransaction(transaction, owner);
@@ -121,15 +126,14 @@ class EstimateStepTest {
 
         Transaction transaction2 = TransactionBuilder.newBuilder()
                 .nid(BigInteger.valueOf(3))
-                .from(fromAddress)
-                .to(toAddress)
+                .from(owner.getAddress())
+                .to(to.getAddress())
                 .stepLimit(estimatedStep)
-                .value(new BigInteger("de0b6b3a7640000", 16))
-                .nonce(BigInteger.ONE)
+                .value(ICX)
                 .build();
 
         // this should override the existing stepLimit
-        BigInteger customStep = BigInteger.valueOf(200000);
+        BigInteger customStep = estimatedStep.add(estimatedStep);
         signedTransaction = new SignedTransaction(transaction2, owner, customStep);
         RpcObject properties = signedTransaction.getProperties();
         assertEquals(customStep, properties.getItem("stepLimit").asInteger());
@@ -140,6 +144,7 @@ class EstimateStepTest {
         assertEquals(estimatedStep, result.getStepUsed());
     }
 
+    @Tag("integration")
     @Test
     void testDeploy() throws IOException {
         // deploy sample token

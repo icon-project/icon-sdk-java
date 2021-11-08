@@ -17,6 +17,8 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
+import foundation.icon.icx.transport.monitor.Monitor;
+import foundation.icon.icx.transport.monitor.MonitorSpec;
 
 /**
  * The {@code Provider} class transports the request and receives the response.
@@ -32,4 +34,16 @@ public interface Provider {
      * @return a {@code Request} object to be executed
      */
     <T> Request<T> request(foundation.icon.icx.transport.jsonrpc.Request request, RpcConverter<T> converter);
+
+    /**
+     * Prepares a Websocket monitor to get notification
+     *
+     * @param spec      the monitor spec
+     * @param converter the converter for the notification data
+     * @param <T>       the return type
+     * @return a {@code Monitor} object to be used for monitoring
+     */
+    default <T> Monitor<T> monitor(MonitorSpec spec, RpcConverter<T> converter) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
-    id "com.jfrog.bintray" version "1.8.4"
-    id "maven-publish"
+    id 'maven-publish'
+    id 'signing'
 }
 
 repositories {
@@ -10,6 +10,7 @@ repositories {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 ext {
@@ -19,8 +20,6 @@ ext {
 
     junitVersion = '5.2.0'
     mockitoVersion = '2.19.0'
-
-    mavenCentralSync = true
 }
 
 dependencies {
@@ -34,20 +33,18 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags "integration"
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+    description = 'Runs integration tests.'
+    group = 'verification'
 }
 
 apply from: '../publish.gradle'
-
-

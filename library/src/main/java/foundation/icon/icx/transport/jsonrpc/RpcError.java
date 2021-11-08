@@ -16,6 +16,8 @@
 
 package foundation.icon.icx.transport.jsonrpc;
 
+import foundation.icon.icx.data.Bytes;
+
 import java.io.IOException;
 
 /**
@@ -24,6 +26,7 @@ import java.io.IOException;
 public class RpcError extends IOException {
     private long code;
     private String message;
+    private Bytes data;
 
     public RpcError() {
         // jackson needs a default constructor
@@ -50,5 +53,13 @@ public class RpcError extends IOException {
     @Override
     public String getMessage() {
         return message;
+    }
+
+    /**
+     * Returns the data of rpc error
+     * @return data
+     */
+    public Bytes getData() {
+        return data;
     }
 }

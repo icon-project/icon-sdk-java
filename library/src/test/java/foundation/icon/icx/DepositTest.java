@@ -27,8 +27,10 @@ import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -42,7 +44,7 @@ class DepositTest {
     private TransactionHandler txHandler;
 
     @BeforeEach
-    void init() {
+    void init() throws Exception {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -50,7 +52,8 @@ class DepositTest {
                 .build();
         iconService = new IconService(new HttpProvider(httpClient, Constants.SERVER_URL, 3));
         txHandler = new TransactionHandler(iconService);
-        owner = KeyWallet.load(Constants.PRIVATE_KEY);
+        owner = KeyWallet.load(Constants.GOD_WALLET_PASSWORD,
+                new File(getClass().getClassLoader().getResource(Constants.GOD_WALLET_FILENAME).getFile()));
     }
 
     @Test
@@ -88,12 +91,25 @@ class DepositTest {
                     .value(depositAmount)
                     .stepLimit(new BigInteger("200000"))
                     .deposit()
-                    .withdraw(new Bytes("0x55cce746e97c7fe9dc0ffcd6b590f7917e7282c18dc65c9121e66ceda9710541"))
                     .add()
+                    .withdraw(BigInteger.TEN)
+                    .build();
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            TransactionBuilder.newBuilder()
+                    .nid(BigInteger.valueOf(3))
+                    .from(owner.getAddress())
+                    .to(scoreAddress)
+                    .value(depositAmount)
+                    .stepLimit(new BigInteger("200000"))
+                    .deposit()
+                    .add()
+                    .withdraw()
                     .build();
         });
     }
 
+    @Tag("integration")
     @Test
     void testSimpleAddAndWithdraw() throws IOException {
         // deploy a sample token first and get the address
@@ -147,7 +163,7 @@ class DepositTest {
                 .to(scoreAddress)
                 .stepLimit(new BigInteger("200000"))
                 .deposit()
-                .withdraw(depositId)
+                .withdraw()
                 .build();
         SignedTransaction signedTransaction = new SignedTransaction(transaction, owner);
         Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
@@ -168,10 +184,12 @@ class DepositTest {
         Address from = event.getIndexed().get(2).asAddress();
         BigInteger amount = event.getData().get(0).asInteger();
         BigInteger term = event.getData().get(1).asInteger();
-        assertEquals(txHash, id);
+        if (id.length() != 0) {
+            assertEquals(txHash, id);
+            assertEquals(BigInteger.valueOf(BLOCKS_IN_ONE_MONTH), term);
+        }
         assertEquals(sender, from);
         assertEquals(depositAmount, amount);
-        assertEquals(BigInteger.valueOf(BLOCKS_IN_ONE_MONTH), term);
     }
 
     private void ensureDepositWithdrawn(TransactionResult result, Address scoreAddress, String funcSig,
@@ -183,10 +201,12 @@ class DepositTest {
         Address from = event.getIndexed().get(2).asAddress();
         BigInteger amount = event.getData().get(0).asInteger();
         BigInteger penalty = event.getData().get(1).asInteger();
-        assertEquals(txHash, id);
+        if (id.length() != 0) {
+            assertEquals(txHash, id);
+        }
         assertEquals(sender, from);
         assertEquals(depositAmount, amount);
-        assertEquals(BigInteger.valueOf(0), penalty);
+        assertEquals(BigInteger.ZERO, penalty);
     }
 
     private EventLog findEventLog(TransactionResult result, Address scoreAddress, String funcSig) {
