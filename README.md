@@ -1,15 +1,11 @@
-[![Maven Central](https://img.shields.io/maven-central/v/foundation.icon/icon-sdk/1.0.0)](https://search.maven.org/artifact/foundation.icon/icon-sdk/1.0.0/jar)
-[![Javadocs](http://www.javadoc.io/badge2/foundation.icon/icon-sdk/1.0.0/javadoc.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk/1.0.0)
+[![Maven Central](https://img.shields.io/maven-central/v/foundation.icon/icon-sdk)](https://search.maven.org/artifact/foundation.icon/icon-sdk)
+[![Javadoc](http://www.javadoc.io/badge2/foundation.icon/icon-sdk/javadoc.svg)](http://www.javadoc.io/doc/foundation.icon/icon-sdk)
 
 # ICON SDK for Java
 
 ICON supports SDK for 3rd party or user services development. You can integrate ICON SDK for your project and utilize ICON’s functionality.
 
 This document is focused on how to use the SDK properly. For the detailed API specification, see the API reference documentation.
-
-## Version
-
-1.0.0
 
 ## Prerequisite
 
@@ -26,7 +22,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
     <groupId>foundation.icon</groupId>
     <artifactId>icon-sdk</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -34,7 +30,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation 'foundation.icon:icon-sdk:1.0.0'
+    implementation 'foundation.icon:icon-sdk:2.0.0'
 }
 ```
 
