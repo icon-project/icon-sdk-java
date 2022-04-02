@@ -25,7 +25,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 
-public class AnnotaionTest {
+public class AnnotationTest {
 
     @Test
     void testConvert() {
@@ -39,8 +39,8 @@ public class AnnotaionTest {
                 .put("byteArray", new RpcValue(new byte[]{1, 2, 3, 4, 5}))
                 .build();
 
-        RpcConverter<AnnotaionClass> converter = new AnnotatedConverterFactory().create(AnnotaionClass.class);
-        AnnotaionClass result = converter.convertTo(rpcObject);
+        RpcConverter<AnnotationClass> converter = new AnnotatedConverterFactory().create(AnnotationClass.class);
+        AnnotationClass result = converter.convertTo(rpcObject);
 
         Assertions.assertEquals(rpcObject.getItem("boolean").asBoolean(), result.booleanType);
         Assertions.assertEquals(rpcObject.getItem("string").asString(), result.stringType);
@@ -53,7 +53,7 @@ public class AnnotaionTest {
 
 
     @AnnotationConverter
-    public class AnnotaionClass {
+    public class AnnotationClass {
 
         @ConverterName("boolean")
         boolean booleanType;
@@ -68,12 +68,12 @@ public class AnnotaionTest {
         @ConverterName("byteArray")
         byte[] byteArrayType;
 
-        public AnnotaionClass() {
+        public AnnotationClass() {
         }
 
         @Override
         public String toString() {
-            return "AnnotaionClass{" +
+            return "AnnotationClass{" +
                     "booleanType=" + booleanType +
                     ", stringType='" + stringType + '\'' +
                     ", bigIntegerType=" + bigIntegerType +
