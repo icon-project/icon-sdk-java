@@ -30,6 +30,7 @@ class CallTest {
         Address from = new Address("hx0000000000000000000000000000000000000000");
         Address to = new Address("cx1111111111111111111111111111111111111111");
         String method = "myMethod";
+        BigInteger height = BigInteger.ONE;
         Person person = new Person();
         person.name = "gold bug";
         person.age = new BigInteger("20");
@@ -37,6 +38,7 @@ class CallTest {
         Call<PersonResponse> call = new Call.Builder()
                 .from(from)
                 .to(to)
+                .height(height)
                 .method(method)
                 .params(person)
                 .buildWith(PersonResponse.class);
@@ -47,6 +49,7 @@ class CallTest {
 
         Assertions.assertEquals(from, properties.getItem("from").asAddress());
         Assertions.assertEquals(to, properties.getItem("to").asAddress());
+        Assertions.assertEquals(height, properties.getItem("height").asInteger());
         Assertions.assertEquals(method, data.getItem("method").asString());
         Assertions.assertEquals(person.name, dataParams.getItem("name").asString());
         Assertions.assertEquals(person.age, dataParams.getItem("age").asInteger());

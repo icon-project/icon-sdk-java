@@ -102,6 +102,22 @@ public class IconService {
     }
 
     /**
+     * Gets the total number of issued coins
+     *
+     * @param height the block number
+     * @return a BigInteger object of the total number of coins in loop
+     */
+    public Request<BigInteger> getTotalSupply(BigInteger height) {
+        long requestId = System.currentTimeMillis();
+        RpcObject params = new RpcObject.Builder()
+                .put("height", new RpcValue(height))
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "icx_getTotalSupply", params);
+        return provider.request(request, findConverter(BigInteger.class));
+    }
+
+    /**
      * Gets the balance of an address
      *
      * @param address the address to check the balance
@@ -111,6 +127,24 @@ public class IconService {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(address))
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "icx_getBalance", params);
+        return provider.request(request, findConverter(BigInteger.class));
+    }
+
+    /**
+     * Gets the balance of an address
+     *
+     * @param address the address to check the balance
+     * @param height the block number
+     * @return a BigInteger object of the current balance for the given address in loop
+     */
+    public Request<BigInteger> getBalance(Address address, BigInteger height) {
+        long requestId = System.currentTimeMillis();
+        RpcObject params = new RpcObject.Builder()
+                .put("address", new RpcValue(address))
+                .put("height", new RpcValue(height))
                 .build();
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
                 requestId, "icx_getBalance", params);
@@ -174,6 +208,28 @@ public class IconService {
         long requestId = System.currentTimeMillis();
         RpcObject params = new RpcObject.Builder()
                 .put("address", new RpcValue(scoreAddress))
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "icx_getScoreApi", params);
+        Class<List<ScoreApi>> listClass = ((Class) List.class);
+        return provider.request(request, findConverter(listClass));
+    }
+
+    /**
+     * Gets information about the APIs in SCORE
+     *
+     * @param scoreAddress the address to get APIs
+     * @param height the block number
+     * @return a {@code ScoreApi} object
+     */
+    @SuppressWarnings("unchecked")
+    public Request<List<ScoreApi>> getScoreApi(Address scoreAddress, BigInteger height) {
+        if (!IconKeys.isContractAddress(scoreAddress))
+            throw new IllegalArgumentException("Only the contract address can be called.");
+        long requestId = System.currentTimeMillis();
+        RpcObject params = new RpcObject.Builder()
+                .put("address", new RpcValue(scoreAddress))
+                .put("height", new RpcValue(height))
                 .build();
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
                 requestId, "icx_getScoreApi", params);
