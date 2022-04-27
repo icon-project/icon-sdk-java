@@ -339,8 +339,8 @@ Person memberPerson = iconService.call(call).execute();
 - [ICON Network]
 
 [Quick Start]: quickstart
-[ICON JSON-RPC API v3]: https://www.icondev.io/docs/icon-json-rpc-v3
-[ICON Network]: https://www.icondev.io/docs/the-icon-network
+[ICON JSON-RPC API v3]: https://icondev.io/references/reference-manuals/icon-json-rpc-api-v3-specification
+[ICON Network]: https://icondev.io/introduction/what-is-icon-network
 
 
 ## License

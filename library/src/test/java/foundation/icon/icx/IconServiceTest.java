@@ -85,6 +85,22 @@ class IconServiceTest {
     }
 
     @Test
+    void testGetTotalSupplyWithHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = BigInteger.ONE;
+        iconService.getTotalSupply(height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getTotalSupply", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
     void testGetBalance() {
         Provider provider = mock(Provider.class);
 
@@ -94,6 +110,24 @@ class IconServiceTest {
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("address", new RpcValue(address));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getBalance", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetBalanceWithHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Address address = new Address(AddressPrefix.EOA, getRandomBytes(20));
+        BigInteger height = BigInteger.ONE;
+        iconService.getBalance(address, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("address", new RpcValue(address));
+        params.put("height", new RpcValue(height));
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getBalance", params)),
@@ -153,6 +187,24 @@ class IconServiceTest {
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("address", new RpcValue(address));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getScoreApi", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetScoreApiWithHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Address address = new Address(AddressPrefix.CONTRACT, getRandomBytes(20));
+        BigInteger height = BigInteger.ONE;
+        iconService.getScoreApi(address, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("address", new RpcValue(address));
+        params.put("height", new RpcValue(height));
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getScoreApi", params)),
@@ -353,15 +405,21 @@ class IconServiceTest {
             }
         });
 
+        Address from = new Address(AddressPrefix.EOA, getRandomBytes(20));
+        Address to = new Address(AddressPrefix.CONTRACT, getRandomBytes(20));
+        BigInteger height = BigInteger.ONE;
+        String method = "addUser";
+
         Person person = new Person();
         person.name = "gold bug";
         person.age = new BigInteger("20");
         person.hasPermission = false;
 
         Call<PersonResponse> call = new Builder()
-                .from(new Address(AddressPrefix.EOA, getRandomBytes(20)))
-                .to(new Address(AddressPrefix.CONTRACT, getRandomBytes(20)))
-                .method("addUser")
+                .from(from)
+                .to(to)
+                .height(height)
+                .method(method)
                 .params(person)
                 .buildWith(PersonResponse.class);
 
@@ -372,8 +430,15 @@ class IconServiceTest {
                 argThat(request -> {
                     if (!request.getMethod().equals("icx_call")) return false;
                     RpcObject params = request.getParams();
-                    RpcObject dataParams = params.getItem("data").asObject()
-                            .getItem("params").asObject();
+                    if (!params.getItem("from").asAddress().equals(from) ||
+                            !params.getItem("to").asAddress().equals(to) ||
+                            !params.getItem("height").asInteger().equals(height)) {
+                        return false;
+                    }
+                    RpcObject data = params.getItem("data").asObject();
+                    if (!data.getItem("method").asString().equals(method))
+                        return false;
+                    RpcObject dataParams = data.getItem("params").asObject();
                     return dataParams.getItem("name").asString().equals(person.name) &&
                             dataParams.getItem("age").asInteger().equals(person.age) &&
                             dataParams.getItem("hasPermission").asBoolean() == person.hasPermission;

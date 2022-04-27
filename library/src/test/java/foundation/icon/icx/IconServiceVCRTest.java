@@ -48,6 +48,7 @@ public class IconServiceVCRTest {
     private Address scoreAddress;
     private IconService iconService;
     private Wallet wallet;
+    private BigInteger height = BigInteger.ONE;
 
     @BeforeEach
     void setUp() {
@@ -65,11 +66,17 @@ public class IconServiceVCRTest {
     void testGetBalance() throws IOException {
         BigInteger balance = iconService.getBalance(wallet.getAddress()).execute();
         assertEquals(new BigInteger("1011444844999999999995"), balance);
+
+        balance = iconService.getBalance(wallet.getAddress(), height).execute();
+        assertEquals(new BigInteger("1011444844999999999995"), balance);
     }
 
     @Test
     void testGetTotalSupply() throws IOException {
         BigInteger totalSupply = iconService.getTotalSupply().execute();
+        assertEquals(new BigInteger("801459900000000000000000000"), totalSupply);
+
+        totalSupply = iconService.getTotalSupply(height).execute();
         assertEquals(new BigInteger("801459900000000000000000000"), totalSupply);
     }
 
@@ -96,6 +103,9 @@ public class IconServiceVCRTest {
     @Test
     void testGetScoreApi() throws IOException {
         List<ScoreApi> apis = iconService.getScoreApi(scoreAddress).execute();
+        assertEquals("balanceOf", apis.get(0).getName());
+
+        apis = iconService.getScoreApi(scoreAddress, height).execute();
         assertEquals("balanceOf", apis.get(0).getName());
     }
 
@@ -142,6 +152,7 @@ public class IconServiceVCRTest {
         Call<RpcItem> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
+                .height(height)
                 .method("balanceOf")
                 .params(params)
                 .build();
@@ -180,6 +191,7 @@ public class IconServiceVCRTest {
         Call<BalanceResponse> call = new Call.Builder()
                 .from(wallet.getAddress())
                 .to(scoreAddress)
+                .height(height)
                 .method("balanceOf")
                 .params(params)
                 .buildWith(BalanceResponse.class);
