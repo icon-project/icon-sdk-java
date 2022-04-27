@@ -95,10 +95,7 @@ public class IconService {
      * @return a BigInteger object of the total number of coins in loop
      */
     public Request<BigInteger> getTotalSupply() {
-        long requestId = System.currentTimeMillis();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getTotalSupply", null);
-        return provider.request(request, findConverter(BigInteger.class));
+        return getTotalSupply(null);
     }
 
     /**
@@ -109,9 +106,12 @@ public class IconService {
      */
     public Request<BigInteger> getTotalSupply(BigInteger height) {
         long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("height", new RpcValue(height))
-                .build();
+        RpcObject params = null;
+        if (height != null) {
+            params = new RpcObject.Builder()
+                    .put("height", new RpcValue(height))
+                    .build();
+        }
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
                 requestId, "icx_getTotalSupply", params);
         return provider.request(request, findConverter(BigInteger.class));
@@ -124,13 +124,7 @@ public class IconService {
      * @return a BigInteger object of the current balance for the given address in loop
      */
     public Request<BigInteger> getBalance(Address address) {
-        long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("address", new RpcValue(address))
-                .build();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getBalance", params);
-        return provider.request(request, findConverter(BigInteger.class));
+        return getBalance(address, null);
     }
 
     /**
@@ -142,12 +136,13 @@ public class IconService {
      */
     public Request<BigInteger> getBalance(Address address, BigInteger height) {
         long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("address", new RpcValue(address))
-                .put("height", new RpcValue(height))
-                .build();
+        RpcObject.Builder builder = new RpcObject.Builder()
+                .put("address", new RpcValue(address));
+        if (height != null) {
+            builder.put("height", new RpcValue(height));
+        }
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getBalance", params);
+                requestId, "icx_getBalance", builder.build());
         return provider.request(request, findConverter(BigInteger.class));
     }
 
@@ -201,18 +196,8 @@ public class IconService {
      * @param scoreAddress the address to get APIs
      * @return a {@code ScoreApi} object
      */
-    @SuppressWarnings("unchecked")
     public Request<List<ScoreApi>> getScoreApi(Address scoreAddress) {
-        if (!IconKeys.isContractAddress(scoreAddress))
-            throw new IllegalArgumentException("Only the contract address can be called.");
-        long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("address", new RpcValue(scoreAddress))
-                .build();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getScoreApi", params);
-        Class<List<ScoreApi>> listClass = ((Class) List.class);
-        return provider.request(request, findConverter(listClass));
+        return getScoreApi(scoreAddress, null);
     }
 
     /**
@@ -227,12 +212,13 @@ public class IconService {
         if (!IconKeys.isContractAddress(scoreAddress))
             throw new IllegalArgumentException("Only the contract address can be called.");
         long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("address", new RpcValue(scoreAddress))
-                .put("height", new RpcValue(height))
-                .build();
+        RpcObject.Builder builder = new RpcObject.Builder()
+                .put("address", new RpcValue(scoreAddress));
+        if (height != null) {
+            builder.put("height", new RpcValue(height));
+        }
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getScoreApi", params);
+                requestId, "icx_getScoreApi", builder.build());
         Class<List<ScoreApi>> listClass = ((Class) List.class);
         return provider.request(request, findConverter(listClass));
     }
