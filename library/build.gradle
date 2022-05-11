@@ -30,7 +30,7 @@ dependencies {
     testImplementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
 test {
