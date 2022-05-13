@@ -23,8 +23,10 @@ import java.math.BigInteger;
  */
 public enum NetworkId {
 
-    MAIN(new BigInteger("1")),
-    TEST(new BigInteger("2"));
+    MAIN(BigInteger.valueOf(1)),
+    LISBON(BigInteger.valueOf(2)),
+    BERLIN(BigInteger.valueOf(7)),
+    LOCAL(BigInteger.valueOf(3));
 
     private final BigInteger nid;
 
