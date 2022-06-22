@@ -17,7 +17,19 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.crypto.IconKeys;
-import foundation.icon.icx.data.*;
+import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.Base64;
+import foundation.icon.icx.data.Block;
+import foundation.icon.icx.data.BlockNotification;
+import foundation.icon.icx.data.BTPNetworkInfo;
+import foundation.icon.icx.data.BTPNetworkTypeInfo;
+import foundation.icon.icx.data.BTPSourceInfo;
+import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.ConfirmedTransaction;
+import foundation.icon.icx.data.Converters;
+import foundation.icon.icx.data.EventNotification;
+import foundation.icon.icx.data.ScoreApi;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.AnnotatedConverterFactory;
 import foundation.icon.icx.transport.jsonrpc.AnnotationConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;

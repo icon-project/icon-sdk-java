@@ -17,8 +17,14 @@
 package foundation.icon.icx;
 
 import foundation.icon.icx.Call.Builder;
-import foundation.icon.icx.data.*;
+import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Address.AddressPrefix;
+import foundation.icon.icx.data.Base64;
+import foundation.icon.icx.data.BlockNotification;
+import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.EventNotification;
+import foundation.icon.icx.data.NetworkId;
+import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
