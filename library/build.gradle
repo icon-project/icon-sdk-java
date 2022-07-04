@@ -1,7 +1,5 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
-    id 'signing'
 }
 
 repositories {
@@ -46,5 +44,3 @@ task integrationTest(type: Test) {
     description = 'Runs integration tests.'
     group = 'verification'
 }
-
-apply from: '../publish.gradle'
