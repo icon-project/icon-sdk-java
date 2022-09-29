@@ -14,12 +14,12 @@ java {
 }
 
 ext {
-    bouncycastleVersion = '1.60'
-    jacksonVersion = '2.9.6'
-    okhttpVersion = '3.11.0'
+    bouncycastleVersion = '1.70'
+    jacksonVersion = '2.13.4'
+    okhttpVersion = '4.10.0'
 
-    junitVersion = '5.2.0'
-    mockitoVersion = '2.19.0'
+    junitVersion = '5.9.0'
+    mockitoVersion = '4.8.0'
 }
 
 dependencies {
