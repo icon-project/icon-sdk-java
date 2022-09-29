@@ -22,7 +22,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
     <groupId>foundation.icon</groupId>
     <artifactId>icon-sdk</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation 'foundation.icon:icon-sdk:2.1.0'
+    implementation 'foundation.icon:icon-sdk:2.2.0'
 }
 ```
 
