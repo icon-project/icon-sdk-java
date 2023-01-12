@@ -1,3 +1,7 @@
+plugins {
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+}
+
 allprojects {
     group GROUP
     version VERSION_NAME
@@ -9,26 +13,13 @@ subprojects {
     }
 }
 
-configure([project(':library')]) {
-    plugins {
-        id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
-        id 'maven-publish'
-        id 'signing'
-    }
-
-    nexusPublishing {
-        packageGroup = GROUP
-        repositories {
-            sonatype {
-                stagingProfileId = findProperty('mavenProfileId') ?: System.getenv("STAGING_PROFILE_ID")
-                username = findProperty('mavenCentralUsername') ?: System.getenv("OSSRH_USERNAME")
-                password = findProperty('mavenCentralPassword') ?: System.getenv("OSSRH_PASSWORD")
-            }
+nexusPublishing {
+    packageGroup = GROUP
+    repositories {
+        sonatype {
+            stagingProfileId = findProperty('mavenProfileId') ?: System.getenv("STAGING_PROFILE_ID")
+            username = findProperty('mavenCentralUsername') ?: System.getenv("OSSRH_USERNAME")
+            password = findProperty('mavenCentralPassword') ?: System.getenv("OSSRH_PASSWORD")
         }
     }
-
-    apply from: 'publish.gradle'
 }
-
-
-
