@@ -13,6 +13,14 @@ subprojects {
     }
 }
 
+configure([project(':library')]) {
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
+    apply from: '../publish.gradle'
+}
+
 nexusPublishing {
     packageGroup = GROUP
     repositories {
