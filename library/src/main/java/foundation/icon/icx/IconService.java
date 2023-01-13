@@ -413,6 +413,84 @@ public class IconService {
         return provider.request(request, findConverter(Base64[].class));
     }
 
+    /**
+     * Get proof for the receipt and the events in it
+     *
+     * @param hash the hash value of the block including the result
+     * @param index index of the receipt in the block
+     * @param events list of indexes of the events in the receipt.
+     * @return a {@code Request} object that can execute the request
+     */
+    public Request<Base64[][]> getProofForEvents(Bytes hash, BigInteger index, BigInteger[] events) {
+        long requestId = System.currentTimeMillis();
+        RpcArray.Builder arrayBuilder = new RpcArray.Builder();
+        for(BigInteger d : events) {
+            arrayBuilder.add(new RpcValue(d));
+        }
+        RpcObject params = new RpcObject.Builder()
+                .put("hash", new RpcValue(hash))
+                .put("index", new RpcValue(index))
+                .put("events", arrayBuilder.build())
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "icx_getProofForEvents", params);
+        return provider.request(request, findConverter(Base64[][].class));
+    }
+
+    /**
+     * Get status of the contract
+     *
+     * @param contract the address of the contract
+     * @return a {@code Request} object that can execute the request
+     */
+    public Request<ScoreStatus> getScoreStatus(Address contract) {
+        long requestId = System.currentTimeMillis();
+        RpcObject params = new RpcObject.Builder()
+                .put("address", new RpcValue(contract))
+                .build();
+        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
+                requestId, "icx_getScoreStatus", params);
+        return provider.request(request, findConverter(ScoreStatus.class));
+    }
+
+    /**
+     * Gets a monitor for block notification
+     *
+     * @param height the start height
+     * @return a {@code Monitor} object
+     */
+    public Monitor<BlockNotification> monitorBlocks(BigInteger height) {
+        MonitorSpec ms = new BlockMonitorSpec(height, null);
+        return provider.monitor(ms, findConverter(BlockNotification.class));
+    }
+
+    /**
+     * Gets a monitor for block notification
+     *
+     * @param height the start height
+     * @param eventFilters array of eventFilter
+     * @return a {@code Monitor} object
+     */
+    public Monitor<BlockNotification> monitorBlocks(BigInteger height, EventMonitorSpec.EventFilter[] eventFilters) {
+        MonitorSpec ms = new BlockMonitorSpec(height, eventFilters);
+        return provider.monitor(ms, findConverter(BlockNotification.class));
+    }
+
+    /**
+     * Gets a monitor for event notification
+     *
+     * @param height the start height
+     * @param event the event signature
+     * @param addr the address of SCORE
+     * @param indexed the array of arguments to match with indexed parameters of event
+     * @param data the array of arguments to match with non-indexed parameters of event
+     * @return a {@code Monitor} object
+     */
+    public Monitor<EventNotification> monitorEvents(BigInteger height, String event, Address addr, String[] indexed, String[] data) {
+        MonitorSpec ms = new EventMonitorSpec(height, event, addr, indexed, data);
+        return provider.monitor(ms, findConverter(EventNotification.class));
+    }
+
     // Below APIs are additional features for BTP 2.0
 
     /**
@@ -537,84 +615,6 @@ public class IconService {
         foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
                 requestId, "btp_getSourceInformation", null);
         return provider.request(request, findConverter(BTPSourceInfo.class));
-    }
-
-    /**
-     * Get proof for the receipt and the events in it
-     *
-     * @param hash the hash value of the block including the result
-     * @param index index of the receipt in the block
-     * @param events list of indexes of the events in the receipt.
-     * @return a {@code Request} object that can execute the request
-     */
-    public Request<Base64[][]> getProofForEvents(Bytes hash, BigInteger index, BigInteger[] events) {
-        long requestId = System.currentTimeMillis();
-        RpcArray.Builder arrayBuilder = new RpcArray.Builder();
-        for(BigInteger d : events) {
-            arrayBuilder.add(new RpcValue(d));
-        }
-        RpcObject params = new RpcObject.Builder()
-                .put("hash", new RpcValue(hash))
-                .put("index", new RpcValue(index))
-                .put("events", arrayBuilder.build())
-                .build();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getProofForEvents", params);
-        return provider.request(request, findConverter(Base64[][].class));
-    }
-
-    /**
-     * Get status of the contract
-     *
-     * @param contract the address of the contract
-     * @return a {@code Request} object that can execute the request
-     */
-    public Request<ScoreStatus> getScoreStatus(Address contract) {
-        long requestId = System.currentTimeMillis();
-        RpcObject params = new RpcObject.Builder()
-                .put("address", new RpcValue(contract))
-                .build();
-        foundation.icon.icx.transport.jsonrpc.Request request = new foundation.icon.icx.transport.jsonrpc.Request(
-                requestId, "icx_getScoreStatus", params);
-        return provider.request(request, findConverter(ScoreStatus.class));
-    }
-
-    /**
-     * Gets a monitor for block notification
-     *
-     * @param height the start height
-     * @return a {@code Monitor} object
-     */
-    public Monitor<BlockNotification> monitorBlocks(BigInteger height) {
-        MonitorSpec ms = new BlockMonitorSpec(height, null);
-        return provider.monitor(ms, findConverter(BlockNotification.class));
-    }
-
-    /**
-     * Gets a monitor for block notification
-     *
-     * @param height the start height
-     * @param eventFilters array of eventFilter
-     * @return a {@code Monitor} object
-     */
-    public Monitor<BlockNotification> monitorBlocks(BigInteger height, EventMonitorSpec.EventFilter[] eventFilters) {
-        MonitorSpec ms = new BlockMonitorSpec(height, eventFilters);
-        return provider.monitor(ms, findConverter(BlockNotification.class));
-    }
-
-    /**
-     * Gets a monitor for event notification
-     *
-     * @param height the start height
-     * @param event the event signature
-     * @param addr the address of SCORE
-     * @param indexed the array of arguments to match with indexed parameters of event
-     * @param data the array of arguments to match with non-indexed parameters of event
-     * @return a {@code Monitor} object
-     */
-    public Monitor<EventNotification> monitorEvents(BigInteger height, String event, Address addr, String[] indexed, String[] data) {
-        MonitorSpec ms = new EventMonitorSpec(height, event, addr, indexed, data);
-        return provider.monitor(ms, findConverter(EventNotification.class));
     }
 
     @SuppressWarnings("unchecked")
