@@ -353,7 +353,7 @@ class IconServiceTest {
 
         IconService iconService = new IconService(provider);
         BigInteger id = new BigInteger(getRandomBytes(2));
-        iconService.btpGetNetworkInfo(id);
+        iconService.getBTPNetworkInfo(id);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("id", new RpcValue(id));
@@ -370,7 +370,7 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         BigInteger height = new BigInteger(getRandomBytes(2));
         BigInteger id = new BigInteger(getRandomBytes(2));
-        iconService.btpGetNetworkInfo(height, id);
+        iconService.getBTPNetworkInfo(id, height);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(height));
@@ -387,7 +387,7 @@ class IconServiceTest {
 
         IconService iconService = new IconService(provider);
         BigInteger id = new BigInteger(getRandomBytes(2));
-        iconService.btpGetNetworkTypeInfo(id);
+        iconService.getBTPNetworkTypeInfo(id);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("id", new RpcValue(id));
@@ -404,7 +404,7 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         BigInteger height = new BigInteger(getRandomBytes(2));
         BigInteger id = new BigInteger(getRandomBytes(2));
-        iconService.btpGetNetworkTypeInfo(height, id);
+        iconService.getBTPNetworkTypeInfo(id, height);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(height));
@@ -422,7 +422,7 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         BigInteger height = new BigInteger(getRandomBytes(2));
         BigInteger networkID = new BigInteger(getRandomBytes(2));
-        iconService.btpGetMessages(height, networkID);
+        iconService.getBTPMessages(networkID, height);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(height));
@@ -440,7 +440,7 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         BigInteger height = new BigInteger(getRandomBytes(2));
         BigInteger networkID = new BigInteger(getRandomBytes(2));
-        iconService.btpGetHeader(height, networkID);
+        iconService.getBTPHeader(networkID, height);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(height));
@@ -458,7 +458,7 @@ class IconServiceTest {
         IconService iconService = new IconService(provider);
         BigInteger height = new BigInteger(getRandomBytes(2));
         BigInteger networkID = new BigInteger(getRandomBytes(2));
-        iconService.btpGetProof(height, networkID);
+        iconService.getBTPProof(networkID, height);
 
         HashMap<String, RpcValue> params = new HashMap<>();
         params.put("height", new RpcValue(height));
@@ -474,7 +474,7 @@ class IconServiceTest {
         Provider provider = mock(Provider.class);
 
         IconService iconService = new IconService(provider);
-        iconService.btpGetSourceInformation();
+        iconService.getBTPSourceInformation();
 
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "btp_getSourceInformation", null)),
