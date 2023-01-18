@@ -19,6 +19,7 @@ package foundation.icon.icx;
 import foundation.icon.icx.Call.Builder;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Address.AddressPrefix;
+import foundation.icon.icx.data.BTPNotification;
 import foundation.icon.icx.data.Base64;
 import foundation.icon.icx.data.BlockNotification;
 import foundation.icon.icx.data.Bytes;
@@ -348,6 +349,140 @@ class IconServiceTest {
     }
 
     @Test
+    void testBTPGetNetworkInfo() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger id = new BigInteger(getRandomBytes(2));
+        iconService.getBTPNetworkInfo(id);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("id", new RpcValue(id));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getNetworkInfo", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetNetworkInfoWithHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(2));
+        BigInteger id = new BigInteger(getRandomBytes(2));
+        iconService.getBTPNetworkInfo(id, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+        params.put("id", new RpcValue(id));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getNetworkInfo", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetNetworkTypeInfo() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger id = new BigInteger(getRandomBytes(2));
+        iconService.getBTPNetworkTypeInfo(id);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("id", new RpcValue(id));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getNetworkTypeInfo", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetNetworkTypeInfoWithHeight() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(2));
+        BigInteger id = new BigInteger(getRandomBytes(2));
+        iconService.getBTPNetworkTypeInfo(id, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+        params.put("id", new RpcValue(id));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getNetworkTypeInfo", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetMessages() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(2));
+        BigInteger networkID = new BigInteger(getRandomBytes(2));
+        iconService.getBTPMessages(networkID, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+        params.put("networkID", new RpcValue(networkID));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getMessages", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetHeader() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(2));
+        BigInteger networkID = new BigInteger(getRandomBytes(2));
+        iconService.getBTPHeader(networkID, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+        params.put("networkID", new RpcValue(networkID));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getHeader", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetProof() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger height = new BigInteger(getRandomBytes(2));
+        BigInteger networkID = new BigInteger(getRandomBytes(2));
+        iconService.getBTPProof(networkID, height);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("height", new RpcValue(height));
+        params.put("networkID", new RpcValue(networkID));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getProof", params)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testBTPGetSourceInformation() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        iconService.getBTPSourceInformation();
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "btp_getSourceInformation", null)),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
     void testMonitorBlocks() {
         Provider provider = mock(Provider.class);
 
@@ -375,6 +510,24 @@ class IconServiceTest {
                         && startHeight.equals(monitorSpec.getParams().getItem("height").asInteger())
                         && event.equals(monitorSpec.getParams().getItem("event").asString())
                         && addr.equals(monitorSpec.getParams().getItem("addr").asAddress())
+                ),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testMonitorBTP() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger startHeight = new BigInteger(getRandomBytes(10));
+        BigInteger networkId = BigInteger.valueOf(100);
+        Monitor<BTPNotification> bm = iconService.monitorBTP(startHeight, networkId, true);
+
+        verify(provider).monitor(
+                argThat(monitorSpec -> "btp".equals(monitorSpec.getPath())
+                        && startHeight.equals(monitorSpec.getParams().getItem("height").asInteger())
+                        && networkId.equals(monitorSpec.getParams().getItem("networkID").asInteger())
+                        && "0x1".equals(monitorSpec.getParams().getItem("proofFlag").asString())
                 ),
                 argThat(Objects::nonNull));
     }

@@ -187,6 +187,19 @@ public final class Converters {
         }
     };
 
+    public static final RpcConverter<BTPNotification> BTP_NOTIFICATION
+            = new RpcConverter<BTPNotification>() {
+        @Override
+        public BTPNotification convertTo(RpcItem object) {
+            return new BTPNotification(object.asObject());
+        }
+
+        @Override
+        public RpcItem convertFrom(BTPNotification object) {
+            return RpcItemCreator.create(object);
+        }
+    };
+
     public static final RpcConverter<Base64[][]> BASE64_ARRAY_ARRAY
             = new RpcConverter<Base64[][]>() {
         @Override
@@ -256,6 +269,48 @@ public final class Converters {
 
         @Override
         public RpcItem convertFrom(List<ScoreApi> object) {
+            return RpcItemCreator.create(object);
+        }
+    };
+
+    public static final RpcConverter<BTPNetworkInfo> BTP_NETWORK_INFO
+            = new RpcConverter<BTPNetworkInfo>() {
+
+        @Override
+        public BTPNetworkInfo convertTo(RpcItem rpcItem) {
+            return new BTPNetworkInfo(rpcItem.asObject());
+        }
+
+        @Override
+        public RpcItem convertFrom(BTPNetworkInfo object) {
+            return RpcItemCreator.create(object);
+        }
+    };
+
+    public static final RpcConverter<BTPNetworkTypeInfo> BTP_NETWORK_TYPE_INFO
+            = new RpcConverter<BTPNetworkTypeInfo>() {
+
+        @Override
+        public BTPNetworkTypeInfo convertTo(RpcItem rpcItem) {
+            return new BTPNetworkTypeInfo(rpcItem.asObject());
+        }
+
+        @Override
+        public RpcItem convertFrom(BTPNetworkTypeInfo object) {
+            return RpcItemCreator.create(object);
+        }
+    };
+
+    public static final RpcConverter<BTPSourceInfo> BTP_SOURCE_INFO
+            = new RpcConverter<BTPSourceInfo>() {
+
+        @Override
+        public BTPSourceInfo convertTo(RpcItem rpcItem) {
+            return new BTPSourceInfo(rpcItem.asObject());
+        }
+
+        @Override
+        public RpcItem convertFrom(BTPSourceInfo object) {
             return RpcItemCreator.create(object);
         }
     };
