@@ -29,8 +29,12 @@ public class BTPNetworkTypeInfo {
 
     private final RpcObject properties;
 
-    public BTPNetworkTypeInfo(RpcObject properties) {
+    BTPNetworkTypeInfo(RpcObject properties) {
         this.properties = properties;
+    }
+
+    public RpcObject getProperties() {
+        return properties;
     }
 
     public BigInteger getNetworkTypeID() {

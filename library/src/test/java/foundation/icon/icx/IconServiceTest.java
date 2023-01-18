@@ -19,6 +19,7 @@ package foundation.icon.icx;
 import foundation.icon.icx.Call.Builder;
 import foundation.icon.icx.data.Address;
 import foundation.icon.icx.data.Address.AddressPrefix;
+import foundation.icon.icx.data.BTPNotification;
 import foundation.icon.icx.data.Base64;
 import foundation.icon.icx.data.BlockNotification;
 import foundation.icon.icx.data.Bytes;
@@ -509,6 +510,24 @@ class IconServiceTest {
                         && startHeight.equals(monitorSpec.getParams().getItem("height").asInteger())
                         && event.equals(monitorSpec.getParams().getItem("event").asString())
                         && addr.equals(monitorSpec.getParams().getItem("addr").asAddress())
+                ),
+                argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testMonitorBTP() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        BigInteger startHeight = new BigInteger(getRandomBytes(10));
+        BigInteger networkId = BigInteger.valueOf(100);
+        Monitor<BTPNotification> bm = iconService.monitorBTP(startHeight, networkId, true);
+
+        verify(provider).monitor(
+                argThat(monitorSpec -> "btp".equals(monitorSpec.getPath())
+                        && startHeight.equals(monitorSpec.getParams().getItem("height").asInteger())
+                        && networkId.equals(monitorSpec.getParams().getItem("networkID").asInteger())
+                        && "0x1".equals(monitorSpec.getParams().getItem("proofFlag").asString())
                 ),
                 argThat(Objects::nonNull));
     }

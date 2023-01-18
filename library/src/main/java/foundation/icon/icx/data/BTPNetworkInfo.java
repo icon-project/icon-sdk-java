@@ -29,6 +29,10 @@ public class BTPNetworkInfo {
         this.properties = properties;
     }
 
+    public RpcObject getProperties() {
+        return properties;
+    }
+
     public BigInteger getStartHeight() {
         RpcItem item = properties.getItem("startHeight");
         return item != null ? item.asInteger() : null;

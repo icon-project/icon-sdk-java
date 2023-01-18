@@ -18,12 +18,13 @@ package foundation.icon.icx;
 
 import foundation.icon.icx.crypto.IconKeys;
 import foundation.icon.icx.data.Address;
+import foundation.icon.icx.data.BTPNetworkInfo;
+import foundation.icon.icx.data.BTPNetworkTypeInfo;
+import foundation.icon.icx.data.BTPNotification;
+import foundation.icon.icx.data.BTPSourceInfo;
 import foundation.icon.icx.data.Base64;
 import foundation.icon.icx.data.Block;
 import foundation.icon.icx.data.BlockNotification;
-import foundation.icon.icx.data.BTPNetworkInfo;
-import foundation.icon.icx.data.BTPNetworkTypeInfo;
-import foundation.icon.icx.data.BTPSourceInfo;
 import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.ConfirmedTransaction;
 import foundation.icon.icx.data.Converters;
@@ -39,6 +40,7 @@ import foundation.icon.icx.transport.jsonrpc.RpcConverter.RpcConverterFactory;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
 import foundation.icon.icx.transport.jsonrpc.RpcObject;
 import foundation.icon.icx.transport.jsonrpc.RpcValue;
+import foundation.icon.icx.transport.monitor.BTPMonitorSpec;
 import foundation.icon.icx.transport.monitor.BlockMonitorSpec;
 import foundation.icon.icx.transport.monitor.EventMonitorSpec;
 import foundation.icon.icx.transport.monitor.Monitor;
@@ -85,10 +87,11 @@ public class IconService {
                 BlockNotification.class, Converters.BLOCK_NOTIFICATION));
         addConverterFactory(Converters.newFactory(
                 EventNotification.class, Converters.EVENT_NOTIFICATION));
+        addConverterFactory(Converters.newFactory(
+                BTPNotification.class, Converters.BTP_NOTIFICATION));
         addConverterFactory(Converters.newFactory(Base64[].class, Converters.BASE64_ARRAY));
         addConverterFactory(Converters.newFactory(Base64[][].class, Converters.BASE64_ARRAY_ARRAY));
-        addConverterFactory(Converters.newFactory(
-                Base64.class, Converters.BASE64));
+        addConverterFactory(Converters.newFactory(Base64.class, Converters.BASE64));
         addConverterFactory(Converters.newFactory(BTPNetworkInfo.class, Converters.BTP_NETWORK_INFO));
         addConverterFactory(Converters.newFactory(BTPNetworkTypeInfo.class, Converters.BTP_NETWORK_TYPE_INFO));
         addConverterFactory(Converters.newFactory(BTPSourceInfo.class, Converters.BTP_SOURCE_INFO));
@@ -489,6 +492,20 @@ public class IconService {
     public Monitor<EventNotification> monitorEvents(BigInteger height, String event, Address addr, String[] indexed, String[] data) {
         MonitorSpec ms = new EventMonitorSpec(height, event, addr, indexed, data);
         return provider.monitor(ms, findConverter(EventNotification.class));
+    }
+
+    /**
+     * Gets a monitor for BTP notification
+     *
+     * @param height the start height
+     * @param networkId the btp network id
+     * @param proofFlag Proof Included for BTP Header
+     * @return a {@code Monitor} object
+     *
+     */
+    public Monitor<BTPNotification> monitorBTP(BigInteger height, BigInteger networkId, boolean proofFlag) {
+        MonitorSpec ms = new BTPMonitorSpec(height, networkId, proofFlag);
+        return provider.monitor(ms, findConverter(BTPNotification.class));
     }
 
     // Below APIs are additional features for BTP 2.0

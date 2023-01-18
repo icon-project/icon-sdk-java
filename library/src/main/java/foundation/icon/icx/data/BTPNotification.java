@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ICON Foundation
+ * Copyright 2022 ICON Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,23 @@
 
 package foundation.icon.icx.data;
 
-public class Base64 {
-    private final String data;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
 
-    public Base64(String data) {
-        this.data = data;
+public class BTPNotification {
+    private final RpcObject properties;
+
+    BTPNotification(RpcObject properties) {
+        this.properties = properties;
     }
 
-    public byte[] decode() {
-        return java.util.Base64.getDecoder().decode(data);
+    public Base64 getHeader() {
+        RpcItem item = properties.getItem("header");
+        return item != null ? new Base64(item.asString()) : null;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj instanceof Base64) {
-            Base64 other = (Base64) obj;
-            return this.data.equals(other.data);
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return this.data;
+    public Base64 getProof() {
+        RpcItem item = properties.getItem("proof");
+        return item != null ? new Base64(item.asString()) : null;
     }
 }
