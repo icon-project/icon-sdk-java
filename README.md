@@ -22,7 +22,7 @@ Download [the latest JAR](https://search.maven.org/search?q=g:foundation.icon%20
 <dependency>
     <groupId>foundation.icon</groupId>
     <artifactId>icon-sdk</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
 </dependency>
 ```
 
@@ -30,14 +30,14 @@ or Gradle:
 
 ```groovy
 dependencies {
-    implementation 'foundation.icon:icon-sdk:2.2.0'
+    implementation 'foundation.icon:icon-sdk:2.3.0'
 }
 ```
 
 ## Quick Start
 
 We provide different types of code examples to help you to start quickly from scratch.
-Please refer to the separate [Quick Start] project for the code examples.
+Please refer to the separate [Quick Start](quickstart) project for the code examples.
 
 
 ## IconService
@@ -334,13 +334,9 @@ Person memberPerson = iconService.call(call).execute();
 
 ## References
 
-- [Quick Start]
-- [ICON JSON-RPC API v3]
-- [ICON Network]
-
-[Quick Start]: quickstart
-[ICON JSON-RPC API v3]: https://icondev.io/references/reference-manuals/icon-json-rpc-api-v3-specification
-[ICON Network]: https://icondev.io/introduction/what-is-icon-network
+- [GOLOOP JSON-RPC API v3](https://github.com/icon-project/goloop/blob/master/doc/jsonrpc_v3.md)
+- [Extension for BTP](https://github.com/icon-project/goloop/blob/master/doc/btp_extension.md)
+- [Extension for BTP 2.0](https://github.com/icon-project/goloop/blob/master/doc/btp2_extension.md)
 
 
 ## License
