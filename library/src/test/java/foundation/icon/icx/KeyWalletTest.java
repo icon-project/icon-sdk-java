@@ -80,6 +80,15 @@ public class KeyWalletTest {
     }
 
     @Test
+    void testPublicKey() {
+        KeyWallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
+        assertEquals(wallet.getPublicKey(), wallet.getPublicKey(false));
+        Bytes compressed = wallet.getPublicKey(true);
+        assertEquals(IconKeys.PUBLIC_KEY_SIZE_COMP, compressed.length());
+        assertEquals(new Address(ADDRESS), IconKeys.getAddress(compressed));
+    }
+
+    @Test
     public void testKeyStore() throws KeystoreException, IOException {
         KeyWallet wallet = KeyWallet.load(new Bytes(PRIVATE_KEY_STRING));
         String fileName = KeyWallet.store(wallet, PASSWORD, tempDir);

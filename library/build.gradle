@@ -13,7 +13,7 @@ java {
 
 ext {
     bouncycastleVersion = '1.70'
-    jacksonVersion = '2.13.4'
+    jacksonVersion = '2.13.4.2'
     okhttpVersion = '4.10.0'
 
     junitVersion = '5.9.0'
