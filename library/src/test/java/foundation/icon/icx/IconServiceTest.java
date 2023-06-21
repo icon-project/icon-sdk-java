@@ -23,8 +23,11 @@ import foundation.icon.icx.data.BTPNotification;
 import foundation.icon.icx.data.Base64;
 import foundation.icon.icx.data.BlockNotification;
 import foundation.icon.icx.data.Bytes;
+import foundation.icon.icx.data.Converters;
 import foundation.icon.icx.data.EventNotification;
 import foundation.icon.icx.data.NetworkId;
+import foundation.icon.icx.data.NetworkInfo;
+import foundation.icon.icx.data.ScoreStatus;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.jsonrpc.RpcConverter;
 import foundation.icon.icx.transport.jsonrpc.RpcItem;
@@ -346,6 +349,34 @@ class IconServiceTest {
         verify(provider).request(
                 argThat(request -> isRequestMatches(request, "icx_getProofForResult", params)),
                 argThat(Objects::nonNull));
+    }
+
+    @Test
+    void testGetScoreStatus() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Address contract = new Address(AddressPrefix.CONTRACT, getRandomBytes(20));
+        Request<ScoreStatus> req = iconService.getScoreStatus(contract);
+
+        HashMap<String, RpcValue> params = new HashMap<>();
+        params.put("address", new RpcValue(contract));
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getScoreStatus", params)),
+                argThat(converter -> converter.equals(Converters.SCORE_STATUS)));
+    }
+
+    @Test
+    void testGetNetworkInfo() {
+        Provider provider = mock(Provider.class);
+
+        IconService iconService = new IconService(provider);
+        Request<NetworkInfo> req = iconService.getNetworkInfo();
+
+        verify(provider).request(
+                argThat(request -> isRequestMatches(request, "icx_getNetworkInfo", null)),
+                argThat(converter -> converter.equals(Converters.NETWORK_INFO)));
     }
 
     @Test
